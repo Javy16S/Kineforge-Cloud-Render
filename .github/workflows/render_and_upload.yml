@@ -1,0 +1,78 @@
+name: KineForge Cloud Render & YouTube Upload
+
+on:
+  workflow_dispatch:
+    inputs:
+      projects:
+        description: 'JSON array de proyectos: [{"channel":"canal1","project":"ep1","branch":"temp-render-ep1"}]'
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  render_and_upload:
+    name: "Render & Upload: ${{ matrix.project.channel }} / ${{ matrix.project.project }}"
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        project: ${{ fromJSON(github.event.inputs.projects) }}
+    environment: ${{ matrix.project.channel }}
+
+    steps:
+      - name: Checkout del código base del motor
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Checkout de assets desde rama efímera (si aplica)
+        if: matrix.project.branch != '' && matrix.project.branch != 'main'
+        run: |
+          echo "📥 Descargando assets de la rama efímera: ${{ matrix.project.branch }}"
+          git fetch origin ${{ matrix.project.branch }}:${{ matrix.project.branch }}
+          git checkout ${{ matrix.project.branch }} -- "projects/${{ matrix.project.channel }}/${{ matrix.project.project }}" || true
+
+      - name: Configurar Python 3.10
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+          cache: 'pip'
+
+      - name: Instalar FFmpeg con soporte de subtítulos y códecs
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y ffmpeg libass-dev
+
+      - name: Instalar dependencias Python
+        run: |
+          pip install --upgrade pip
+          pip install -r cloud-pipeline/runner/requirements.txt
+
+      - name: Renderizar Video con KineForge Engine
+        run: |
+          PROJECT_DIR="projects/${{ matrix.project.channel }}/${{ matrix.project.project }}"
+          python cloud-pipeline/runner/render.py \
+            --manifest "${PROJECT_DIR}/manifest.json" \
+            --assets "${PROJECT_DIR}/assets" \
+            --output "${RUNNER_TEMP}/output_${{ matrix.project.project }}.mp4"
+
+      - name: Subir a YouTube
+        env:
+          YT_CLIENT_ID: ${{ secrets.YT_CLIENT_ID }}
+          YT_CLIENT_SECRET: ${{ secrets.YT_CLIENT_SECRET }}
+          YT_REFRESH_TOKEN: ${{ secrets.YT_REFRESH_TOKEN }}
+        run: |
+          PROJECT_DIR="projects/${{ matrix.project.channel }}/${{ matrix.project.project }}"
+          python cloud-pipeline/runner/upload_youtube.py \
+            --video "${RUNNER_TEMP}/output_${{ matrix.project.project }}.mp4" \
+            --metadata "${PROJECT_DIR}/metadata.json"
+
+      - name: 💥 Auto-Destrucción: Eliminar rama efímera de assets
+        if: always() && matrix.project.branch != '' && matrix.project.branch != 'main'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "🧹 Eliminando rama temporal ${{ matrix.project.branch }} del repositorio..."
+          gh api -X DELETE "repos/${{ github.repository }}/git/refs/heads/${{ matrix.project.branch }}" || echo "Rama ya eliminada o no encontrada."
