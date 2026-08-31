@@ -4,8 +4,9 @@ on:
   workflow_dispatch:
     inputs:
       projects:
-        description: 'JSON array de proyectos: [{"channel":"canal1","project":"ep1","branch":"temp-render-ep1"}]'
+        description: 'JSON array de proyectos a procesar'
         required: true
+        default: '[{"channel":"canal1","project":"test_goku_mil_anos","branch":"temp-render-goku-test"}]'
         type: string
 
 permissions:
@@ -18,7 +19,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        project: ${{ fromJSON(github.event.inputs.projects) }}
+        project: ${{ fromJSON(inputs.projects) }}
     environment: ${{ matrix.project.channel }}
 
     steps:
@@ -27,7 +28,7 @@ jobs:
         with:
           ref: main
 
-      - name: Checkout de assets desde rama efímera (si aplica)
+      - name: Checkout de assets desde rama efímera
         if: matrix.project.branch != '' && matrix.project.branch != 'main'
         run: |
           echo "📥 Descargando assets de la rama efímera: ${{ matrix.project.branch }}"
@@ -38,7 +39,6 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.10'
-          cache: 'pip'
 
       - name: Instalar FFmpeg con soporte de subtítulos y códecs
         run: |
@@ -48,24 +48,24 @@ jobs:
       - name: Instalar dependencias Python
         run: |
           pip install --upgrade pip
-          pip install -r cloud-pipeline/runner/requirements.txt
+          pip install -r runner/requirements.txt
 
       - name: Renderizar Video con KineForge Engine
         run: |
           PROJECT_DIR="projects/${{ matrix.project.channel }}/${{ matrix.project.project }}"
-          python cloud-pipeline/runner/render.py \
+          python runner/render.py \
             --manifest "${PROJECT_DIR}/manifest.json" \
             --assets "${PROJECT_DIR}/assets" \
             --output "${RUNNER_TEMP}/output_${{ matrix.project.project }}.mp4"
 
-      - name: Subir a YouTube
+      - name: Subir a YouTube (o Dry-Run)
         env:
           YT_CLIENT_ID: ${{ secrets.YT_CLIENT_ID }}
           YT_CLIENT_SECRET: ${{ secrets.YT_CLIENT_SECRET }}
           YT_REFRESH_TOKEN: ${{ secrets.YT_REFRESH_TOKEN }}
         run: |
           PROJECT_DIR="projects/${{ matrix.project.channel }}/${{ matrix.project.project }}"
-          python cloud-pipeline/runner/upload_youtube.py \
+          python runner/upload_youtube.py \
             --video "${RUNNER_TEMP}/output_${{ matrix.project.project }}.mp4" \
             --metadata "${PROJECT_DIR}/metadata.json"
 
