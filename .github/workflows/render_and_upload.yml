@@ -15,11 +15,12 @@ permissions:
 jobs:
   render_and_upload:
     name: "Render & Upload: ${{ matrix.project.channel }} / ${{ matrix.project.project }}"
+    if: github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        project: ${{ fromJSON(inputs.projects) }}
+        project: ${{ fromJSON(github.event.inputs.projects) }}
     environment: ${{ matrix.project.channel }}
 
     steps:
