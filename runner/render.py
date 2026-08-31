@@ -128,7 +128,7 @@ def render_project(manifest_path: str, assets_dir: str, output_path: str, ffmpeg
             gap_dur = clip_start - current_timeline_time
             gap_tag = f"[gap_{gap_counter}]"
             filter_complex_lines.append(
-                f"color=c=black:s={width}x{height}:r={fps}:d={gap_dur:.3f},settb=AVTB,setpts=PTS-STARTPTS{gap_tag};"
+                f"color=c=black:s={width}x{height}:r={fps}:d={gap_dur:.3f},setsar=1/1,format=yuv420p,settb=AVTB,setpts=PTS-STARTPTS{gap_tag};"
             )
             concat_video_tags.append(gap_tag)
             gap_counter += 1
@@ -139,7 +139,7 @@ def render_project(manifest_path: str, assets_dir: str, output_path: str, ffmpeg
         zoom_filter = build_zoompan_filter(clip_data, width, height, fps)
         
         v_tag = f"[v_seg_{idx}]"
-        filter_complex_lines.append(f"[{input_index}:v]{zoom_filter},settb=AVTB,setpts=PTS-STARTPTS{v_tag};")
+        filter_complex_lines.append(f"[{input_index}:v]{zoom_filter},setsar=1/1,format=yuv420p,settb=AVTB,setpts=PTS-STARTPTS{v_tag};")
         concat_video_tags.append(v_tag)
 
         current_timeline_time = clip_end
@@ -150,7 +150,7 @@ def render_project(manifest_path: str, assets_dir: str, output_path: str, ffmpeg
         gap_dur = total_duration - current_timeline_time
         gap_tag = f"[gap_{gap_counter}]"
         filter_complex_lines.append(
-            f"color=c=black:s={width}x{height}:r={fps}:d={gap_dur:.3f},settb=AVTB,setpts=PTS-STARTPTS{gap_tag};"
+            f"color=c=black:s={width}x{height}:r={fps}:d={gap_dur:.3f},setsar=1/1,format=yuv420p,settb=AVTB,setpts=PTS-STARTPTS{gap_tag};"
         )
         concat_video_tags.append(gap_tag)
 
