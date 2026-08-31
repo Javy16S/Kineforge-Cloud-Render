@@ -40,6 +40,7 @@ def parse_args():
     parser = argparse.ArgumentParser(description="KineForge YouTube Uploader")
     parser.add_argument("--video", required=True, help="Ruta al archivo MP4 a subir")
     parser.add_argument("--metadata", required=True, help="Ruta al archivo metadata.json")
+    parser.add_argument("--dry-run", action="store_true", help="Modo simulación (no consume cuota de YouTube)")
     return parser.parse_args()
 
 def get_authenticated_service():
@@ -166,6 +167,17 @@ def main():
 
     with open(args.metadata, "r", encoding="utf-8") as f:
         metadata = json.load(f)
+
+    is_dry_run = args.dry_run or metadata.get("dryRun", False)
+    if is_dry_run:
+        print("\n🧪 ==================================================")
+        print("   MODO SIMULACIÓN (DRY-RUN) ACTIVO")
+        print("   El vídeo se ha renderizado y verificado correctamente.")
+        print(f"   Vídeo: {args.video} ({os.path.getsize(args.video) / (1024*1024):.2f} MB)")
+        print(f"   Título: {metadata.get('title')}")
+        print("   ℹ️ No se ha realizado la subida a YouTube para no consumir cuota.")
+        print("==================================================\n")
+        return
 
     try:
         youtube = get_authenticated_service()
