@@ -152,6 +152,34 @@ def upload_video_resumable(youtube, video_path: str, metadata: dict):
         except Exception as e:
             print(f"⚠️ No se pudo subir la miniatura: {e}")
 
+    # Subir subtítulos (Captions) automáticamente si existen
+    sub_path = metadata.get("subtitles")
+    if not sub_path:
+        # Buscar en el mismo directorio de metadata.json
+        meta_dir = os.path.dirname(os.path.abspath(metadata.get("_metadata_path", "")))
+        candidate = os.path.join(meta_dir, "assets", "subtitles.srt")
+        if os.path.exists(candidate):
+            sub_path = candidate
+
+    if sub_path and os.path.exists(sub_path):
+        print(f"📝 Subiendo pista de subtítulos a YouTube: {sub_path}...")
+        try:
+            youtube.captions().insert(
+                part="snippet",
+                body={
+                    "snippet": {
+                        "videoId": video_id,
+                        "language": "es",
+                        "name": "Español (Latino / España)",
+                        "isDraft": False
+                    }
+                },
+                media_body=MediaFileUpload(sub_path, mimetype="*/*", resumable=True)
+            ).execute()
+            print("✅ Pista de subtítulos subida y activada en YouTube.")
+        except Exception as e:
+            print(f"⚠️ No se pudieron subir los subtítulos: {e}")
+
     return video_id
 
 def main():
