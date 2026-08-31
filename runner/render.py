@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """
-KineForge Cloud Pipeline - High Performance Headless FFmpeg Renderer
-Renderiza proyectos KineForge a video MP4 (H.264 / AAC) con arquitectura de concatenación en serie ultra rápida.
+KineForge Cloud Pipeline - Industrial Chunked FFmpeg Renderer
+Renderiza proyectos KineForge a video MP4 (H.264 / AAC) con arquitectura segmentada ultra rápida,
+inmune a límites de memoria RAM (cero OOM) y con paralelismo nativo en CPU.
 """
 
 import os
@@ -10,7 +11,9 @@ import json
 import argparse
 import subprocess
 import time
-from typing import Dict, Any, List
+import shutil
+from concurrent.futures import ThreadPoolExecutor
+from typing import Dict, Any, List, Tuple
 
 if hasattr(sys.stdout, 'reconfigure'):
     sys.stdout.reconfigure(encoding='utf-8', errors='replace')
@@ -23,18 +26,14 @@ RESOLUTION_MAP = {
 }
 
 def parse_args():
-    parser = argparse.ArgumentParser(description="KineForge High Performance Cloud FFmpeg Renderer")
+    parser = argparse.ArgumentParser(description="KineForge Industrial Cloud FFmpeg Renderer")
     parser.add_argument("--manifest", required=True, help="Ruta al archivo manifest.json del proyecto")
     parser.add_argument("--assets", required=True, help="Ruta al directorio de assets")
     parser.add_argument("--output", required=True, help="Ruta del archivo MP4 de salida")
     parser.add_argument("--ffmpeg-bin", default="ffmpeg", help="Binario de FFmpeg a usar")
     return parser.parse_args()
 
-def build_zoompan_filter(clip: Dict[str, Any], width: int, height: int, fps: int = 30) -> str:
-    """
-    Construye la expresión zoompan de FFmpeg para interpolar el zoom Ken Burns
-    entre el área inicial (start) y el área final (end).
-    """
+def build_zoompan_filter(clip: Dict[str, Any], width: int, height: int, fps: int = 30) -> Tuple[str, int]:
     dur_frames = max(1, int(float(clip.get("duration", 5.0)) * fps))
     zoom = clip.get("zoom", {})
     start = zoom.get("start", {"x": 0, "y": 0, "w": 1, "h": 1})
@@ -66,12 +65,18 @@ def build_zoompan_filter(clip: Dict[str, Any], width: int, height: int, fps: int
     x_expr = f"{x_norm_expr}*(iw-iw/zoom)"
     y_expr = f"{y_norm_expr}*(ih-ih/zoom)"
 
-    return f"zoompan=z='{z_expr}':x='{x_expr}':y='{y_expr}':d={dur_frames}:s={width}x{height}:fps={fps}"
+    vf = f"zoompan=z='{z_expr}':x='{x_expr}':y='{y_expr}':d={dur_frames}:s={width}x{height}:fps={fps},setsar=1/1,format=yuv420p"
+    return vf, dur_frames
+
+def render_single_segment(item):
+    cmd, out_ts = item
+    res = subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    return res.returncode == 0 and os.path.exists(out_ts) and os.path.getsize(out_ts) > 100
 
 def render_project(manifest_path: str, assets_dir: str, output_path: str, ffmpeg_bin: str = "ffmpeg"):
     start_time = time.time()
     print("==================================================")
-    print("🚀 KineForge Cloud High-Performance Renderer v2.0")
+    print("🚀 KineForge Cloud Industrial Renderer v3.0")
     print(f"Manifest: {manifest_path}")
     print(f"Assets:   {assets_dir}")
     print(f"Output:   {output_path}")
@@ -100,20 +105,22 @@ def render_project(manifest_path: str, assets_dir: str, output_path: str, ffmpeg
 
     print(f"📊 Duración total: {total_duration:.2f}s | Resolución: {width}x{height} ({aspect_ratio}) @ {fps}fps")
 
-    input_args = ["-y", "-threads", "0"]
-    filter_complex_lines = []
-    concat_video_tags = []
+    out_dir = os.path.dirname(os.path.abspath(output_path))
+    seg_dir = os.path.join(out_dir, f"render_segments_{int(time.time())}")
+    if os.path.exists(seg_dir):
+        shutil.rmtree(seg_dir)
+    os.makedirs(seg_dir, exist_ok=True)
 
-    input_index = 0
+    segment_tasks = []
+    segment_files = []
+
     current_timeline_time = 0.0
     gap_counter = 0
 
-    # 1. Construir segmentos de vídeo en serie (Arquitectura Concat secuencial)
     for idx, clip in enumerate(clips):
         filename = clip.get("asset") or clip.get("resource")
         if not filename:
             continue
-            
         full_asset_path = os.path.join(assets_dir, os.path.basename(filename))
         if not os.path.exists(full_asset_path):
             print(f"⚠️ Aviso: Asset no encontrado: {full_asset_path}. Omitiendo clip {idx}.")
@@ -123,115 +130,123 @@ def render_project(manifest_path: str, assets_dir: str, output_path: str, ffmpeg
         clip_end = float(clip.get("audioOut", clip.get("timeEnd", clip_start + 5.0)))
         clip_dur = max(0.1, clip_end - clip_start)
 
-        # Rellenar gap con negro si hay un salto entre clips
+        # Gap de negro si hay salto
         if clip_start > current_timeline_time + 0.05:
             gap_dur = clip_start - current_timeline_time
-            gap_tag = f"[gap_{gap_counter}]"
-            filter_complex_lines.append(
-                f"color=c=black:s={width}x{height}:r={fps}:d={gap_dur:.3f},setsar=1/1,format=yuv420p,settb=AVTB,setpts=PTS-STARTPTS{gap_tag};"
-            )
-            concat_video_tags.append(gap_tag)
+            gap_frames = max(1, int(gap_dur * fps))
+            gap_ts = os.path.join(seg_dir, f"gap_{gap_counter:04d}.ts")
+            gap_cmd = [
+                ffmpeg_bin, "-y",
+                "-f", "lavfi", "-i", f"color=c=black:s={width}x{height}:r={fps}",
+                "-vf", "setsar=1/1,format=yuv420p",
+                "-frames:v", str(gap_frames),
+                "-c:v", "libx264", "-preset", "ultrafast", "-crf", "20",
+                "-f", "mpegts", gap_ts
+            ]
+            segment_tasks.append((gap_cmd, gap_ts))
+            segment_files.append(gap_ts)
             gap_counter += 1
 
-        input_args.extend(["-loop", "1", "-t", f"{clip_dur:.3f}", "-i", full_asset_path])
-        
-        clip_data = {"duration": clip_dur, "zoom": clip.get("zoom", {})}
-        zoom_filter = build_zoompan_filter(clip_data, width, height, fps)
-        
-        v_tag = f"[v_seg_{idx}]"
-        filter_complex_lines.append(f"[{input_index}:v]{zoom_filter},setsar=1/1,format=yuv420p,settb=AVTB,setpts=PTS-STARTPTS{v_tag};")
-        concat_video_tags.append(v_tag)
+        seg_ts = os.path.join(seg_dir, f"seg_{idx:04d}.ts")
+        zoom_vf, dur_frames = build_zoompan_filter({"duration": clip_dur, "zoom": clip.get("zoom", {})}, width, height, fps)
+        cmd = [
+            ffmpeg_bin, "-y",
+            "-loop", "1", "-i", full_asset_path,
+            "-vf", zoom_vf,
+            "-frames:v", str(dur_frames),
+            "-c:v", "libx264", "-preset", "ultrafast", "-crf", "20",
+            "-f", "mpegts", seg_ts
+        ]
+        segment_tasks.append((cmd, seg_ts))
+        segment_files.append(seg_ts)
 
         current_timeline_time = clip_end
-        input_index += 1
 
-    # Rellenar gap final hasta total_duration si aplica
-    if total_duration > current_timeline_time + 0.05:
-        gap_dur = total_duration - current_timeline_time
-        gap_tag = f"[gap_{gap_counter}]"
-        filter_complex_lines.append(
-            f"color=c=black:s={width}x{height}:r={fps}:d={gap_dur:.3f},setsar=1/1,format=yuv420p,settb=AVTB,setpts=PTS-STARTPTS{gap_tag};"
-        )
-        concat_video_tags.append(gap_tag)
-
-    # 2. Concatenar todos los clips en serie (Cero sobrecarga de memoria en CPU)
-    concat_inputs = "".join(concat_video_tags)
-    filter_complex_lines.append(f"{concat_inputs}concat=n={len(concat_video_tags)}:v=1:a=0[v_concat];")
-    final_video_tag = "[v_concat]"
-
-    # 3. Pistas de audio
-    audio_inputs = []
+    print(f"\n🎬 Renderizando {len(segment_tasks)} segmentos de vídeo en paralelo (2 hilos CPU)...")
+    t0 = time.time()
     
+    with ThreadPoolExecutor(max_workers=2) as executor:
+        results = list(executor.map(render_single_segment, segment_tasks))
+
+    failed_count = len(results) - sum(results)
+    if failed_count > 0:
+        print(f"⚠️ Atención: {failed_count} segmentos no se pudieron renderizar.")
+    else:
+        print(f"✅ Todos los segmentos renderizados con éxito en {time.time() - t0:.2f}s")
+
+    # Crear lista concat con rutas absolutas
+    concat_list_file = os.path.join(seg_dir, "concat_list.txt")
+    with open(concat_list_file, "w", encoding="utf-8") as f:
+        for sf in segment_files:
+            abs_p = os.path.abspath(sf).replace("\\", "/")
+            f.write(f"file '{abs_p}'\n")
+
+    # Mux final de video concatenado + audio + música
+    print("\n🎧 Mezclando audio y ensamblando vídeo final MP4...")
+    
+    final_inputs = [
+        ffmpeg_bin, "-y",
+        "-f", "concat", "-safe", "0", "-i", concat_list_file
+    ]
+    input_idx = 1
+    audio_inputs = []
+
     if audio_path:
-        full_audio_path = os.path.join(assets_dir, os.path.basename(audio_path))
-        if os.path.exists(full_audio_path):
-            input_args.extend(["-i", full_audio_path])
-            audio_inputs.append(f"[{input_index}:a]")
-            input_index += 1
+        full_audio = os.path.join(assets_dir, os.path.basename(audio_path))
+        if os.path.exists(full_audio):
+            final_inputs.extend(["-i", full_audio])
+            audio_inputs.append(f"[{input_idx}:a]")
+            input_idx += 1
 
     if music_path:
-        full_music_path = os.path.join(assets_dir, os.path.basename(music_path))
-        if os.path.exists(full_music_path):
+        full_music = os.path.join(assets_dir, os.path.basename(music_path))
+        if os.path.exists(full_music):
             music_vol = manifest.get("musicVolume", 0.12)
-            input_args.extend(["-i", full_music_path])
-            filter_complex_lines.append(f"[{input_index}:a]volume={music_vol:.2f}[a_music];")
-            audio_inputs.append("[a_music]")
-            input_index += 1
+            final_inputs.extend(["-i", full_music])
+            audio_inputs.append(f"[{input_idx}:a]")
+            input_idx += 1
 
+    filter_graph = ""
     if len(audio_inputs) > 1:
-        mix_inputs = "".join(audio_inputs)
-        filter_complex_lines.append(f"{mix_inputs}amix=inputs={len(audio_inputs)}:duration=longest:dropout_transition=2[a_out];")
-        final_audio_tag = "[a_out]"
+        mix = "".join(audio_inputs)
+        filter_graph = f"{mix}amix=inputs={len(audio_inputs)}:duration=longest:dropout_transition=2[a_out]"
+        audio_map = "[a_out]"
     elif len(audio_inputs) == 1:
-        final_audio_tag = audio_inputs[0]
+        audio_map = audio_inputs[0]
     else:
-        input_args.extend(["-f", "lavfi", "-i", "anullsrc=r=44100:cl=stereo"])
-        final_audio_tag = f"[{input_index}:a]"
-        input_index += 1
+        final_inputs.extend(["-f", "lavfi", "-i", "anullsrc=r=44100:cl=stereo"])
+        audio_map = f"[{input_idx}:a]"
 
-    # 4. Subtítulos opcionales
-    if subtitle_file:
-        full_sub_path = os.path.join(assets_dir, os.path.basename(subtitle_file))
-        if os.path.exists(full_sub_path):
-            sub_escaped = full_sub_path.replace(":", "\\:").replace("'", "\\'")
-            filter_complex_lines.append(f"{final_video_tag}subtitles='{sub_escaped}'[v_sub_out];")
-            final_video_tag = "[v_sub_out]"
-
-    filter_graph = "".join(filter_complex_lines)
-    if filter_graph.endswith(";"):
-        filter_graph = filter_graph[:-1]
-
-    output_dir = os.path.dirname(output_path)
-    if output_dir:
-        os.makedirs(output_dir, exist_ok=True)
-
-    cmd = [ffmpeg_bin] + input_args
+    final_cmd = final_inputs
     if filter_graph:
-        cmd.extend(["-filter_complex", filter_graph])
-        cmd.extend(["-map", final_video_tag, "-map", final_audio_tag])
-    
-    cmd.extend([
-        "-c:v", "libx264",
-        "-preset", "veryfast",
-        "-crf", "20",
-        "-pix_fmt", "yuv420p",
-        "-c:a", "aac",
-        "-b:a", "192k",
-        "-t", f"{total_duration:.3f}",
+        final_cmd.extend(["-filter_complex", filter_graph])
+        final_cmd.extend(["-map", "0:v", "-map", audio_map])
+    else:
+        final_cmd.extend(["-map", "0:v", "-map", audio_map])
+
+    final_cmd.extend([
+        "-c:v", "copy",
+        "-c:a", "aac", "-b:a", "192k",
+        "-shortest",
         output_path
     ])
 
-    print("\n🎬 Ejecutando render FFmpeg (Arquitectura de alto rendimiento)...")
-    res = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+    res = subprocess.run(final_cmd, capture_output=True, text=True)
+    
+    # Limpiar temporales
+    try:
+        shutil.rmtree(seg_dir)
+    except:
+        pass
 
-    elapsed = time.time() - start_time
+    total_time = time.time() - start_time
     if res.returncode == 0 and os.path.exists(output_path) and os.path.getsize(output_path) > 1000:
         file_size_mb = os.path.getsize(output_path) / (1024 * 1024)
-        print(f"✅ Render completado con éxito en {elapsed:.1f}s ({elapsed/60:.1f} min)")
-        print(f"📦 Archivo generado: {output_path} ({file_size_mb:.2f} MB)")
+        print(f"\n🎉 ¡VÍDEO COMPLETO RENDERIZADO EN {total_time:.2f}s ({total_time/60:.1f} min)!")
+        print(f"📦 Archivo final: {output_path} ({file_size_mb:.2f} MB)")
         return True
     else:
-        print(f"❌ Error durante el renderizado de FFmpeg (Código {res.returncode}):")
+        print(f"❌ Error durante el ensamblado final MP4:")
         print(res.stderr[-2000:] if res.stderr else "Error desconocido")
         sys.exit(1)
 
