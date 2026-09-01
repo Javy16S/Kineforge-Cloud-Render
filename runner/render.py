@@ -151,7 +151,7 @@ def render_project(manifest_path: str, assets_dir: str, output_path: str, ffmpeg
         zoom_vf, dur_frames = build_zoompan_filter({"duration": clip_dur, "zoom": clip.get("zoom", {})}, width, height, fps)
         cmd = [
             ffmpeg_bin, "-y",
-            "-loop", "1", "-i", full_asset_path,
+            "-i", full_asset_path,
             "-vf", zoom_vf,
             "-frames:v", str(dur_frames),
             "-c:v", "libx264", "-preset", "ultrafast", "-crf", "20",
