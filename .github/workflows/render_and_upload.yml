@@ -79,7 +79,7 @@ jobs:
             --metadata "${PROJECT_DIR}/metadata.json"
 
       - name: "Auto-cleanup ephemeral branch"
-        if: always() && matrix.project.branch != '' && matrix.project.branch != 'main'
+        if: success() && matrix.project.branch != '' && matrix.project.branch != 'main'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
