@@ -1,0 +1,75 @@
+name: "KineForge Autonomous Cloud Factory"
+
+on:
+  schedule:
+    # 01:25 UTC = 03:25 hora local de España (CEST)
+    - cron: '25 1 * * *'
+  workflow_dispatch:
+    inputs:
+      chapter_num:
+        description: "Número de capítulo a producir (1..5)"
+        required: true
+        default: "1"
+        type: string
+      dry_run:
+        description: "Modo simulación (sin subir a YouTube)"
+        required: false
+        default: false
+        type: boolean
+
+permissions:
+  contents: write
+
+jobs:
+  produce_and_upload:
+    name: "Produce and Upload Chapter"
+    runs-on: ubuntu-latest
+    environment: canal1
+
+    steps:
+      - name: "Checkout repository and assets library"
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: "Install FFmpeg"
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends ffmpeg libass-dev
+
+      - name: "Setup Python 3.10 with Cache"
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+          cache: 'pip'
+          cache-dependency-path: 'runner/requirements.txt'
+
+      - name: "Install Python dependencies"
+        run: |
+          pip install -r runner/requirements.txt
+
+      - name: "Run Autonomous Cloud Factory (Full Production & YouTube Upload)"
+        env:
+          YT_CLIENT_ID: ${{ secrets.YT_CLIENT_ID }}
+          YT_CLIENT_SECRET: ${{ secrets.YT_CLIENT_SECRET }}
+          YT_REFRESH_TOKEN: ${{ secrets.YT_REFRESH_TOKEN }}
+        run: |
+          CHAPTER="${{ github.event.inputs.chapter_num || '1' }}"
+          DRY_RUN_FLAG=""
+          if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then
+            DRY_RUN_FLAG="--dry-run"
+          fi
+
+          python runner/cloud_factory.py \
+            --chapter-num "${CHAPTER}" \
+            --work-dir "${RUNNER_TEMP}/factory_work" \
+            --output-video "${RUNNER_TEMP}/video_capitulo_${CHAPTER}.mp4" \
+            ${DRY_RUN_FLAG}
+
+      - name: "Save rendered video as Artifact"
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: "video-capitulo-${{ github.event.inputs.chapter_num || '1' }}"
+          path: "${{ runner.temp }}/video_capitulo_*.mp4"
+          retention-days: 7
