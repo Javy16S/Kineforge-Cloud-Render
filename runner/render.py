@@ -231,7 +231,7 @@ def render_project(manifest_path: str, assets_dir: str, output_path: str, ffmpeg
         output_path
     ])
 
-    res = subprocess.run(final_cmd, capture_output=True, text=True)
+    res = subprocess.run(final_cmd, capture_output=True, text=True, encoding="utf-8", errors="replace")
     
     # Limpiar temporales
     try:
