@@ -212,26 +212,71 @@ async def main():
     dest_music_bg = os.path.join(assets_dir, "music_bg.mp3")
     subprocess.run(["ffmpeg", "-y", "-f", "concat", "-safe", "0", "-i", music_concat_txt, "-t", str(total_duration), "-c:a", "libmp3lame", "-b:a", "192k", dest_music_bg], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
-    # 6. Selección de imágenes contextuales
-    goku_lib = sorted([os.path.join(assets_lib, "goku", f) for f in os.listdir(os.path.join(assets_lib, "goku"))])
-    dbs_lib = sorted([os.path.join(assets_lib, "dbs", f) for f in os.listdir(os.path.join(assets_lib, "dbs"))])
-    scen_lib = sorted([os.path.join(assets_lib, "scenarios", f) for f in os.listdir(os.path.join(assets_lib, "scenarios"))])
-    intro_img = os.path.join(assets_lib, "intro", "Zorojin_Intro.jpg")
+    # 6. Motor de Memoria de Sujeto (Stateful Director Engine)
+    class StatefulDirector:
+        def __init__(self, goku_lib, dbs_lib, scen_lib):
+            self.goku_lib = goku_lib
+            self.dbs_lib = dbs_lib
+            self.scen_lib = scen_lib
+            self.current_subject = "Escenario"
+            self.subject_streak = 0
+            self.goku_idx = 0
+            self.dbs_idx = 0
+            self.scen_idx = 0
 
-    def get_img(cut_item, idx):
-        char = cut_item["character"]
-        t = cut_item["text"].lower()
-        if char == "Goku":
-            return goku_lib[idx % len(goku_lib)]
-        elif char in ["Dende", "Mister Popo"]:
-            return dbs_lib[idx % len(dbs_lib)] if dbs_lib else goku_lib[0]
-        else:
-            if any(w in t for w in ["goku", "saiyajin", "kamehameha", "ki", "guerrero", "entrenamiento", "puño", "poder"]):
-                return goku_lib[idx % len(goku_lib)]
-            elif any(w in t for w in ["dende", "popo", "kami", "templo", "palacio", "sismo", "chispas"]):
-                return dbs_lib[idx % len(dbs_lib)] if dbs_lib else scen_lib[idx % len(scen_lib)]
+        def select_image(self, cut_item, cut_index):
+            char = cut_item.get("character", "Narrador")
+            text = cut_item.get("text", "").lower()
+
+            # 1. Diálogos directos de personajes
+            if char == "Goku":
+                self.current_subject = "Goku"
+                self.subject_streak = 0
+            elif char in ["Dende", "Mister Popo", "Popo"]:
+                self.current_subject = "DBS"
+                self.subject_streak = 0
+            elif char == "Vegeta":
+                self.current_subject = "Vegeta"
+                self.subject_streak = 0
+            else: # Narrador con análisis semántico e inercia de sujeto
+                goku_explicit = ["goku", "saiyajin", "saiyan", "kamehameha", "kakarotto", "super saiyajin", "ssj", "ki dorado", "guerrero de la tierra", "entrenamiento"]
+                dbs_explicit = ["dende", "popo", "mr. popo", "kami-sama", "kami sama", "namekiano", "dios de la tierra"]
+                env_explicit = ["templo", "palacio", "habitación del tiempo", "puerta", "portal", "grieta", "terremoto", "temblor", "sismo", "cielo", "suelo", "atmósfera", "vacío", "horizonte", "escombros", "plano dimensional", "gravedad", "terreno", "derrumbe"]
+                anaphora_triggers = ["sus ojos", "su mirada", "su cuerpo", "pensó", "recordó", "sintió", "dio un paso", "se levantó", "apretó", "en su mente", "su corazón", "respiró", "su poder", "sus puños", "su rostro", "decidió", "sabía que", "no podía creer", "cerró los ojos"]
+
+                if any(w in text for w in goku_explicit):
+                    self.current_subject = "Goku"
+                    self.subject_streak = 0
+                elif any(w in text for w in dbs_explicit):
+                    self.current_subject = "DBS"
+                    self.subject_streak = 0
+                elif any(w in text for w in env_explicit):
+                    self.current_subject = "Escenario"
+                    self.subject_streak = 0
+                elif any(w in text for w in anaphora_triggers):
+                    # Mantener el sujeto activo por inercia dramática
+                    self.subject_streak += 1
+                else:
+                    self.subject_streak += 1
+                    # Corte de variedad para evitar fatiga visual
+                    if self.subject_streak > 3:
+                        self.current_subject = "Escenario" if self.current_subject != "Escenario" else "Goku"
+                        self.subject_streak = 0
+
+            # 2. Asignación de imagen sin repetir
+            if self.current_subject == "Goku":
+                img = self.goku_lib[self.goku_idx % len(self.goku_lib)]
+                self.goku_idx += 1
+            elif self.current_subject == "DBS":
+                img = self.dbs_lib[self.dbs_idx % len(self.dbs_lib)] if self.dbs_lib else self.goku_lib[0]
+                self.dbs_idx += 1
             else:
-                return scen_lib[idx % len(scen_lib)]
+                img = self.scen_lib[self.scen_idx % len(self.scen_lib)]
+                self.scen_idx += 1
+
+            return img
+
+    director = StatefulDirector(goku_lib, dbs_lib, scen_lib)
 
     manifest_clips = []
     shutil.copy2(intro_img, os.path.join(assets_dir, "img_0000.jpg"))
@@ -251,7 +296,7 @@ async def main():
         start_t = current_t
         end_t = current_t + seg["duration"]
         current_t = end_t
-        orig_img = get_img(seg, idx)
+        orig_img = director.select_image(seg, idx)
         if orig_img not in asset_map:
             ext = os.path.splitext(orig_img)[1]
             img_name = f"img_{asset_counter:04d}{ext}"
