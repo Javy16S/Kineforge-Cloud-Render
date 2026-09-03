@@ -34,38 +34,39 @@ def parse_args():
     return parser.parse_args()
 
 def build_zoompan_filter(clip: Dict[str, Any], width: int, height: int, fps: int = 30) -> Tuple[str, int]:
+    """
+    Construye el filtro Ken Burns con la fórmula oficial de KineForge:
+    1. Pre-escalado inteligente a 16:9 (force_original_aspect_ratio=increase,crop)
+    2. Clamp estricto max(0, min(iw-iw/zoom, ...)) para evitar bordes cortados
+    3. Interpolación suave de zoom y encuadre
+    """
     dur_frames = max(1, int(float(clip.get("duration", 5.0)) * fps))
     zoom = clip.get("zoom", {})
-    start = zoom.get("start", {"x": 0, "y": 0, "w": 1, "h": 1})
-    end = zoom.get("end", {"x": 0, "y": 0, "w": 1, "h": 1})
+    start = zoom.get("start", {"x": 0.0, "y": 0.0, "w": 1.0, "h": 1.0})
+    end = zoom.get("end", {"x": 0.0, "y": 0.0, "w": 1.0, "h": 1.0})
 
-    start_z = 1.0 / max(0.01, float(start.get("w", 1.0)))
-    end_z = 1.0 / max(0.01, float(end.get("w", 1.0)))
-
+    start_w = max(0.01, float(start.get("w", 1.0)))
+    end_w = max(0.01, float(end.get("w", 1.0)))
     start_x = float(start.get("x", 0.0))
     end_x = float(end.get("x", 0.0))
     start_y = float(start.get("y", 0.0))
     end_y = float(end.get("y", 0.0))
 
-    if dur_frames > 1 and abs(end_z - start_z) > 0.001:
-        z_expr = f"{start_z:.4f}+({end_z - start_z:.4f})*(on/{dur_frames - 1})"
-    else:
-        z_expr = f"{start_z:.4f}"
+    progress = f"(on/{dur_frames})"
+    w_expr = f"({start_w:.4f}+({end_w - start_w:.4f})*{progress})"
+    z_expr = f"(1/max(0.01\\,{w_expr}))"
 
-    if dur_frames > 1 and abs(end_x - start_x) > 0.001:
-        x_norm_expr = f"({start_x:.4f}+({end_x - start_x:.4f})*(on/{dur_frames - 1}))"
-    else:
-        x_norm_expr = f"{start_x:.4f}"
+    x_offset = f"({start_x:.4f}+({end_x - start_x:.4f})*{progress})"
+    y_offset = f"({start_y:.4f}+({end_y - start_y:.4f})*{progress})"
 
-    if dur_frames > 1 and abs(end_y - start_y) > 0.001:
-        y_norm_expr = f"({start_y:.4f}+({end_y - start_y:.4f})*(on/{dur_frames - 1}))"
-    else:
-        y_norm_expr = f"{start_y:.4f}"
+    x_expr = f"max(0\\,min(iw-iw/zoom\\,{x_offset}*iw))"
+    y_expr = f"max(0\\,min(ih-ih/zoom\\,{y_offset}*ih))"
 
-    x_expr = f"{x_norm_expr}*(iw-iw/zoom)"
-    y_expr = f"{y_norm_expr}*(ih-ih/zoom)"
-
-    vf = f"zoompan=z='{z_expr}':x='{x_expr}':y='{y_expr}':d={dur_frames}:s={width}x{height}:fps={fps},setsar=1/1,format=yuv420p"
+    # Pre-scale a 16:9 exacto para que zoompan nunca distorsione ni corte
+    pre_scale = f"scale={width}:{height}:force_original_aspect_ratio=increase,crop={width}:{height},setsar=1/1"
+    zoom_part = f"zoompan=z='{z_expr}':x='{x_expr}':y='{y_expr}':d={dur_frames}:s={width}x{height}:fps={fps}"
+    
+    vf = f"{pre_scale},{zoom_part},setsar=1/1,format=yuv420p"
     return vf, dur_frames
 
 def render_single_segment(item):
