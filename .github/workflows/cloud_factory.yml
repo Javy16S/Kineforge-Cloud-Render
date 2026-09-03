@@ -2,8 +2,8 @@ name: "KineForge Autonomous Cloud Factory"
 
 on:
   schedule:
-    # 01:50 UTC = 03:50 hora local de España (CEST)
-    - cron: '50 1 * * *'
+    # 18:00 UTC = 20:00 hora local de España (CEST / las 8)
+    - cron: '0 18 * * *'
   workflow_dispatch:
     inputs:
       chapter_num:
