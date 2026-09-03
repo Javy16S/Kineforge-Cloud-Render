@@ -24,7 +24,7 @@ jobs:
   produce_and_upload:
     name: "Produce and Upload Chapter"
     runs-on: ubuntu-latest
-    environment: canal1
+    environment: YT_CLIENT_ID
 
     steps:
       - name: "Checkout repository and assets library"
