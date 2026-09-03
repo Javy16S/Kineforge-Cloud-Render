@@ -133,12 +133,26 @@ async def main():
 
     story_row = rows[args.history_index]
     sheet_title = story_row.get('TÍTULO DEL VIDEO', 'Goku Encerrado Mil Años')
-    cap_text = story_row.get(f'CAPÍTULO {args.chapter_num}', '').strip()
+    
+    chapter_arg = str(args.chapter_num).strip().lower()
+    if chapter_arg in ["full", "completo", "0", "pelicula"]:
+        is_full_movie = True
+        cap_parts = []
+        for c_idx in range(1, 6):
+            p_txt = story_row.get(f'CAPÍTULO {c_idx}', '').strip()
+            if p_txt:
+                cap_parts.append(p_txt)
+        cap_text = "\n\n".join(cap_parts)
+        display_title = f"{sheet_title} | PELÍCULA COMPLETA (Capítulos 1 al 5)"
+    else:
+        is_full_movie = False
+        cap_text = story_row.get(f'CAPÍTULO {args.chapter_num}', '').strip()
+        display_title = f"{sheet_title} | Capítulo {args.chapter_num}"
 
     if not cap_text:
         raise ValueError(f"No se encontró texto para el CAPÍTULO {args.chapter_num} en la fila seleccionada.")
 
-    print(f"📖 Título: {sheet_title} | Capítulo {args.chapter_num}")
+    print(f"📖 Título: {display_title}")
     print(f"   Palabras: {len(cap_text.split()):,} | Caracteres: {len(cap_text):,}")
 
     # 2. Parsear en cortes dinámicos (3-5 segundos)
@@ -285,9 +299,9 @@ async def main():
         json.dump(manifest, f, indent=2, ensure_ascii=False)
 
     metadata = {
-        "title": f"{sheet_title} | Capítulo {args.chapter_num}",
-        "description": f"Capítulo {args.chapter_num} completo en piloto automático en la nube.\n\n#DragonBall #Goku #AnimeFanfic #Zorojin",
-        "tags": ["Dragon Ball", "Goku", "Zorojin", "Habitacion del Tiempo", "Anime Fanfic", "Super Saiyajin"],
+        "title": display_title,
+        "description": f"{display_title} producido y renderizado en la nube.\n\n#DragonBall #Goku #AnimeFanfic #Zorojin",
+        "tags": ["Dragon Ball", "Goku", "Zorojin", "Habitacion del Tiempo", "Anime Fanfic", "Super Saiyajin", "Pelicula Completa"],
         "categoryId": "1",
         "privacyStatus": "unlisted",
         "madeForKids": False,
