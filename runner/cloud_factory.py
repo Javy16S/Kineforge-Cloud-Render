@@ -276,6 +276,12 @@ async def main():
 
             return img
 
+    # Cargar bibliotecas de assets
+    goku_lib = sorted([os.path.join(assets_lib, "goku", f) for f in os.listdir(os.path.join(assets_lib, "goku"))])
+    dbs_lib = sorted([os.path.join(assets_lib, "dbs", f) for f in os.listdir(os.path.join(assets_lib, "dbs"))])
+    scen_lib = sorted([os.path.join(assets_lib, "scenarios", f) for f in os.listdir(os.path.join(assets_lib, "scenarios"))])
+    intro_img = os.path.join(assets_lib, "intro", "Zorojin_Intro.jpg")
+
     director = StatefulDirector(goku_lib, dbs_lib, scen_lib)
 
     manifest_clips = []
