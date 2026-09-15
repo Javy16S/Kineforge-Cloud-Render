@@ -6,6 +6,16 @@ on:
     - cron: '0 18 * * *'
   workflow_dispatch:
     inputs:
+      channel:
+        description: "Nombre del canal / Environment (ej: Zorojin, DrLuffycs)"
+        required: true
+        default: "Zorojin"
+        type: string
+      history_index:
+        description: "Índice de la historia en Google Sheets (0 = primera)"
+        required: false
+        default: "0"
+        type: string
       chapter_num:
         description: "Número de capítulo a producir (1..5)"
         required: true
@@ -24,7 +34,7 @@ jobs:
   produce_and_upload:
     name: "Produce and Upload Chapter"
     runs-on: ubuntu-latest
-    environment: YT_CLIENT_ID
+    environment: ${{ inputs.channel || 'Zorojin' }}
 
     steps:
       - name: "Checkout repository and assets library"
@@ -54,22 +64,24 @@ jobs:
           YT_CLIENT_SECRET: ${{ secrets.YT_CLIENT_SECRET }}
           YT_REFRESH_TOKEN: ${{ secrets.YT_REFRESH_TOKEN }}
         run: |
-          CHAPTER="${{ github.event.inputs.chapter_num || '1' }}"
+          CHAPTER="${{ inputs.chapter_num || '1' }}"
+          HIST_IDX="${{ inputs.history_index || '0' }}"
           DRY_RUN_FLAG=""
-          if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then
+          if [ "${{ inputs.dry_run }}" = "true" ]; then
             DRY_RUN_FLAG="--dry-run"
           fi
 
           python runner/cloud_factory.py \
-            --chapter-num "${CHAPTER}" \
-            --work-dir "${RUNNER_TEMP}/factory_work" \
-            --output-video "${RUNNER_TEMP}/video_capitulo_${CHAPTER}.mp4" \
-            ${DRY_RUN_FLAG}
+            --chapter-num "$CHAPTER" \
+            --history-index "$HIST_IDX" \
+            --work-dir "$RUNNER_TEMP/factory_work" \
+            --output-video "$RUNNER_TEMP/video_capitulo_$CHAPTER.mp4" \
+            $DRY_RUN_FLAG
 
       - name: "Save rendered video as Artifact"
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: "video-capitulo-${{ github.event.inputs.chapter_num || '1' }}"
+          name: "video-capitulo-${{ inputs.chapter_num || '1' }}"
           path: "${{ runner.temp }}/video_capitulo_*.mp4"
           retention-days: 7

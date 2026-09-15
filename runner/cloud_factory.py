@@ -36,9 +36,38 @@ VOICE_MAP = {
     "Narrador": {"voice": "es-ES-AlvaroNeural", "rate": "-2%", "pitch": "-6Hz"},
     "Goku": {"voice": "es-MX-JorgeNeural", "rate": "+2%", "pitch": "-1Hz"},
     "Vegeta": {"voice": "es-MX-JorgeNeural", "rate": "-1%", "pitch": "-7Hz"},
+    "Gohan": {"voice": "es-MX-JorgeNeural", "rate": "+1%", "pitch": "+1Hz"},
+    "Piccolo": {"voice": "es-ES-AlvaroNeural", "rate": "-3%", "pitch": "-12Hz"},
+    "Broly": {"voice": "es-ES-AlvaroNeural", "rate": "-4%", "pitch": "-14Hz"},
+    "Trunks": {"voice": "es-MX-JorgeNeural", "rate": "+0%", "pitch": "+0Hz"},
+    "Freezer": {"voice": "es-ES-AlvaroNeural", "rate": "-2%", "pitch": "+7Hz"},
+    "Cell": {"voice": "es-ES-AlvaroNeural", "rate": "-2%", "pitch": "-8Hz"},
+    "Majin_Buu": {"voice": "es-MX-JorgeNeural", "rate": "+6%", "pitch": "+12Hz"},
+    "Bills_Beerus": {"voice": "es-ES-AlvaroNeural", "rate": "-4%", "pitch": "-4Hz"},
+    "Whis": {"voice": "es-ES-AlvaroNeural", "rate": "+0%", "pitch": "+10Hz"},
+    "Krilin": {"voice": "es-MX-JorgeNeural", "rate": "+4%", "pitch": "+6Hz"},
+    "Muten_Roshi": {"voice": "es-ES-AlvaroNeural", "rate": "-6%", "pitch": "-8Hz"},
+    "Mr_Satan": {"voice": "es-MX-JorgeNeural", "rate": "+5%", "pitch": "-2Hz"},
+    "Bulma": {"voice": "es-MX-DaliaNeural", "rate": "+2%", "pitch": "+2Hz"},
+    "Androide_18": {"voice": "es-MX-DaliaNeural", "rate": "-2%", "pitch": "-3Hz"},
+    "Androide_17": {"voice": "es-ES-AlvaroNeural", "rate": "+0%", "pitch": "+0Hz"},
     "Dende": {"voice": "es-ES-AlvaroNeural", "rate": "+4%", "pitch": "+6Hz"},
     "Mister Popo": {"voice": "es-ES-AlvaroNeural", "rate": "-6%", "pitch": "-10Hz"}
 }
+
+def get_voice_for_char(char_name):
+    c_norm = char_name.strip().replace(" ", "_")
+    if c_norm in VOICE_MAP:
+        return VOICE_MAP[c_norm]
+    # Comprobar variantes
+    for k, v in VOICE_MAP.items():
+        if k.lower() in c_norm.lower() or c_norm.lower() in k.lower():
+            return v
+    # Si parece femenino
+    if any(f in c_norm.lower() for f in ["bulma", "videl", "milk", "chichi", "18", "androide_18"]):
+        return {"voice": "es-MX-DaliaNeural", "rate": "+0%", "pitch": "+0Hz"}
+    # Por defecto
+    return VOICE_MAP.get("Narrador")
 
 KEN_BURNS_PRESETS = [
     {"start": {"x": 0.0, "y": 0.0, "w": 1.0, "h": 1.0}, "end": {"x": 0.04, "y": 0.04, "w": 0.92, "h": 0.92}},
@@ -55,6 +84,9 @@ def parse_args():
     parser.add_argument("--work-dir", default="/tmp/kineforge_factory", help="Directorio temporal de trabajo")
     parser.add_argument("--output-video", default="/tmp/final_video.mp4", help="Ruta del video final")
     parser.add_argument("--dry-run", action="store_true", help="Simular subida a YouTube sin consumir cuota")
+    parser.add_argument("--music-volume", type=float, default=0.08, help="Volumen de la música de fondo (default: 0.08 = -22dB relativo a la voz)")
+    parser.add_argument("--assets-dir", default=None, help="Ruta a imágenes/assets (ej: E:\\Dataset_Dragon_Ball\\Ordered Images)")
+    parser.add_argument("--music-dir", default=None, help="Ruta a carpeta de música (ej: E:\\Dataset_Dragon_Ball\\Music)")
     return parser.parse_args()
 
 def split_text_into_dynamic_cuts(text, target_words=10):
@@ -77,27 +109,39 @@ def split_text_into_dynamic_cuts(text, target_words=10):
 def parse_script_with_dynamic_pacing(guion_text):
     paragraphs = [p.strip() for p in guion_text.split("\n") if p.strip()]
     atomic_cuts = []
+    
+    # Expresión regular: Soporta "Personaje (Fase, Emoción): texto", "Personaje (Emoción): texto", "Narrador [Escenario]: texto", "Narrador: texto"
+    pat = re.compile(r'^(?:[-—]\s*)?([A-Za-z0-9_ñÑáéíóúÁÉÍÓÚ\s]+?)(?:\s*\(([^)]+)\))?(?:\s*\[([^\]]+)\])?\s*:\s*(.+)$')
+    
     for p in paragraphs:
-        if p.startswith("—") or p.startswith("-"):
+        m = pat.match(p)
+        if m:
+            char_raw = m.group(1).strip()
+            meta_paren = m.group(2).strip() if m.group(2) else None
+            meta_bracket = m.group(3).strip() if m.group(3) else None
+            speech = m.group(4).strip()
+            is_dialogue = (char_raw.lower() != "narrador")
+            char = "Narrador" if not is_dialogue else char_raw
+            sub_cuts = split_text_into_dynamic_cuts(speech, target_words=10)
+            for s in sub_cuts:
+                atomic_cuts.append({
+                    "character": char,
+                    "text": s,
+                    "meta_paren": meta_paren,
+                    "meta_bracket": meta_bracket,
+                    "is_dialogue": is_dialogue
+                })
+        else:
             p_clean = p.lstrip("—- ").strip()
-            p_low = p_clean.lower()
-            if "dende" in p_low:
-                char = "Dende"
-            elif "popo" in p_low:
-                char = "Mister Popo"
-            elif "vegeta" in p_low:
-                char = "Vegeta"
-            elif "goku" in p_low or any(k in p_low for k in ["¡", "¿", "kamehameha", "maldición", "milk", "cena"]):
-                char = "Goku"
-            else:
-                char = "Narrador"
             sub_cuts = split_text_into_dynamic_cuts(p_clean, target_words=10)
             for s in sub_cuts:
-                atomic_cuts.append({"character": char, "text": s, "is_dialogue": True})
-        else:
-            sub_cuts = split_text_into_dynamic_cuts(p, target_words=10)
-            for s in sub_cuts:
-                atomic_cuts.append({"character": "Narrador", "text": s, "is_dialogue": False})
+                atomic_cuts.append({
+                    "character": "Narrador",
+                    "text": s,
+                    "meta_paren": None,
+                    "meta_bracket": None,
+                    "is_dialogue": False
+                })
     return atomic_cuts
 
 def get_audio_duration(file_path):
@@ -168,7 +212,7 @@ async def main():
         async with sem:
             char = cut["character"]
             text = cut["text"]
-            cfg = VOICE_MAP.get(char, VOICE_MAP["Narrador"])
+            cfg = get_voice_for_char(char)
             out_file = os.path.join(tts_dir, f"cut_{idx:04d}_{char}.mp3")
             if not os.path.exists(out_file) or os.path.getsize(out_file) < 200:
                 comm = edge_tts.Communicate(text, cfg["voice"], rate=cfg["rate"], pitch=cfg["pitch"])
@@ -184,105 +228,420 @@ async def main():
     # 4. Master Audio con 4.0s de intro Zorojin
     silence_4s = os.path.join(tts_dir, "silence_4s.mp3")
     subprocess.run(["ffmpeg", "-y", "-f", "lavfi", "-i", "anullsrc=r=44100:cl=stereo", "-t", "4.0", silence_4s], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    silence_4s_esc = os.path.abspath(silence_4s).replace("\\", "/")
     concat_audio_txt = os.path.join(tts_dir, "concat_audio.txt")
     with open(concat_audio_txt, "w", encoding="utf-8") as af_txt:
-        af_txt.write(f"file '{silence_4s}'\n")
+        af_txt.write(f"file '{silence_4s_esc}'\n")
         for item in audio_segments:
-            af_txt.write(f"file '{item['file']}'\n")
+            f_esc = os.path.abspath(item['file']).replace("\\", "/")
+            af_txt.write(f"file '{f_esc}'\n")
 
     master_audio = os.path.join(assets_dir, "audio_master.mp3")
     subprocess.run(["ffmpeg", "-y", "-f", "concat", "-safe", "0", "-i", concat_audio_txt, "-c", "copy", master_audio], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     total_duration = get_audio_duration(master_audio)
     print(f"🎧 Master Audio compilado: {total_duration:.2f}s (~{total_duration/60:.1f} min)")
 
-    # 5. Música de fondo con 4s de silencio inicial
+    # 5. Detección Inteligente de Assets y Música (Dataset E:\Dataset_Dragon_Ball o assets_library)
     repo_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-    assets_lib = os.path.join(repo_root, "assets_library")
-    music_lib = os.path.join(assets_lib, "music")
-    music_files = sorted([os.path.join(music_lib, f) for f in os.listdir(music_lib) if f.lower().endswith(('.mp3', '.wav'))])
+    
+    # 5.1 Resolver Directorio de Imágenes / Assets
+    candidate_assets = [
+        args.assets_dir,
+        r"E:\Dataset_Dragon_Ball\Ordered Images",
+        r"E:\Dataset_Dragon_Ball",
+        os.path.join(repo_root, "assets_library"),
+        os.path.join(repo_root, "Ordered Images")
+    ]
+    assets_lib = None
+    for cand in candidate_assets:
+        if cand and os.path.exists(cand):
+            assets_lib = os.path.abspath(cand)
+            break
+    if not assets_lib:
+        assets_lib = os.path.join(repo_root, "assets_library")
+    print(f"📁 Directorio de assets: {assets_lib}")
+
+    # 5.2 Resolver Directorio de Música
+    candidate_music = [
+        args.music_dir,
+        r"E:\Dataset_Dragon_Ball\Music",
+        os.path.join(assets_lib, "music"),
+        os.path.join(assets_lib, "Music"),
+        os.path.join(repo_root, "music"),
+        os.path.join(repo_root, "Music")
+    ]
+    music_lib = None
+    for cand in candidate_music:
+        if cand and os.path.exists(cand):
+            music_lib = os.path.abspath(cand)
+            break
+    if not music_lib:
+        music_lib = os.path.join(assets_lib, "music")
+    print(f"🎵 Directorio de música: {music_lib}")
+
+    music_files = []
+    if os.path.exists(music_lib) and os.path.isdir(music_lib):
+        music_files = sorted([os.path.join(music_lib, f) for f in os.listdir(music_lib) if f.lower().endswith(('.mp3', '.wav'))])
+    print(f"   {len(music_files)} pistas de música encontradas.")
+
+    # Asegurar que la música cubra la duración total repitiendo o mezclando
+    music_playlist = []
+    if music_files:
+        import random
+        rng = random.Random(args.chapter_num + args.history_index * 100)
+        shuffled = list(music_files)
+        rng.shuffle(shuffled)
+        while len(music_playlist) < max(len(shuffled) * 3, 25):
+            music_playlist.extend(shuffled)
 
     music_4s_silence = os.path.join(tts_dir, "music_silence_4s.mp3")
     subprocess.run(["ffmpeg", "-y", "-f", "lavfi", "-i", "anullsrc=r=44100:cl=stereo", "-t", "4.0", music_4s_silence], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    music_4s_silence_esc = os.path.abspath(music_4s_silence).replace("\\", "/")
+    
     music_concat_txt = os.path.join(tts_dir, "music_concat.txt")
     with open(music_concat_txt, "w", encoding="utf-8") as mf_txt:
-        mf_txt.write(f"file '{music_4s_silence}'\n")
-        for m in music_files:
-            mf_txt.write(f"file '{m}'\n")
+        mf_txt.write(f"file '{music_4s_silence_esc}'\n")
+        for m in music_playlist:
+            m_esc = os.path.abspath(m).replace("\\", "/")
+            mf_txt.write(f"file '{m_esc}'\n")
 
     dest_music_bg = os.path.join(assets_dir, "music_bg.mp3")
-    subprocess.run(["ffmpeg", "-y", "-f", "concat", "-safe", "0", "-i", music_concat_txt, "-t", str(total_duration), "-c:a", "libmp3lame", "-b:a", "192k", dest_music_bg], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    if music_playlist:
+        subprocess.run(["ffmpeg", "-y", "-f", "concat", "-safe", "0", "-i", music_concat_txt, "-t", str(total_duration), "-c:a", "libmp3lame", "-b:a", "192k", dest_music_bg], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    else:
+        # Silencio de fondo si no hay música
+        subprocess.run(["ffmpeg", "-y", "-f", "lavfi", "-i", "anullsrc=r=44100:cl=stereo", "-t", str(total_duration), dest_music_bg], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
-    # 6. Motor de Memoria de Sujeto (Stateful Director Engine)
+    # 6. Motor de Dirección Inteligente Basado en Dataset Estructurado (Characters/{Char}/{Phase}/{Emotion} y Scenarios/{Scenario})
     class StatefulDirector:
-        def __init__(self, goku_lib, dbs_lib, scen_lib):
-            self.goku_lib = goku_lib
-            self.dbs_lib = dbs_lib
-            self.scen_lib = scen_lib
-            self.current_subject = "Escenario"
-            self.subject_streak = 0
-            self.goku_idx = 0
-            self.dbs_idx = 0
-            self.scen_idx = 0
+        def __init__(self, assets_lib_dir):
+            self.assets_lib = assets_lib_dir
+            
+            # Localizar carpetas Characters y Scenarios
+            if os.path.exists(os.path.join(assets_lib_dir, "Characters")):
+                self.chars_dir = os.path.join(assets_lib_dir, "Characters")
+            elif os.path.exists(os.path.join(assets_lib_dir, "characters")):
+                self.chars_dir = os.path.join(assets_lib_dir, "characters")
+            elif os.path.exists(os.path.join(assets_lib_dir, "Ordered Images", "Characters")):
+                self.chars_dir = os.path.join(assets_lib_dir, "Ordered Images", "Characters")
+            else:
+                self.chars_dir = assets_lib_dir
+
+            if os.path.exists(os.path.join(assets_lib_dir, "Scenarios")):
+                self.scens_dir = os.path.join(assets_lib_dir, "Scenarios")
+            elif os.path.exists(os.path.join(assets_lib_dir, "scenarios")):
+                self.scens_dir = os.path.join(assets_lib_dir, "scenarios")
+            elif os.path.exists(os.path.join(assets_lib_dir, "Ordered Images", "Scenarios")):
+                self.scens_dir = os.path.join(assets_lib_dir, "Ordered Images", "Scenarios")
+            else:
+                self.scens_dir = assets_lib_dir
+            
+            self.pools = {}
+            self.current_scenario = "Habitación del Tiempo"
+            self.current_char = "Goku"
+            self.current_phase = "Base"
+
+            # Indexación dinámica de carpetas de personajes
+            self.char_map = {}
+            if os.path.exists(self.chars_dir) and os.path.isdir(self.chars_dir):
+                for folder in os.listdir(self.chars_dir):
+                    f_full = os.path.join(self.chars_dir, folder)
+                    if os.path.isdir(f_full):
+                        clean_key = self._clean_str(folder)
+                        self.char_map[clean_key] = folder
+
+            # Indexación dinámica de carpetas de escenarios
+            self.scen_map = {}
+            if os.path.exists(self.scens_dir) and os.path.isdir(self.scens_dir):
+                for folder in os.listdir(self.scens_dir):
+                    f_full = os.path.join(self.scens_dir, folder)
+                    if os.path.isdir(f_full):
+                        clean_key = self._clean_str(folder)
+                        self.scen_map[clean_key] = folder
+
+            # Mapeo de alias comunes
+            self.char_aliases = {
+                "bills": "billsbeerus",
+                "beerus": "billsbeerus",
+                "billsbeerus": "billsbeerus",
+                "roshi": "mutenroshi",
+                "mutenroshi": "mutenroshi",
+                "maestroroshi": "mutenroshi",
+                "buu": "majinbuu",
+                "majinbuu": "majinbuu",
+                "mrbuu": "majinbuu",
+                "ginyu": "capitanginyu",
+                "capitanginyu": "capitanginyu",
+                "satan": "mrsatan",
+                "mrsatan": "mrsatan",
+                "milk": "milkchichi",
+                "chichi": "milkchichi",
+                "milkchichi": "milkchichi",
+                "trunksfuturo": "trunksdelfuturo",
+                "trunksdelfuturo": "trunksdelfuturo",
+                "a17": "androide17",
+                "n17": "androide17",
+                "numero17": "androide17",
+                "androide17": "androide17",
+                "a18": "androide18",
+                "n18": "androide18",
+                "numero18": "androide18",
+                "androide18": "androide18",
+                "frieza": "freezer",
+                "vegetta": "vegeta"
+            }
+
+            self.phase_aliases = {
+                "base": "Base",
+                "normal": "Base",
+                "ssj": "SSJ1",
+                "ssj1": "SSJ1",
+                "supersaiyan": "SSJ1",
+                "supersaiyajin": "SSJ1",
+                "ssj2": "SSJ1",
+                "ssj3": "SSJ3",
+                "god": "SSJGOD",
+                "ssjgod": "SSJGOD",
+                "dios": "SSJGOD",
+                "ssjdios": "SSJGOD",
+                "blue": "SSJBLUE",
+                "ssjblue": "SSJBLUE",
+                "ultrainstinto": "ULTRAINSTINTO",
+                "ui": "ULTRAINSTINTO",
+                "migattenogokui": "ULTRAINSTINTO"
+            }
+
+            self.emotion_aliases = {
+                "alegre": "Alegre",
+                "feliz": "Alegre",
+                "riendo": "Alegre",
+                "sonriendo": "Alegre",
+                "contento": "Alegre",
+                "enfadado": "Enfadado",
+                "enojado": "Enfadado",
+                "furioso": "Enfadado",
+                "furia": "Enfadado",
+                "gritando": "Enfadado",
+                "agresivo": "Enfadado",
+                "triste": "Triste",
+                "herido": "Triste",
+                "derrotado": "Triste",
+                "llorando": "Triste",
+                "preocupado": "Triste",
+                "neutral": "Neutral",
+                "serio": "Neutral",
+                "normal": "Neutral",
+                "pensativo": "Neutral",
+                "calmado": "Neutral"
+            }
+
+            self.scen_aliases = {
+                "namek": "planetanamek",
+                "namekusei": "planetanamek",
+                "tierra": "planetatierra",
+                "kamehouse": "planetatierra",
+                "habitacion": "habitaciondeltiempo",
+                "saladeltiempo": "habitaciondeltiempo",
+                "espacio": "espacio",
+                "universo": "espacio",
+                "bills": "planetabills",
+                "beerus": "planetabills",
+                "zeno": "templozenosama",
+                "zenosama": "templozenosama",
+                "vegeta": "planetavegetta",
+                "vegetta": "planetavegetta",
+                "kaioshin": "planetakaioshin",
+                "combate": "extras",
+                "torneo": "extras",
+                "pelea": "extras"
+            }
+
+        @staticmethod
+        def _clean_str(text):
+            import unicodedata
+            t = unicodedata.normalize('NFKD', str(text)).encode('ASCII', 'ignore').decode('utf-8')
+            return re.sub(r'[^a-z0-9]', '', t.lower())
+
+        def _get_files(self, dir_path):
+            if dir_path not in self.pools:
+                files = []
+                if os.path.exists(dir_path) and os.path.isdir(dir_path):
+                    files = [os.path.join(dir_path, f) for f in sorted(os.listdir(dir_path)) if f.lower().endswith(('.jpg', '.jpeg', '.png', '.webp'))]
+                self.pools[dir_path] = {"files": files, "idx": 0}
+            return self.pools[dir_path]["files"]
+
+        def _next_image(self, dir_path):
+            files = self._get_files(dir_path)
+            if not files:
+                return None
+            pool = self.pools[dir_path]
+            img = pool["files"][pool["idx"] % len(pool["files"])]
+            pool["idx"] += 1
+            return img
+
+        def resolve_character_dir(self, char_raw):
+            clean_name = self._clean_str(char_raw)
+            # 1. Búsqueda por alias
+            if clean_name in self.char_aliases:
+                clean_name = self.char_aliases[clean_name]
+            # 2. Búsqueda en mapa de carpetas reales
+            if clean_name in self.char_map:
+                return self.char_map[clean_name]
+            # 3. Búsqueda parcial
+            for k, folder in self.char_map.items():
+                if k in clean_name or clean_name in k:
+                    return folder
+            return "Goku"
+
+        def get_character_image(self, character, phase="Base", emotion="Neutral"):
+            folder_name = self.resolve_character_dir(character)
+            
+            # Normalizar fase
+            clean_phase = self._clean_str(phase)
+            mapped_phase = self.phase_aliases.get(clean_phase, phase)
+            
+            # Normalizar emoción
+            clean_emo = self._clean_str(emotion)
+            mapped_emo = self.emotion_aliases.get(clean_emo, "Neutral")
+
+            # 1. Búsqueda exacta: Characters/{char}/{phase}/{emotion}/
+            exact_dir = os.path.join(self.chars_dir, folder_name, mapped_phase, mapped_emo)
+            img = self._next_image(exact_dir)
+            if img: return img
+
+            # 2. Fallback a Neutral en misma fase
+            fb_neutral = os.path.join(self.chars_dir, folder_name, mapped_phase, "Neutral")
+            img = self._next_image(fb_neutral)
+            if img: return img
+
+            # 3. Fallback a Base/{emotion}
+            fb_base_emo = os.path.join(self.chars_dir, folder_name, "Base", mapped_emo)
+            img = self._next_image(fb_base_emo)
+            if img: return img
+
+            # 4. Fallback a Base/Neutral
+            fb_base_neutral = os.path.join(self.chars_dir, folder_name, "Base", "Neutral")
+            img = self._next_image(fb_base_neutral)
+            if img: return img
+
+            # 5. Fallback a cualquier imagen dentro de la carpeta del personaje
+            char_root = os.path.join(self.chars_dir, folder_name)
+            if os.path.exists(char_root):
+                all_imgs = [os.path.join(r, f) for r, _, fs in os.walk(char_root) for f in fs if f.lower().endswith(('.jpg', '.jpeg', '.png', '.webp'))]
+                if all_imgs:
+                    pool = self.pools.setdefault(char_root, {"files": sorted(all_imgs), "idx": 0})
+                    res = pool["files"][pool["idx"] % len(pool["files"])]
+                    pool["idx"] += 1
+                    return res
+
+            # 6. Fallback de emergencia a Goku Base Neutral
+            goku_fb = os.path.join(self.chars_dir, "Goku", "Base", "Neutral")
+            img = self._next_image(goku_fb)
+            if img: return img
+            
+            # 7. Si no hay nada, primera imagen que exista en la librería
+            for r, _, fs in os.walk(self.assets_lib):
+                for f in fs:
+                    if f.lower().endswith(('.jpg', '.png')):
+                        return os.path.join(r, f)
+            return None
+
+        def resolve_scenario_dir(self, scenario_raw):
+            clean_scen = self._clean_str(scenario_raw)
+            if clean_scen in self.scen_aliases:
+                clean_scen = self.scen_aliases[clean_scen]
+            if clean_scen in self.scen_map:
+                return self.scen_map[clean_scen]
+            for k, folder in self.scen_map.items():
+                if k in clean_scen or clean_scen in k:
+                    return folder
+            return "Habitación del Tiempo"
+
+        def get_scenario_image(self, scenario_name=None):
+            target = scenario_name or self.current_scenario
+            folder_name = self.resolve_scenario_dir(target)
+            matched_dir = os.path.join(self.scens_dir, folder_name)
+
+            if os.path.exists(matched_dir):
+                img = self._next_image(matched_dir)
+                if img:
+                    self.current_scenario = folder_name
+                    return img
+
+            for fb in ["Planeta Tierra", "Habitación del Tiempo", "Extras"]:
+                fb_folder = self.resolve_scenario_dir(fb)
+                fb_p = os.path.join(self.scens_dir, fb_folder)
+                img = self._next_image(fb_p)
+                if img: return img
+
+            return self.get_character_image("Goku", "Base", "Neutral")
 
         def select_image(self, cut_item, cut_index):
             char = cut_item.get("character", "Narrador")
+            meta_tag = cut_item.get("meta_tag") or cut_item.get("meta_paren") or cut_item.get("meta_bracket")
             text = cut_item.get("text", "").lower()
 
-            # 1. Diálogos directos de personajes
-            if char == "Goku":
-                self.current_subject = "Goku"
-                self.subject_streak = 0
-            elif char in ["Dende", "Mister Popo", "Popo"]:
-                self.current_subject = "DBS"
-                self.subject_streak = 0
-            elif char == "Vegeta":
-                self.current_subject = "Vegeta"
-                self.subject_streak = 0
-            else: # Narrador con análisis semántico e inercia de sujeto
-                goku_explicit = ["goku", "saiyajin", "saiyan", "kamehameha", "kakarotto", "super saiyajin", "ssj", "ki dorado", "guerrero de la tierra", "entrenamiento"]
-                dbs_explicit = ["dende", "popo", "mr. popo", "kami-sama", "kami sama", "namekiano", "dios de la tierra"]
-                env_explicit = ["templo", "palacio", "habitación del tiempo", "puerta", "portal", "grieta", "terremoto", "temblor", "sismo", "cielo", "suelo", "atmósfera", "vacío", "horizonte", "escombros", "plano dimensional", "gravedad", "terreno", "derrumbe"]
-                anaphora_triggers = ["sus ojos", "su mirada", "su cuerpo", "pensó", "recordó", "sintió", "dio un paso", "se levantó", "apretó", "en su mente", "su corazón", "respiró", "su poder", "sus puños", "su rostro", "decidió", "sabía que", "no podía creer", "cerró los ojos"]
+            if char == "Narrador":
+                if meta_tag:
+                    return self.get_scenario_image(meta_tag)
+                
+                # Búsqueda semántica básica en texto si no hay tag
+                scen_keywords = {
+                    "Habitación del Tiempo": ["habitación del tiempo", "puerta", "vacío", "vacio", "blanco", "reloj", "gravedad"],
+                    "Planeta Namek": ["namek", "namekusei", "cielo verde", "agua verde", "esferas del dragón"],
+                    "Planeta Tierra": ["tierra", "kame house", "montañas", "ciudad", "isla", "cielo azul"],
+                    "Espacio": ["espacio", "universo", "galaxias", "estrellas", "nave"],
+                    "Planeta Bills": ["bills", "árbol", "pirámide", "whis"],
+                    "Extras": ["destrucción", "combate", "pelea", "explosión", "cráter", "ring", "torneo"]
+                }
+                for scen, kws in scen_keywords.items():
+                    if any(k in text for k in kws):
+                        return self.get_scenario_image(scen)
 
-                if any(w in text for w in goku_explicit):
-                    self.current_subject = "Goku"
-                    self.subject_streak = 0
-                elif any(w in text for w in dbs_explicit):
-                    self.current_subject = "DBS"
-                    self.subject_streak = 0
-                elif any(w in text for w in env_explicit):
-                    self.current_subject = "Escenario"
-                    self.subject_streak = 0
-                elif any(w in text for w in anaphora_triggers):
-                    # Mantener el sujeto activo por inercia dramática
-                    self.subject_streak += 1
-                else:
-                    self.subject_streak += 1
-                    # Corte de variedad para evitar fatiga visual
-                    if self.subject_streak > 3:
-                        self.current_subject = "Escenario" if self.current_subject != "Escenario" else "Goku"
-                        self.subject_streak = 0
-
-            # 2. Asignación de imagen sin repetir
-            if self.current_subject == "Goku":
-                img = self.goku_lib[self.goku_idx % len(self.goku_lib)]
-                self.goku_idx += 1
-            elif self.current_subject == "DBS":
-                img = self.dbs_lib[self.dbs_idx % len(self.dbs_lib)] if self.dbs_lib else self.goku_lib[0]
-                self.dbs_idx += 1
+                return self.get_scenario_image()
             else:
-                img = self.scen_lib[self.scen_idx % len(self.scen_lib)]
-                self.scen_idx += 1
+                # Es un diálogo de personaje
+                phase = "Base"
+                emotion = "Neutral"
+                if meta_tag:
+                    parts = [p.strip() for p in meta_tag.split(",")]
+                    if len(parts) == 1:
+                        p0 = parts[0]
+                        clean_p0 = self._clean_str(p0)
+                        if clean_p0 in self.emotion_aliases:
+                            emotion = self.emotion_aliases[clean_p0]
+                        elif clean_p0 in self.phase_aliases:
+                            phase = self.phase_aliases[clean_p0]
+                        else:
+                            emotion = p0
+                    elif len(parts) >= 2:
+                        phase = parts[0]
+                        emotion = parts[1]
+                
+                return self.get_character_image(char, phase=phase, emotion=emotion)
 
-            return img
+    # 7. Resolución Inteligente de Imagen de Intro Zorojin
+    intro_img = None
+    intro_candidates = [
+        os.path.join(assets_lib, "intro", "Zorojin_Intro.jpg"),
+        os.path.join(assets_lib, "intro", "intro.jpg"),
+        r"D:\Descargas\Javier\Elementos\Zorojin_Intro.jpg",
+        os.path.join(os.path.dirname(assets_lib), "reference_images", "Goku_Base.jpg")
+    ]
+    for c in intro_candidates:
+        if c and os.path.exists(c):
+            intro_img = c
+            break
 
-    # Cargar bibliotecas de assets
-    goku_lib = sorted([os.path.join(assets_lib, "goku", f) for f in os.listdir(os.path.join(assets_lib, "goku"))])
-    dbs_lib = sorted([os.path.join(assets_lib, "dbs", f) for f in os.listdir(os.path.join(assets_lib, "dbs"))])
-    scen_lib = sorted([os.path.join(assets_lib, "scenarios", f) for f in os.listdir(os.path.join(assets_lib, "scenarios"))])
-    intro_img = os.path.join(assets_lib, "intro", "Zorojin_Intro.jpg")
+    if not intro_img:
+        for r, _, fs in os.walk(assets_lib):
+            for f in fs:
+                if f.lower().endswith(('.jpg', '.png')):
+                    intro_img = os.path.join(r, f)
+                    break
+            if intro_img: break
 
-    director = StatefulDirector(goku_lib, dbs_lib, scen_lib)
+    director = StatefulDirector(assets_lib)
 
     manifest_clips = []
     shutil.copy2(intro_img, os.path.join(assets_dir, "img_0000.jpg"))
@@ -342,7 +701,7 @@ async def main():
         "fps": 30,
         "audioFile": "audio_master.mp3",
         "musicFile": "music_bg.mp3",
-        "musicVolume": 0.12,
+        "musicVolume": args.music_volume,
         "clips": manifest_clips
     }
     manifest_file = os.path.join(args.work_dir, "manifest.json")

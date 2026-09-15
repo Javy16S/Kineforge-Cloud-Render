@@ -62,11 +62,15 @@ def build_zoompan_filter(clip: Dict[str, Any], width: int, height: int, fps: int
     x_expr = f"max(0\\,min(iw-iw/zoom\\,{x_offset}*iw))"
     y_expr = f"max(0\\,min(ih-ih/zoom\\,{y_offset}*ih))"
 
-    # Pre-scale a 16:9 exacto para que zoompan nunca distorsione ni corte
-    pre_scale = f"scale={width}:{height}:force_original_aspect_ratio=increase,crop={width}:{height},setsar=1/1"
-    zoom_part = f"zoompan=z='{z_expr}':x='{x_expr}':y='{y_expr}':d={dur_frames}:s={width}x{height}:fps={fps}"
+    # Supersampling 2x (lienzo interno 3840x2160 en 16:9) para eliminar tirones por redondeo de enteros
+    internal_w = width * 2
+    internal_h = height * 2
+
+    pre_scale = f"scale={internal_w}:{internal_h}:force_original_aspect_ratio=increase,crop={internal_w}:{internal_h},setsar=1/1"
+    zoom_part = f"zoompan=z='{z_expr}':x='{x_expr}':y='{y_expr}':d={dur_frames}:s={internal_w}x{internal_h}:fps={fps}"
+    down_scale = f"scale={width}:{height}:flags=lanczos"
     
-    vf = f"{pre_scale},{zoom_part},setsar=1/1,format=yuv420p"
+    vf = f"{pre_scale},{zoom_part},{down_scale},setsar=1/1,format=yuv420p"
     return vf, dur_frames
 
 def render_single_segment(item):
@@ -202,15 +206,20 @@ def render_project(manifest_path: str, assets_dir: str, output_path: str, ffmpeg
     if music_path:
         full_music = os.path.join(assets_dir, os.path.basename(music_path))
         if os.path.exists(full_music):
-            music_vol = manifest.get("musicVolume", 0.12)
             final_inputs.extend(["-i", full_music])
             audio_inputs.append(f"[{input_idx}:a]")
             input_idx += 1
 
     filter_graph = ""
     if len(audio_inputs) > 1:
-        mix = "".join(audio_inputs)
-        filter_graph = f"{mix}amix=inputs={len(audio_inputs)}:duration=longest:dropout_transition=2[a_out]"
+        # audio_inputs[0] = voz maestra TTS
+        # audio_inputs[1] = musica de fondo
+        music_vol = float(manifest.get("musicVolume", 0.08))
+        filter_graph = (
+            f"{audio_inputs[0]}volume=1.0[v_voice];"
+            f"{audio_inputs[1]}volume={music_vol:.3f}[v_music];"
+            f"[v_voice][v_music]amix=inputs=2:duration=first:dropout_transition=2[a_out]"
+        )
         audio_map = "[a_out]"
     elif len(audio_inputs) == 1:
         audio_map = audio_inputs[0]
