@@ -214,7 +214,7 @@ def render_project(manifest_path: str, assets_dir: str, output_path: str, ffmpeg
     if len(audio_inputs) > 1:
         # audio_inputs[0] = voz maestra TTS
         # audio_inputs[1] = musica de fondo
-        music_vol = float(manifest.get("musicVolume", 0.08))
+        music_vol = float(manifest.get("musicVolume", 0.20))
         filter_graph = (
             f"{audio_inputs[0]}volume=1.0[v_voice];"
             f"{audio_inputs[1]}volume={music_vol:.3f}[v_music];"

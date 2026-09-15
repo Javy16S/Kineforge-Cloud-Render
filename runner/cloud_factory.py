@@ -84,7 +84,7 @@ def parse_args():
     parser.add_argument("--work-dir", default="/tmp/kineforge_factory", help="Directorio temporal de trabajo")
     parser.add_argument("--output-video", default="/tmp/final_video.mp4", help="Ruta del video final")
     parser.add_argument("--dry-run", action="store_true", help="Simular subida a YouTube sin consumir cuota")
-    parser.add_argument("--music-volume", type=float, default=0.08, help="Volumen de la música de fondo (default: 0.08 = -22dB relativo a la voz)")
+    parser.add_argument("--music-volume", type=float, default=0.20, help="Volumen de la música de fondo (default: 0.20 = presencia destacada para banda sonora anime)")
     parser.add_argument("--assets-dir", default=None, help="Ruta a imágenes/assets (ej: E:\\Dataset_Dragon_Ball\\Ordered Images)")
     parser.add_argument("--music-dir", default=None, help="Ruta a carpeta de música (ej: E:\\Dataset_Dragon_Ball\\Music)")
     return parser.parse_args()
