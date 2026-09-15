@@ -581,17 +581,117 @@ async def main():
             meta_tag = cut_item.get("meta_tag") or cut_item.get("meta_paren") or cut_item.get("meta_bracket")
             text = cut_item.get("text", "").lower()
 
+            # Diccionario de detección de personajes en el texto
+            char_keywords = {
+                "Goku": ["son goku", "goku", "kakarotto", "kakaroto", "sayayin goku", "saiyajin goku"],
+                "Vegeta": ["vegeta", "vegetta", "príncipe de los saiyajin", "principe saiyajin", "orgulloso príncipe"],
+                "Gohan": ["gohan", "son gohan"],
+                "Piccolo": ["piccolo", "piccoro", "namekiano"],
+                "Freezer": ["freezer", "frieza", "emperador del mal"],
+                "Cell": ["cell", "célula", "celula", "androide perfecto", "bioandroide"],
+                "Majin_Buu": ["majin buu", "buu", "majin boo", "monstruo buu"],
+                "Bills_Beerus": ["bills", "beerus", "dios de la destrucción", "dios destructor"],
+                "Whis": ["whis", "ángel whis", "angel whis"],
+                "Krilin": ["krilin", "krillin"],
+                "Trunks_del_Futuro": ["trunks del futuro", "trunks joven", "trunks"],
+                "Broly": ["broly", "saiyajin legendario"],
+                "Dende": ["dende", "kamisama dende"],
+                "Bulma": ["bulma"],
+                "Androide_17": ["androide 17", "número 17", "numero 17", "a17", "n17"],
+                "Androide_18": ["androide 18", "número 18", "numero 18", "a18", "n18"],
+                "Muten_Roshi": ["muten roshi", "maestro roshi", "roshi"],
+                "Yamcha": ["yamcha"],
+                "Tenshinhan": ["tenshinhan", "ten shin han", "tien"],
+                "Mr_Satan": ["mr satan", "mr. satan", "míster satan", "mister satan", "satan"],
+                "Jiren": ["jiren", "el gris"],
+                "Toppo": ["toppo"],
+                "Hit": ["hit", "asesino legendario"],
+                "Raditz": ["raditz"]
+            }
+
+            # Diccionario de detección de emociones por acciones y gestos
+            emotion_keywords = {
+                "Enfadado": [
+                    "ceño", "frunció", "fruncio", "puño", "puños", "ira", "rabia", "enfado", "furio", "furia", 
+                    "grit", "rugi", "apretó", "apreto", "diente", "ataqu", "golp", "arremeti", "fiero", "odio", 
+                    "tensión", "tension", "asesin", "estall", "furor", "rabios", "amenaz", "violento"
+                ],
+                "Alegre": [
+                    "sonri", "risa", "sonrisa", "confiad", "burl", "alegr", "feliz", "satisf", "arrogant", 
+                    "orgullos", "carcajad", "tranquil", "optimis", "victoria", "celebr"
+                ],
+                "Triste": [
+                    "herid", "dolor", "derrot", "cayó", "cayo", "caer", "jade", "exhaust", "sangr", "lágrim", 
+                    "lagrim", "llor", "miedo", "tembl", "aterr", "impotent", "desesper", "preocup", "agoní", 
+                    "agonia", "grave", "debilitad", "suelo", "inconsciente", "temor"
+                ],
+                "Neutral": [
+                    "observ", "mir", "analiz", "pensat", "seri", "silenci", "calm", "cruzó los brazos", "cruzo los brazos", 
+                    "explic", "sabía", "sabia", "inmóvil", "inmovil", "parado", "quieto", "esper", "atento"
+                ]
+            }
+
+            # Diccionario de detección de fase por mención visual
+            phase_keywords = {
+                "ULTRAINSTINTO": ["ultra instinto", "ultrainstinto", "ui", "platead", "doctrina egoísta", "doctrina egoista"],
+                "SSJBLUE": ["ssj blue", "ssjblue", "super saiyajin blue", "azul", "dios azul", "aura azul"],
+                "SSJGOD": ["ssj god", "ssjgod", "super saiyajin dios", "dios rojo", "aura roja", "rojiz"],
+                "SSJ3": ["ssj 3", "ssj3", "super saiyajin 3", "cabello largo", "melena dorada"],
+                "SSJ1": ["super saiyajin", "super saiyan", "ssj 1", "ssj1", "ssj", "dorad", "rubi", "guerrero dorado", "aura dorada"],
+                "Base": ["base", "estado base", "cabello negro", "normal"]
+            }
+
             if char == "Narrador":
+                # 1. Detectar si el texto menciona explícitamente a un personaje
+                detected_char = None
+                for ch_name, kws in char_keywords.items():
+                    if any(kw in text for kw in kws):
+                        detected_char = ch_name
+                        break
+
+                # Si no hay mención nominal pero hay pronombres de continuación del personaje activo
+                if not detected_char and any(p in text for p in [" su ", " sus ", "él ", "el saiyajin", "el guerrero", "su cuerpo", "su rostro", "sus ojos", "su mirada", "su ki", "su poder"]):
+                    detected_char = self.current_char
+
+                # 2. Si hay personaje involucrado en la acción descrita:
+                if detected_char:
+                    # Detectar emoción por acciones y gestos
+                    detected_emo = "Neutral"
+                    for emo, kws in emotion_keywords.items():
+                        if any(kw in text for kw in kws):
+                            detected_emo = emo
+                            break
+
+                    # Detectar fase por texto o mantener la actual
+                    detected_phase = self.current_phase if detected_char == self.current_char else "Base"
+                    for ph, kws in phase_keywords.items():
+                        if any(kw in text for kw in kws):
+                            detected_phase = ph
+                            break
+
+                    self.current_char = detected_char
+                    self.current_phase = detected_phase
+                    return self.get_character_image(detected_char, phase=detected_phase, emotion=detected_emo)
+
+                # 3. Si no hay personaje, comprobar si es escena de combate / explosión / choque
+                clash_keywords = ["choque", "colisi", "explosi", "combate", "pelea", "resquebraj", "cráter", "crater", "destrucci", "ondas de choque", "ráfaga", "rafaga", "ki explot", "destello"]
+                if any(kw in text for kw in clash_keywords):
+                    return self.get_scenario_image("Extras")
+
+                # 4. Si es descripción de entorno / escenario:
                 if meta_tag:
                     return self.get_scenario_image(meta_tag)
-                
-                # Búsqueda semántica básica en texto si no hay tag
+
+                # 5. Búsqueda semántica de escenario en texto
                 scen_keywords = {
-                    "Habitación del Tiempo": ["habitación del tiempo", "puerta", "vacío", "vacio", "blanco", "reloj", "gravedad"],
+                    "Habitación del Tiempo": ["habitación del tiempo", "puerta", "vacío", "vacio", "blanco", "reloj", "gravedad", "dimensión blanca"],
                     "Planeta Namek": ["namek", "namekusei", "cielo verde", "agua verde", "esferas del dragón"],
-                    "Planeta Tierra": ["tierra", "kame house", "montañas", "ciudad", "isla", "cielo azul"],
-                    "Espacio": ["espacio", "universo", "galaxias", "estrellas", "nave"],
-                    "Planeta Bills": ["bills", "árbol", "pirámide", "whis"],
+                    "Planeta Tierra": ["tierra", "kame house", "montañas", "ciudad", "isla", "cielo azul", "bosque"],
+                    "Espacio": ["espacio", "universo", "galaxias", "estrellas", "nave", "vacío cósmico"],
+                    "Planeta Bills": ["bills", "árbol", "arbol", "pirámide", "piramide", "whis", "templo de bills"],
+                    "Templo Zeno Sama": ["zeno", "zeno sama", "templo zeno", "palacio de zeno"],
+                    "Planeta Vegetta": ["planeta vegeta", "planeta vegetta", "reino saiyajin"],
+                    "Planeta Kaioshin": ["kaioshin", "mundo supremo", "árbol sagrado", "tierra sagrada"],
                     "Extras": ["destrucción", "combate", "pelea", "explosión", "cráter", "ring", "torneo"]
                 }
                 for scen, kws in scen_keywords.items():
@@ -599,8 +699,9 @@ async def main():
                         return self.get_scenario_image(scen)
 
                 return self.get_scenario_image()
+
             else:
-                # Es un diálogo de personaje
+                # Es un diálogo directo de personaje
                 phase = "Base"
                 emotion = "Neutral"
                 if meta_tag:
@@ -618,6 +719,15 @@ async def main():
                         phase = parts[0]
                         emotion = parts[1]
                 
+                # Revisar si en el texto del diálogo hay un fuerte indicio emocional
+                if emotion == "Neutral":
+                    for emo, kws in emotion_keywords.items():
+                        if any(kw in text for kw in kws):
+                            emotion = emo
+                            break
+
+                self.current_char = char
+                self.current_phase = phase
                 return self.get_character_image(char, phase=phase, emotion=emotion)
 
     # 7. Resolución Inteligente de Imagen de Intro Zorojin
