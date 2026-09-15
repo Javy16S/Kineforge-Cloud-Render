@@ -52,7 +52,18 @@ VOICE_MAP = {
     "Androide_18": {"voice": "es-MX-DaliaNeural", "rate": "-2%", "pitch": "-3Hz"},
     "Androide_17": {"voice": "es-ES-AlvaroNeural", "rate": "+0%", "pitch": "+0Hz"},
     "Dende": {"voice": "es-ES-AlvaroNeural", "rate": "+4%", "pitch": "+6Hz"},
-    "Mister Popo": {"voice": "es-ES-AlvaroNeural", "rate": "-6%", "pitch": "-10Hz"}
+    "Mister Popo": {"voice": "es-ES-AlvaroNeural", "rate": "-6%", "pitch": "-10Hz"},
+    "Luffy": {"voice": "es-MX-JorgeNeural", "rate": "+3%", "pitch": "+2Hz"},
+    "Zoro": {"voice": "es-ES-AlvaroNeural", "rate": "-2%", "pitch": "-8Hz"},
+    "Sanji": {"voice": "es-ES-AlvaroNeural", "rate": "+1%", "pitch": "-1Hz"},
+    "Nami": {"voice": "es-MX-DaliaNeural", "rate": "+2%", "pitch": "+3Hz"},
+    "Robin": {"voice": "es-MX-DaliaNeural", "rate": "-2%", "pitch": "-2Hz"},
+    "Usopp": {"voice": "es-MX-JorgeNeural", "rate": "+5%", "pitch": "+5Hz"},
+    "Chopper": {"voice": "es-MX-DaliaNeural", "rate": "+8%", "pitch": "+10Hz"},
+    "Shanks": {"voice": "es-ES-AlvaroNeural", "rate": "-3%", "pitch": "-6Hz"},
+    "Imu_Sama": {"voice": "es-ES-AlvaroNeural", "rate": "-4%", "pitch": "-10Hz"},
+    "Garp": {"voice": "es-MX-JorgeNeural", "rate": "-2%", "pitch": "-5Hz"},
+    "Roger": {"voice": "es-MX-JorgeNeural", "rate": "-1%", "pitch": "-4Hz"}
 }
 
 def get_voice_for_char(char_name):
@@ -64,7 +75,7 @@ def get_voice_for_char(char_name):
         if k.lower() in c_norm.lower() or c_norm.lower() in k.lower():
             return v
     # Si parece femenino
-    if any(f in c_norm.lower() for f in ["bulma", "videl", "milk", "chichi", "18", "androide_18"]):
+    if any(f in c_norm.lower() for f in ["bulma", "videl", "milk", "chichi", "18", "androide_18", "nami", "robin", "yamato", "hancock"]):
         return {"voice": "es-MX-DaliaNeural", "rate": "+0%", "pitch": "+0Hz"}
     # Por defecto
     return VOICE_MAP.get("Narrador")
@@ -606,7 +617,22 @@ async def main():
                 "Jiren": ["jiren", "el gris"],
                 "Toppo": ["toppo"],
                 "Hit": ["hit", "asesino legendario"],
-                "Raditz": ["raditz"]
+                "Raditz": ["raditz"],
+                # One Piece
+                "Luffy": ["luffy", "monkey d. luffy", "sombrero de paja", "mugiwara", "nika", "joy boy"],
+                "Zoro": ["zoro", "roronoa", "espadachín", "espadachin", "cazador de piratas"],
+                "Sanji": ["sanji", "pierna negra", "vinsmoke", "cocinero"],
+                "Nami": ["nami", "gata ladrona", "navegante"],
+                "Usopp": ["usopp", "sogeking", "god usopp", "tirador"],
+                "Chopper": ["chopper", "tony tony", "médico", "medico"],
+                "Robin": ["robin", "nico robin", "niña demonio", "arqueóloga", "arqueologa"],
+                "Shanks": ["shanks", "el pelirrojo", "akagami"],
+                "Imu_Sama": ["imu-sama", "imu sama", "imu", "soberano del mundo", "rey del mundo"],
+                "Garp": ["garp", "héroe de la marina", "heroe de la marina", "el puño", "el puno"],
+                "Roger": ["roger", "gol d. roger", "rey de los piratas"],
+                "Kobe": ["kobe", "koby"],
+                "Fujitora": ["fujitora", "issho"],
+                "Yamato": ["yamato", "hijo de kaido"]
             }
 
             # Diccionario de detección de emociones por acciones y gestos
@@ -633,6 +659,9 @@ async def main():
 
             # Diccionario de detección de fase por mención visual
             phase_keywords = {
+                "GEAR5": ["gear 5", "gear fifth", "marcha 5", "nika", "blanco", "reír", "reir", "tambores de la liberación"],
+                "GEAR4": ["gear 4", "gear fourth", "boundman", "snakeman"],
+                "GEAR2": ["gear 2", "gear second"],
                 "ULTRAINSTINTO": ["ultra instinto", "ultrainstinto", "ui", "platead", "doctrina egoísta", "doctrina egoista"],
                 "SSJBLUE": ["ssj blue", "ssjblue", "super saiyajin blue", "azul", "dios azul", "aura azul"],
                 "SSJGOD": ["ssj god", "ssjgod", "super saiyajin dios", "dios rojo", "aura roja", "rojiz"],
@@ -650,7 +679,7 @@ async def main():
                         break
 
                 # Si no hay mención nominal pero hay pronombres de continuación del personaje activo
-                if not detected_char and any(p in text for p in [" su ", " sus ", "él ", "el saiyajin", "el guerrero", "su cuerpo", "su rostro", "sus ojos", "su mirada", "su ki", "su poder"]):
+                if not detected_char and any(p in text for p in [" su ", " sus ", "él ", "el saiyajin", "el guerrero", "su cuerpo", "su rostro", "sus ojos", "su mirada", "su ki", "su poder", "el pirata", "el capitán", "el capitan", "el espadachín", "el espadachin", "el muchacho", "el joven"]):
                     detected_char = self.current_char
 
                 # 2. Si hay personaje involucrado en la acción descrita:
