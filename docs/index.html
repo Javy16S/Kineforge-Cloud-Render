@@ -1,0 +1,331 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>KineForge Cloud Studio - Cinema Web Player</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: #0b0f19;
+      color: #e2e8f0;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 16px;
+      -webkit-font-smoothing: antialiased;
+    }
+    .header {
+      width: 100%;
+      max-width: 900px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 0 20px 0;
+      border-bottom: 1px solid #1e293b;
+      margin-bottom: 20px;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .logo-badge {
+      background: linear-gradient(135deg, #f59e0b, #ef4444);
+      color: #ffffff;
+      font-weight: 800;
+      font-size: 14px;
+      padding: 6px 12px;
+      border-radius: 8px;
+      letter-spacing: 0.5px;
+      box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+    }
+    .brand-title {
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      color: #f8fafc;
+    }
+    .status-badge {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: #0f172a;
+      border: 1px solid #334155;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+      color: #10b981;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      background: #10b981;
+      border-radius: 50%;
+      box-shadow: 0 0 8px #10b981;
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.85); }
+    }
+    .main-container {
+      width: 100%;
+      max-width: 900px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .player-card {
+      background: #131b2e;
+      border: 1px solid #1e293b;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+      position: relative;
+    }
+    .video-wrapper {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      background: #000000;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    video {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      outline: none;
+    }
+    .meta-bar {
+      padding: 16px 20px;
+      background: #131b2e;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .video-title {
+      font-size: 17px;
+      font-weight: 700;
+      color: #ffffff;
+      line-height: 1.4;
+    }
+    .tags-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+    .tag {
+      font-size: 11px;
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-weight: 600;
+      letter-spacing: 0.2px;
+    }
+    .tag-blue { background: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3); }
+    .tag-emerald { background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); }
+    .tag-purple { background: rgba(168, 85, 247, 0.15); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.3); }
+
+    .selector-card {
+      background: #131b2e;
+      border: 1px solid #1e293b;
+      border-radius: 16px;
+      padding: 16px 20px;
+    }
+    .selector-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: #94a3b8;
+      margin-bottom: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .chapter-buttons {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 10px;
+    }
+    .btn-ch {
+      background: #1e293b;
+      color: #cbd5e1;
+      border: 1px solid #334155;
+      padding: 10px 14px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      text-decoration: none;
+    }
+    .btn-ch:hover {
+      background: #334155;
+      color: #ffffff;
+      border-color: #64748b;
+    }
+    .btn-ch.active {
+      background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+      color: #ffffff;
+      border-color: #60a5fa;
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+    }
+    .actions-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 6px;
+    }
+    .btn-action {
+      flex: 1;
+      min-width: 180px;
+      padding: 12px 18px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.2s;
+    }
+    .btn-download {
+      background: #1e293b;
+      color: #38bdf8;
+      border: 1px solid #0284c7;
+    }
+    .btn-download:hover {
+      background: #0284c7;
+      color: #ffffff;
+    }
+    .btn-github {
+      background: #0f172a;
+      color: #94a3b8;
+      border: 1px solid #334155;
+    }
+    .btn-github:hover {
+      background: #1e293b;
+      color: #f1f5f9;
+    }
+    .tip-box {
+      font-size: 12px;
+      color: #64748b;
+      text-align: center;
+      margin-top: 8px;
+      line-height: 1.5;
+    }
+    @media (max-width: 600px) {
+      body { padding: 10px; }
+      .header { padding: 8px 0 14px 0; }
+      .meta-bar { padding: 12px 14px; }
+      .selector-card { padding: 12px 14px; }
+      .chapter-buttons { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="header">
+    <div class="brand">
+      <div class="logo-badge">KINEFORGE</div>
+      <div class="brand-title">Cloud Cinema Preview</div>
+    </div>
+    <div class="status-badge">
+      <span class="status-dot"></span>
+      <span>STREAMING READY</span>
+    </div>
+  </header>
+
+  <main class="main-container">
+    <div class="player-card">
+      <div class="video-wrapper">
+        <video id="cloudPlayer" controls playsinline preload="metadata">
+          Tu navegador no soporta reproducción de vídeo HTML5.
+        </video>
+      </div>
+      <div class="meta-bar">
+        <div class="video-title" id="videoTitle">Cargando Previsualización de KineForge...</div>
+        <div class="tags-row">
+          <span class="tag tag-blue">⚡ 720p FastStart (~35 MB)</span>
+          <span class="tag tag-emerald">🔊 48,000 Hz Broadcast Stereo</span>
+          <span class="tag tag-purple">🎬 OpenCV Subpixel Ken Burns</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="selector-card">
+      <div class="selector-label">Seleccionar Capítulo para Visualizar:</div>
+      <div class="chapter-buttons">
+        <button class="btn-ch active" onclick="loadChapter(1)">Capítulo 1</button>
+        <button class="btn-ch" onclick="loadChapter(2)">Capítulo 2</button>
+        <button class="btn-ch" onclick="loadChapter(3)">Capítulo 3</button>
+        <button class="btn-ch" onclick="loadChapter(4)">Capítulo 4</button>
+        <button class="btn-ch" onclick="loadChapter(5)">Capítulo 5</button>
+        <button class="btn-ch" onclick="loadChapter('full')">Película Completa</button>
+      </div>
+
+      <div class="actions-row" style="margin-top: 16px;">
+        <a id="btnDownload" href="#" target="_blank" class="btn-action btn-download">
+          📥 Descargar MP4 Ligero
+        </a>
+        <a href="https://github.com/Javy16S/Kineforge-Cloud-Render/actions" target="_blank" class="btn-action btn-github">
+          ⚙️ Ver Ejecuciones en GitHub Actions
+        </a>
+      </div>
+    </div>
+
+    <p class="tip-box">
+      💡 <strong>Optimizado para móvil:</strong> Este reproductor transmite vídeo codificado en H.264 con metadatos FastStart al inicio. Puedes avanzar y retroceder sin descargar los 2 GB del master.
+    </p>
+  </main>
+
+  <script>
+    const REPO_BASE = "https://github.com/Javy16S/Kineforge-Cloud-Render/releases/download/previews/";
+    const player = document.getElementById("cloudPlayer");
+    const videoTitle = document.getElementById("videoTitle");
+    const btnDownload = document.getElementById("btnDownload");
+    const buttons = document.querySelectorAll(".btn-ch");
+
+    function getQueryParam(param) {
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get(param);
+    }
+
+    function loadChapter(ch) {
+      const fileName = ch === 'full' ? 'preview_capitulo_full.mp4' : `preview_capitulo_${ch}.mp4`;
+      const videoUrl = REPO_BASE + fileName;
+      
+      player.src = videoUrl;
+      btnDownload.href = videoUrl;
+      videoTitle.innerText = ch === 'full' 
+        ? "Película Completa (Capítulos 1 al 5) - Previsualización de Prueba"
+        : `Capítulo ${ch} - Previsualización en Tiempo Real`;
+
+      buttons.forEach(btn => {
+        if (ch === 'full') {
+          btn.classList.toggle("active", btn.innerText.includes("Película"));
+        } else {
+          btn.classList.toggle("active", btn.innerText.includes(`Capítulo ${ch}`));
+        }
+      });
+    }
+
+    // Inicializar según URL o Capítulo 1 por defecto
+    const paramCh = getQueryParam("ch") || getQueryParam("c") || "1";
+    loadChapter(paramCh);
+  </script>
+</body>
+</html>

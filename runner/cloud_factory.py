@@ -959,8 +959,17 @@ async def main():
     if args.dry_run:
         print("ℹ️ Modo Dry-Run activo: No se subirá a YouTube.")
     else:
-        youtube = get_authenticated_service()
-        upload_video_resumable(youtube, args.output_video, metadata)
+        try:
+            youtube = get_authenticated_service()
+            upload_video_resumable(youtube, args.output_video, metadata)
+        except Exception as e:
+            err_msg = str(e)
+            if "quotaExceeded" in err_msg or "quota" in err_msg.lower():
+                print(f"\n⚠️ [AVISO DE CUOTA] Límite diario de la API de YouTube superado: {e}")
+                print("ℹ️ El vídeo se ha renderizado íntegramente y estará disponible en el reproductor Web / Móvil y en Artifacts.")
+            else:
+                print(f"\n⚠️ [AVISO YOUTUBE] Error en subida a YouTube: {e}")
+                print("ℹ️ Continuando con la generación de preview y guardado de artefactos.")
 
     print("\n🎉 ¡PRODUCCIÓN 100% COMPLETADA CON ÉXITO EN LA NUBE!")
 

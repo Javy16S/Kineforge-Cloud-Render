@@ -80,10 +80,69 @@ jobs:
             --output-video "${RUNNER_TEMP}/video_capitulo_${CHAPTER}.mp4" \
             ${DRY_RUN_FLAG}
 
+      - name: "Generate Lightweight Web/Mobile Preview (720p FastStart)"
+        if: always()
+        run: |
+          CHAPTER="${{ github.event.inputs.chapter_num || '1' }}"
+          MASTER="${RUNNER_TEMP}/video_capitulo_${CHAPTER}.mp4"
+          PREVIEW="${RUNNER_TEMP}/preview_capitulo_${CHAPTER}.mp4"
+
+          if [ -f "$MASTER" ]; then
+            echo "⚡ Comprimiendo preview ultraligera 720p FastStart para móvil..."
+            ffmpeg -y -i "$MASTER" \
+              -vf "scale=-2:720" \
+              -c:v libx264 -preset veryfast -crf 28 \
+              -c:a aac -b:a 128k -ar 48000 \
+              -movflags +faststart \
+              "$PREVIEW"
+
+            MASTER_MB=$(du -m "$MASTER" | cut -f1)
+            PREVIEW_MB=$(du -m "$PREVIEW" | cut -f1)
+            echo "MASTER_MB=${MASTER_MB}" >> $GITHUB_ENV
+            echo "PREVIEW_MB=${PREVIEW_MB}" >> $GITHUB_ENV
+            echo "✅ Preview creada con éxito: ${PREVIEW_MB} MB (vs ${MASTER_MB} MB master)"
+          else
+            echo "⚠️ No se encontró vídeo master para comprimir."
+          fi
+
+      - name: "Publish Preview for Mobile Streaming & Job Summary"
+        if: always()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          CHAPTER="${{ github.event.inputs.chapter_num || '1' }}"
+          PREVIEW="${RUNNER_TEMP}/preview_capitulo_${CHAPTER}.mp4"
+          TAG="previews"
+
+          if [ -f "$PREVIEW" ]; then
+            echo "🚀 Subiendo preview a GitHub Releases..."
+            gh release create "$TAG" --title "KineForge Video Previews" --notes "Previsualizaciones automáticas para streaming en navegadores y móviles" --clobber 2>/dev/null || true
+            gh release upload "$TAG" "$PREVIEW" --clobber
+
+            PREVIEW_URL="https://github.com/${{ github.repository }}/releases/download/${TAG}/preview_capitulo_${CHAPTER}.mp4"
+            WEB_PLAYER="https://javy16s.github.io/Kineforge-Cloud-Render/?ch=${CHAPTER}"
+
+            echo "## 🎬 ¡Previsualización Lista para Móvil y Navegador!" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "> ⚡ **Optimizado para Móvil (Sin descargar 2 GB):** Vídeo 720p con FastStart (~${PREVIEW_MB} MB en vez de ${MASTER_MB} MB). Se reproduce al instante en el navegador de tu móvil o PC." >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "### 📱 [▶️ Abrir en Reproductor Web / Móvil (Streaming Instantáneo)](${WEB_PLAYER})" >> $GITHUB_STEP_SUMMARY
+            echo "### 📥 [Descargar MP4 Ligero (${PREVIEW_MB} MB)](${PREVIEW_URL})" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "| Parámetro | Valor |" >> $GITHUB_STEP_SUMMARY
+            echo "|---|---|" >> $GITHUB_STEP_SUMMARY
+            echo "| **Capítulo** | ${CHAPTER} |" >> $GITHUB_STEP_SUMMARY
+            echo "| **Peso Preview Web** | **${PREVIEW_MB} MB** |" >> $GITHUB_STEP_SUMMARY
+            echo "| **Peso Master (1080p)** | ${MASTER_MB} MB |" >> $GITHUB_STEP_SUMMARY
+            echo "| **Modo** | ${{ github.event.inputs.dry_run == 'true' && '🧪 Testing (Dry-Run)' || '🚀 Producción' }} |" >> $GITHUB_STEP_SUMMARY
+          fi
+
       - name: "Save rendered video as Artifact"
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: "video-capitulo-${{ github.event.inputs.chapter_num || '1' }}"
-          path: "${{ runner.temp }}/video_capitulo_*.mp4"
+          path: |
+            ${{ runner.temp }}/video_capitulo_*.mp4
+            ${{ runner.temp }}/preview_capitulo_*.mp4
           retention-days: 7
