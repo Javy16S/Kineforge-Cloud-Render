@@ -80,6 +80,18 @@ def get_voice_for_char(char_name):
     # Por defecto
     return VOICE_MAP.get("Narrador")
 
+# Mapeo de personajes a IDs de modelos de Fish Audio (ej: 32 caracteres hexadecimales de fish.audio/m/<ID>)
+FISH_VOICE_MAP = {}
+
+def get_fish_model_id(char_name, default_model=None):
+    c_norm = char_name.strip().replace(" ", "_")
+    if c_norm in FISH_VOICE_MAP:
+        return FISH_VOICE_MAP[c_norm]
+    for k, v in FISH_VOICE_MAP.items():
+        if k.lower() in c_norm.lower() or c_norm.lower() in k.lower():
+            return v
+    return default_model
+
 KEN_BURNS_PRESETS = [
     {"start": {"x": 0.0, "y": 0.0, "w": 1.0, "h": 1.0}, "end": {"x": 0.04, "y": 0.04, "w": 0.92, "h": 0.92}},
     {"start": {"x": 0.04, "y": 0.04, "w": 0.92, "h": 0.92}, "end": {"x": 0.0, "y": 0.0, "w": 1.0, "h": 1.0}},
@@ -98,6 +110,8 @@ def parse_args():
     parser.add_argument("--music-volume", type=float, default=0.20, help="Volumen de la música de fondo (default: 0.20 = presencia destacada para banda sonora anime)")
     parser.add_argument("--assets-dir", default=None, help="Ruta a imágenes/assets (ej: E:\\Dataset_Dragon_Ball\\Ordered Images)")
     parser.add_argument("--music-dir", default=None, help="Ruta a carpeta de música (ej: E:\\Dataset_Dragon_Ball\\Music)")
+    parser.add_argument("--fish-api-key", default=None, help="API Key de Fish Audio (o variable FISH_API_KEY)")
+    parser.add_argument("--fish-default-model-id", default=None, help="ID de modelo por defecto de Fish Audio (o variable FISH_DEFAULT_MODEL_ID)")
     return parser.parse_args()
 
 def split_text_into_dynamic_cuts(text, target_words=10):
@@ -214,20 +228,85 @@ async def main():
     atomic_cuts = parse_script_with_dynamic_pacing(cap_text)
     print(f"✂️ Cortes atómicos generados: {len(atomic_cuts)} frases individuales")
 
-    # 3. Generar TTS para cada corte con Edge-TTS
-    print("\n🎙️ Generando locuciones en la nube con Edge-TTS...")
+    # 3. Generación de Voces Cinemáticas (Fish Audio SOTA con fallback garantizado a Edge-TTS)
+    fish_api_key = (args.fish_api_key or os.environ.get("FISH_API_KEY") or "").strip()
+    fish_default_model = (args.fish_default_model_id or os.environ.get("FISH_DEFAULT_MODEL_ID") or "").strip() or None
+
+    # Cargar mapa de voces personalizado si existe fish_voices.json
+    for possible_json in ["fish_voices.json", os.path.join(os.path.dirname(__file__), "fish_voices.json")]:
+        if os.path.exists(possible_json):
+            try:
+                with open(possible_json, "r", encoding="utf-8") as fv_f:
+                    custom_fish = json.load(fv_f)
+                    FISH_VOICE_MAP.update(custom_fish)
+                    print(f"🐟 Cargadas {len(custom_fish)} voces personalizadas de Fish Audio desde {possible_json}")
+            except Exception as e:
+                print(f"⚠️ Error leyendo {possible_json}: {e}")
+
+    # Inicializar cliente Fish Audio si hay clave
+    fish_session = None
+    if fish_api_key:
+        try:
+            from fish_audio_sdk import Session, TTSRequest
+            fish_session = Session(fish_api_key)
+            print("🐟 Fish Audio SOTA activado (Emoción, respiración y entonación humana natural)")
+            if fish_default_model:
+                print(f"   Modelo por defecto: {fish_default_model}")
+            if FISH_VOICE_MAP:
+                print(f"   Modelos mapeados: {list(FISH_VOICE_MAP.keys())}")
+        except Exception as e:
+            print(f"⚠️ No se pudo inicializar fish_audio_sdk: {e}. Se usará Edge-TTS.")
+            fish_session = None
+    else:
+        print("\n🎙️ Generando locuciones con Edge-TTS (Configura FISH_API_KEY en Secrets para calidad Cine)...")
+
     import edge_tts
     sem = asyncio.Semaphore(5)
+
+    def _synthesize_fish_sync(session, req, out_path):
+        with open(out_path, "wb") as f:
+            for chunk in session.tts(req):
+                f.write(chunk)
 
     async def gen_cut(idx, cut):
         async with sem:
             char = cut["character"]
             text = cut["text"]
-            cfg = get_voice_for_char(char)
             out_file = os.path.join(tts_dir, f"cut_{idx:04d}_{char}.mp3")
+            
             if not os.path.exists(out_file) or os.path.getsize(out_file) < 200:
-                comm = edge_tts.Communicate(text, cfg["voice"], rate=cfg["rate"], pitch=cfg["pitch"])
-                await comm.save(out_file)
+                generated = False
+                ref_id = get_fish_model_id(char, default_model=fish_default_model)
+
+                # Intentar primero con Fish Audio si está disponible y hay un modelo asignado
+                if fish_session and ref_id:
+                    try:
+                        req = TTSRequest(
+                            text=text,
+                            reference_id=ref_id,
+                            format="mp3",
+                            sample_rate=48000,
+                            latency="balanced"
+                        )
+                        await asyncio.to_thread(_synthesize_fish_sync, fish_session, req, out_file)
+                        if os.path.exists(out_file) and os.path.getsize(out_file) >= 200:
+                            generated = True
+                            print(f"  ✨ [Fish Audio] ({char}): {text[:35]}...")
+                    except Exception as e:
+                        print(f"  ⚠️ [Fish Audio falló para {char}: {e}]. Conmutando a Edge-TTS...")
+                        if os.path.exists(out_file):
+                            try:
+                                os.remove(out_file)
+                            except:
+                                pass
+
+                # Fallback garantizado a Edge-TTS
+                if not generated:
+                    cfg = get_voice_for_char(char)
+                    comm = edge_tts.Communicate(text, cfg["voice"], rate=cfg["rate"], pitch=cfg["pitch"])
+                    await comm.save(out_file)
+                    print(f"  🎙️ [Edge-TTS] ({char}): {text[:35]}...")
+
             dur = get_audio_duration(out_file)
             return {"idx": idx, "character": char, "text": text, "file": out_file, "duration": dur}
 

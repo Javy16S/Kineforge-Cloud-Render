@@ -7,9 +7,9 @@ on:
   workflow_dispatch:
     inputs:
       channel:
-        description: "Nombre del canal / Environment (ej: Zorojin, DrLuffycs)"
+        description: "Canal destino (Nombre del Environment en GitHub, ej: canal1, canal2)"
         required: true
-        default: "Zorojin"
+        default: "canal1"
         type: string
       history_index:
         description: "Índice de la historia en Google Sheets (0 = primera)"
@@ -17,7 +17,7 @@ on:
         default: "0"
         type: string
       chapter_num:
-        description: "Número de capítulo a producir (1..5)"
+        description: "Número de capítulo a producir (1..5 o 'full')"
         required: true
         default: "1"
         type: string
@@ -32,9 +32,9 @@ permissions:
 
 jobs:
   produce_and_upload:
-    name: "Produce and Upload Chapter"
+    name: "Produce and Upload Chapter (${{ github.event.inputs.channel || 'canal1' }})"
     runs-on: ubuntu-latest
-    environment: ${{ inputs.channel || 'Zorojin' }}
+    environment: ${{ github.event.inputs.channel || 'canal1' }}
 
     steps:
       - name: "Checkout repository and assets library"
@@ -63,25 +63,27 @@ jobs:
           YT_CLIENT_ID: ${{ secrets.YT_CLIENT_ID }}
           YT_CLIENT_SECRET: ${{ secrets.YT_CLIENT_SECRET }}
           YT_REFRESH_TOKEN: ${{ secrets.YT_REFRESH_TOKEN }}
+          FISH_API_KEY: ${{ secrets.FISH_API_KEY }}
+          FISH_DEFAULT_MODEL_ID: ${{ secrets.FISH_DEFAULT_MODEL_ID }}
         run: |
-          CHAPTER="${{ inputs.chapter_num || '1' }}"
-          HIST_IDX="${{ inputs.history_index || '0' }}"
+          HIST_IDX="${{ github.event.inputs.history_index || '0' }}"
+          CHAPTER="${{ github.event.inputs.chapter_num || '1' }}"
           DRY_RUN_FLAG=""
-          if [ "${{ inputs.dry_run }}" = "true" ]; then
+          if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then
             DRY_RUN_FLAG="--dry-run"
           fi
 
           python runner/cloud_factory.py \
-            --chapter-num "$CHAPTER" \
-            --history-index "$HIST_IDX" \
-            --work-dir "$RUNNER_TEMP/factory_work" \
-            --output-video "$RUNNER_TEMP/video_capitulo_$CHAPTER.mp4" \
-            $DRY_RUN_FLAG
+            --history-index "${HIST_IDX}" \
+            --chapter-num "${CHAPTER}" \
+            --work-dir "${RUNNER_TEMP}/factory_work" \
+            --output-video "${RUNNER_TEMP}/video_capitulo_${CHAPTER}.mp4" \
+            ${DRY_RUN_FLAG}
 
       - name: "Save rendered video as Artifact"
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: "video-capitulo-${{ inputs.chapter_num || '1' }}"
+          name: "video-capitulo-${{ github.event.inputs.chapter_num || '1' }}"
           path: "${{ runner.temp }}/video_capitulo_*.mp4"
           retention-days: 7
