@@ -70,11 +70,13 @@ def render_segment_opencv(
     height: int,
     fps: int,
     out_ts: str,
-    ffmpeg_bin: str = "ffmpeg"
+    ffmpeg_bin: str = "ffmpeg",
+    is_last_clip: bool = False
 ) -> bool:
     """
     Renderiza Ken Burns con precisión subpíxel flotante mediante OpenCV warpAffine.
     Elimina al 100% el temblor, escalonado y micro-saltos de FFmpeg zoompan.
+    Incluye fundido en negro cinematográfico si es el último clip del capítulo.
     """
     try:
         with open(full_asset_path, "rb") as f:
@@ -120,6 +122,9 @@ def render_segment_opencv(
 
         dst_pts = np.float32([[0.0, 0.0], [float(width), 0.0], [0.0, float(height)]])
 
+        fade_frames = min(dur_frames, int(2.0 * fps))
+        fade_start_frame = dur_frames - fade_frames
+
         for i in range(dur_frames):
             t = i / max(1, dur_frames - 1)
             # Smoothstep easing para un movimiento de cámara suave y cinematográfico
@@ -148,6 +153,12 @@ def render_segment_opencv(
                 flags=cv2.INTER_CUBIC,
                 borderMode=cv2.BORDER_REPLICATE
             )
+
+            # Fundido en negro en los últimos 2 segundos del capítulo
+            if is_last_clip and i >= fade_start_frame:
+                alpha = max(0.0, (dur_frames - 1 - i) / max(1, fade_frames))
+                frame = (frame.astype(np.float32) * alpha).astype(np.uint8)
+
             proc.stdin.write(frame.tobytes())
 
         proc.stdin.close()
@@ -195,8 +206,8 @@ def build_zoompan_filter(clip: Dict[str, Any], width: int, height: int, fps: int
 def render_single_segment(item):
     task_type = item[0]
     if task_type == "opencv":
-        _, full_asset_path, zoom, dur_frames, width, height, fps, out_ts, ffmpeg_bin, fallback_cmd = item
-        if render_segment_opencv(full_asset_path, zoom, dur_frames, width, height, fps, out_ts, ffmpeg_bin):
+        _, full_asset_path, zoom, dur_frames, width, height, fps, out_ts, ffmpeg_bin, fallback_cmd, is_last_clip = item
+        if render_segment_opencv(full_asset_path, zoom, dur_frames, width, height, fps, out_ts, ffmpeg_bin, is_last_clip=is_last_clip):
             return True
         # Fallback a FFmpeg si falla OpenCV en esta imagen específica
         res = subprocess.run(fallback_cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
@@ -296,8 +307,9 @@ def render_project(manifest_path: str, assets_dir: str, output_path: str, ffmpeg
         ]
 
         is_video = full_asset_path.lower().endswith((".mp4", ".mov", ".mkv", ".webm"))
+        is_last = (idx == len(clips) - 1)
         if HAS_OPENCV and not is_video:
-            segment_tasks.append(("opencv", full_asset_path, clip_zoom, dur_frames, width, height, fps, seg_ts, ffmpeg_bin, fallback_cmd))
+            segment_tasks.append(("opencv", full_asset_path, clip_zoom, dur_frames, width, height, fps, seg_ts, ffmpeg_bin, fallback_cmd, is_last))
         else:
             segment_tasks.append(("ffmpeg", fallback_cmd, seg_ts))
 
@@ -353,9 +365,11 @@ def render_project(manifest_path: str, assets_dir: str, output_path: str, ffmpeg
         # audio_inputs[0] = voz maestra TTS
         # audio_inputs[1] = musica de fondo
         music_vol = float(manifest.get("musicVolume", 0.20))
+        fade_out_dur = 3.0
+        fade_start = max(0.0, total_duration - fade_out_dur)
         filter_graph = (
             f"{audio_inputs[0]}aresample=48000,volume=1.0[v_voice];"
-            f"{audio_inputs[1]}aresample=48000,volume={music_vol:.3f}[v_music];"
+            f"{audio_inputs[1]}aresample=48000,volume={music_vol:.3f},afade=t=out:st={fade_start:.2f}:d={fade_out_dur:.2f}[v_music];"
             f"[v_voice][v_music]amix=inputs=2:duration=first:dropout_transition=0:normalize=0[a_out]"
         )
         audio_map = "[a_out]"
