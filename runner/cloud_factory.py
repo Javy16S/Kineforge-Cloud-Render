@@ -30,6 +30,16 @@ if hasattr(sys.stderr, 'reconfigure'):
 from render import render_project
 from upload_youtube import get_authenticated_service, upload_video_resumable
 
+try:
+    from voice_director import resolve_character_voice, CHARACTER_REGISTRY, FISH_CATALOG
+except ImportError:
+    try:
+        from runner.voice_director import resolve_character_voice, CHARACTER_REGISTRY, FISH_CATALOG
+    except ImportError:
+        resolve_character_voice = None
+        CHARACTER_REGISTRY = {}
+        FISH_CATALOG = {}
+
 SHEETS_CSV_URL = "https://docs.google.com/spreadsheets/d/14G4pyQLz6jGe8AW1yyU8KV4JHy1LmpF78-w1Riq3i2E/export?format=csv"
 
 VOICE_MAP = {
@@ -84,13 +94,18 @@ def get_voice_for_char(char_name):
 FISH_VOICE_MAP = {}
 
 def get_fish_model_id(char_name, default_model=None):
+    if resolve_character_voice:
+        fid, mode, rvc_m, pitch, role = resolve_character_voice(char_name)
+        if fid:
+            return fid, mode, rvc_m, pitch, role
+
     c_norm = char_name.strip().replace(" ", "_")
     if c_norm in FISH_VOICE_MAP:
-        return FISH_VOICE_MAP[c_norm]
+        return FISH_VOICE_MAP[c_norm], "direct", None, 0, "Personalizado"
     for k, v in FISH_VOICE_MAP.items():
         if k.lower() in c_norm.lower() or c_norm.lower() in k.lower():
-            return v
-    return default_model
+            return v, "direct", None, 0, "Personalizado"
+    return default_model, "direct", None, 0, "Default"
 
 KEN_BURNS_PRESETS = [
     {"start": {"x": 0.0, "y": 0.0, "w": 1.0, "h": 1.0}, "end": {"x": 0.04, "y": 0.04, "w": 0.92, "h": 0.92}},
@@ -268,6 +283,49 @@ async def main():
             for chunk in session.tts(req):
                 f.write(chunk)
 
+    def _apply_rvc_if_available(audio_path, rvc_model_name, pitch_shift=0):
+        """Aplica RVC al audio sintetizado si el modelo .pth está disponible localmente o en la nube"""
+        if not rvc_model_name:
+            return False
+        
+        # Buscar modelo .pth en posibles rutas
+        model_candidates = [
+            f"resources/models/rvc/{rvc_model_name}.pth",
+            f"models/rvc/{rvc_model_name}.pth",
+            f"rvc_models/{rvc_model_name}.pth",
+            os.path.join(os.path.dirname(__file__), "..", "resources", "models", "rvc", f"{rvc_model_name}.pth")
+        ]
+        model_path = None
+        for cand in model_candidates:
+            if os.path.exists(cand):
+                model_path = os.path.abspath(cand)
+                break
+                
+        if not model_path:
+            return False
+            
+        try:
+            import torch
+            from rvc_python.infer import RVCInference
+            device = "cuda" if torch.cuda.is_available() else "cpu"
+            rvc_engine = RVCInference(device=device)
+            temp_rvc_out = audio_path.replace(".mp3", "_rvc.wav")
+            rvc_engine.infer_file(
+                input_path=audio_path,
+                model_path=model_path,
+                output_path=temp_rvc_out,
+                f0_up_key=pitch_shift
+            )
+            if os.path.exists(temp_rvc_out) and os.path.getsize(temp_rvc_out) > 200:
+                # Convertir de vuelta a MP3 48kHz
+                subprocess.run(["ffmpeg", "-y", "-i", temp_rvc_out, "-ar", "48000", "-b:a", "192k", audio_path], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                try: os.remove(temp_rvc_out)
+                except: pass
+                return True
+        except Exception as e:
+            print(f"    ⚠️ RVC post-processing no disponible ({e}). Se mantiene audio Fish Audio original.")
+        return False
+
     async def gen_cut(idx, cut):
         async with sem:
             char = cut["character"]
@@ -276,7 +334,7 @@ async def main():
             
             if not os.path.exists(out_file) or os.path.getsize(out_file) < 200:
                 generated = False
-                ref_id = get_fish_model_id(char, default_model=fish_default_model)
+                ref_id, mode, rvc_model, pitch, role = get_fish_model_id(char, default_model=fish_default_model)
 
                 # Intentar primero con Fish Audio si está disponible y hay un modelo asignado
                 if fish_session and ref_id:
@@ -291,7 +349,16 @@ async def main():
                         await asyncio.to_thread(_synthesize_fish_sync, fish_session, req, out_file)
                         if os.path.exists(out_file) and os.path.getsize(out_file) >= 200:
                             generated = True
-                            print(f"  ✨ [Fish Audio] ({char}): {text[:35]}...")
+                            
+                            # Si el personaje está configurado para RVC, intentar aplicar el timbre del actor
+                            applied_rvc = False
+                            if mode == "rvc" and rvc_model:
+                                applied_rvc = await asyncio.to_thread(_apply_rvc_if_available, out_file, rvc_model, pitch)
+                                
+                            if applied_rvc:
+                                print(f"  🎭 [Fish Audio + RVC: {rvc_model}] ({char} - {role}): {text[:35]}...")
+                            else:
+                                print(f"  ✨ [Fish Audio Directo] ({char} - {role}): {text[:35]}...")
                     except Exception as e:
                         print(f"  ⚠️ [Fish Audio falló para {char}: {e}]. Conmutando a Edge-TTS...")
                         if os.path.exists(out_file):
