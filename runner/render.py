@@ -20,6 +20,13 @@ if hasattr(sys.stdout, 'reconfigure'):
 if hasattr(sys.stderr, 'reconfigure'):
     sys.stderr.reconfigure(encoding='utf-8', errors='replace')
 
+try:
+    import cv2
+    import numpy as np
+    HAS_OPENCV = True
+except ImportError:
+    HAS_OPENCV = False
+
 RESOLUTION_MAP = {
     '16:9': {'width': 1920, 'height': 1080},
     '9:16': {'width': 1080, 'height': 1920},
@@ -33,12 +40,125 @@ def parse_args():
     parser.add_argument("--ffmpeg-bin", default="ffmpeg", help="Binario de FFmpeg a usar")
     return parser.parse_args()
 
+def prepare_base_canvas(img: np.ndarray, target_w: int, target_h: int) -> np.ndarray:
+    """
+    Escala la imagen manteniendo relación de aspecto y recortando el sobrante centrado
+    (equivalente perfecto a force_original_aspect_ratio=increase, crop=w:h).
+    """
+    img_h, img_w = img.shape[:2]
+    scale = max(target_w / img_w, target_h / img_h)
+    new_w = max(target_w, int(round(img_w * scale)))
+    new_h = max(target_h, int(round(img_h * scale)))
+    
+    interp = cv2.INTER_AREA if scale < 1.0 else cv2.INTER_CUBIC
+    resized = cv2.resize(img, (new_w, new_h), interpolation=interp)
+    
+    start_x = max(0, (new_w - target_w) // 2)
+    start_y = max(0, (new_h - target_h) // 2)
+    canvas = resized[start_y:start_y + target_h, start_x:start_x + target_w]
+    
+    if canvas.shape[1] != target_w or canvas.shape[0] != target_h:
+        canvas = cv2.resize(canvas, (target_w, target_h), interpolation=cv2.INTER_LINEAR)
+        
+    return canvas
+
+def render_segment_opencv(
+    full_asset_path: str,
+    zoom: Dict[str, Any],
+    dur_frames: int,
+    width: int,
+    height: int,
+    fps: int,
+    out_ts: str,
+    ffmpeg_bin: str = "ffmpeg"
+) -> bool:
+    """
+    Renderiza Ken Burns con precisión subpíxel flotante mediante OpenCV warpAffine.
+    Elimina al 100% el temblor, escalonado y micro-saltos de FFmpeg zoompan.
+    """
+    try:
+        with open(full_asset_path, "rb") as f:
+            file_bytes = np.frombuffer(f.read(), dtype=np.uint8)
+        img = cv2.imdecode(file_bytes, cv2.IMREAD_COLOR)
+        if img is None:
+            return False
+
+        base_canvas = prepare_base_canvas(img, width, height)
+
+        start = zoom.get("start", {"x": 0.0, "y": 0.0, "w": 1.0, "h": 1.0})
+        end = zoom.get("end", {"x": 0.0, "y": 0.0, "w": 1.0, "h": 1.0})
+
+        start_w = max(0.01, float(start.get("w", 1.0)))
+        end_w = max(0.01, float(end.get("w", 1.0)))
+        start_x = float(start.get("x", 0.0))
+        end_x = float(end.get("x", 0.0))
+        start_y = float(start.get("y", 0.0))
+        end_y = float(end.get("y", 0.0))
+
+        ffmpeg_cmd = [
+            ffmpeg_bin, "-y",
+            "-f", "rawvideo",
+            "-pix_fmt", "bgr24",
+            "-s", f"{width}x{height}",
+            "-r", str(fps),
+            "-i", "-",
+            "-frames:v", str(dur_frames),
+            "-c:v", "libx264",
+            "-preset", "ultrafast",
+            "-crf", "20",
+            "-pix_fmt", "yuv420p",
+            "-f", "mpegts",
+            out_ts
+        ]
+
+        proc = subprocess.Popen(
+            ffmpeg_cmd,
+            stdin=subprocess.PIPE,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL
+        )
+
+        dst_pts = np.float32([[0.0, 0.0], [float(width), 0.0], [0.0, float(height)]])
+
+        for i in range(dur_frames):
+            t = i / max(1, dur_frames - 1)
+            # Smoothstep easing para un movimiento de cámara suave y cinematográfico
+            ease = t * t * (3.0 - 2.0 * t)
+
+            cur_w = start_w + (end_w - start_w) * ease
+            cur_x = start_x + (end_x - start_x) * ease
+            cur_y = start_y + (end_y - start_y) * ease
+
+            crop_w = cur_w * width
+            crop_h = cur_w * height
+            crop_x = np.clip(cur_x * width, 0.0, max(0.0, width - crop_w))
+            crop_y = np.clip(cur_y * height, 0.0, max(0.0, height - crop_h))
+
+            src_pts = np.float32([
+                [crop_x, crop_y],
+                [crop_x + crop_w, crop_y],
+                [crop_x, crop_y + crop_h]
+            ])
+
+            M = cv2.getAffineTransform(src_pts, dst_pts)
+            frame = cv2.warpAffine(
+                base_canvas,
+                M,
+                (width, height),
+                flags=cv2.INTER_CUBIC,
+                borderMode=cv2.BORDER_REPLICATE
+            )
+            proc.stdin.write(frame.tobytes())
+
+        proc.stdin.close()
+        proc.wait()
+        return proc.returncode == 0 and os.path.exists(out_ts) and os.path.getsize(out_ts) > 100
+    except Exception:
+        return False
+
 def build_zoompan_filter(clip: Dict[str, Any], width: int, height: int, fps: int = 30) -> Tuple[str, int]:
     """
-    Construye el filtro Ken Burns con la fórmula oficial de KineForge:
-    1. Pre-escalado inteligente a 16:9 (force_original_aspect_ratio=increase,crop)
-    2. Clamp estricto max(0, min(iw-iw/zoom, ...)) para evitar bordes cortados
-    3. Interpolación suave de zoom y encuadre
+    Filtro de respaldo con FFmpeg zoompan en caso de no disponer de OpenCV.
     """
     dur_frames = max(1, int(float(clip.get("duration", 5.0)) * fps))
     zoom = clip.get("zoom", {})
@@ -62,7 +182,6 @@ def build_zoompan_filter(clip: Dict[str, Any], width: int, height: int, fps: int
     x_expr = f"max(0\\,min(iw-iw/zoom\\,{x_offset}*iw))"
     y_expr = f"max(0\\,min(ih-ih/zoom\\,{y_offset}*ih))"
 
-    # Supersampling 2x (lienzo interno 3840x2160 en 16:9) para eliminar tirones por redondeo de enteros
     internal_w = width * 2
     internal_h = height * 2
 
@@ -74,9 +193,19 @@ def build_zoompan_filter(clip: Dict[str, Any], width: int, height: int, fps: int
     return vf, dur_frames
 
 def render_single_segment(item):
-    cmd, out_ts = item
-    res = subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-    return res.returncode == 0 and os.path.exists(out_ts) and os.path.getsize(out_ts) > 100
+    task_type = item[0]
+    if task_type == "opencv":
+        _, full_asset_path, zoom, dur_frames, width, height, fps, out_ts, ffmpeg_bin, fallback_cmd = item
+        if render_segment_opencv(full_asset_path, zoom, dur_frames, width, height, fps, out_ts, ffmpeg_bin):
+            return True
+        # Fallback a FFmpeg si falla OpenCV en esta imagen específica
+        res = subprocess.run(fallback_cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        return res.returncode == 0 and os.path.exists(out_ts) and os.path.getsize(out_ts) > 100
+    elif task_type == "ffmpeg":
+        _, cmd, out_ts = item
+        res = subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        return res.returncode == 0 and os.path.exists(out_ts) and os.path.getsize(out_ts) > 100
+    return False
 
 def render_project(manifest_path: str, assets_dir: str, output_path: str, ffmpeg_bin: str = "ffmpeg"):
     start_time = time.time()
@@ -148,13 +277,16 @@ def render_project(manifest_path: str, assets_dir: str, output_path: str, ffmpeg
                 "-c:v", "libx264", "-preset", "ultrafast", "-crf", "20",
                 "-f", "mpegts", gap_ts
             ]
-            segment_tasks.append((gap_cmd, gap_ts))
+            segment_tasks.append(("ffmpeg", gap_cmd, gap_ts))
             segment_files.append(gap_ts)
             gap_counter += 1
 
         seg_ts = os.path.join(seg_dir, f"seg_{idx:04d}.ts")
-        zoom_vf, dur_frames = build_zoompan_filter({"duration": clip_dur, "zoom": clip.get("zoom", {})}, width, height, fps)
-        cmd = [
+        dur_frames = max(1, int(round(clip_dur * fps)))
+        clip_zoom = clip.get("zoom", {})
+
+        zoom_vf, _ = build_zoompan_filter({"duration": clip_dur, "zoom": clip_zoom}, width, height, fps)
+        fallback_cmd = [
             ffmpeg_bin, "-y",
             "-i", full_asset_path,
             "-vf", zoom_vf,
@@ -162,12 +294,18 @@ def render_project(manifest_path: str, assets_dir: str, output_path: str, ffmpeg
             "-c:v", "libx264", "-preset", "ultrafast", "-crf", "20",
             "-f", "mpegts", seg_ts
         ]
-        segment_tasks.append((cmd, seg_ts))
-        segment_files.append(seg_ts)
 
+        is_video = full_asset_path.lower().endswith((".mp4", ".mov", ".mkv", ".webm"))
+        if HAS_OPENCV and not is_video:
+            segment_tasks.append(("opencv", full_asset_path, clip_zoom, dur_frames, width, height, fps, seg_ts, ffmpeg_bin, fallback_cmd))
+        else:
+            segment_tasks.append(("ffmpeg", fallback_cmd, seg_ts))
+
+        segment_files.append(seg_ts)
         current_timeline_time = clip_end
 
-    print(f"\n🎬 Renderizando {len(segment_tasks)} segmentos de vídeo en paralelo (2 hilos CPU)...")
+    engine_desc = "OpenCV Subpixel Continuous Precision (Butter-Smooth)" if HAS_OPENCV else "FFmpeg zoompan (Fallback)"
+    print(f"\n🎬 Renderizando {len(segment_tasks)} segmentos de vídeo en paralelo ({engine_desc})...")
     t0 = time.time()
     
     with ThreadPoolExecutor(max_workers=2) as executor:
