@@ -354,15 +354,15 @@ def render_project(manifest_path: str, assets_dir: str, output_path: str, ffmpeg
         # audio_inputs[1] = musica de fondo
         music_vol = float(manifest.get("musicVolume", 0.20))
         filter_graph = (
-            f"{audio_inputs[0]}volume=1.0[v_voice];"
-            f"{audio_inputs[1]}volume={music_vol:.3f}[v_music];"
-            f"[v_voice][v_music]amix=inputs=2:duration=first:dropout_transition=2[a_out]"
+            f"{audio_inputs[0]}aresample=48000,volume=1.0[v_voice];"
+            f"{audio_inputs[1]}aresample=48000,volume={music_vol:.3f}[v_music];"
+            f"[v_voice][v_music]amix=inputs=2:duration=first:dropout_transition=0:normalize=0[a_out]"
         )
         audio_map = "[a_out]"
     elif len(audio_inputs) == 1:
         audio_map = audio_inputs[0]
     else:
-        final_inputs.extend(["-f", "lavfi", "-i", "anullsrc=r=44100:cl=stereo"])
+        final_inputs.extend(["-f", "lavfi", "-i", "anullsrc=r=48000:cl=stereo"])
         audio_map = f"[{input_idx}:a]"
 
     final_cmd = final_inputs
@@ -374,7 +374,7 @@ def render_project(manifest_path: str, assets_dir: str, output_path: str, ffmpeg
 
     final_cmd.extend([
         "-c:v", "copy",
-        "-c:a", "aac", "-b:a", "192k",
+        "-c:a", "aac", "-b:a", "192k", "-ar", "48000",
         "-shortest",
         output_path
     ])

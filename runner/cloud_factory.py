@@ -236,9 +236,9 @@ async def main():
     audio_segments = sorted(audio_segments, key=lambda x: x["idx"])
     print(f"✅ {len(audio_segments)} audios generados.")
 
-    # 4. Master Audio con 4.0s de intro Zorojin
+    # 4. Master Audio con 4.0s de intro Zorojin (Normalizado a 48kHz Estéreo Broadcast)
     silence_4s = os.path.join(tts_dir, "silence_4s.mp3")
-    subprocess.run(["ffmpeg", "-y", "-f", "lavfi", "-i", "anullsrc=r=44100:cl=stereo", "-t", "4.0", silence_4s], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    subprocess.run(["ffmpeg", "-y", "-f", "lavfi", "-i", "anullsrc=r=48000:cl=stereo", "-t", "4.0", silence_4s], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     silence_4s_esc = os.path.abspath(silence_4s).replace("\\", "/")
     concat_audio_txt = os.path.join(tts_dir, "concat_audio.txt")
     with open(concat_audio_txt, "w", encoding="utf-8") as af_txt:
@@ -248,9 +248,9 @@ async def main():
             af_txt.write(f"file '{f_esc}'\n")
 
     master_audio = os.path.join(assets_dir, "audio_master.mp3")
-    subprocess.run(["ffmpeg", "-y", "-f", "concat", "-safe", "0", "-i", concat_audio_txt, "-c", "copy", master_audio], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    subprocess.run(["ffmpeg", "-y", "-f", "concat", "-safe", "0", "-i", concat_audio_txt, "-ar", "48000", "-ac", "2", "-c:a", "libmp3lame", "-b:a", "192k", master_audio], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     total_duration = get_audio_duration(master_audio)
-    print(f"🎧 Master Audio compilado: {total_duration:.2f}s (~{total_duration/60:.1f} min)")
+    print(f"🎧 Master Audio compilado (48kHz Estéreo): {total_duration:.2f}s (~{total_duration/60:.1f} min)")
 
     # 5. Detección Inteligente de Assets y Música (Dataset E:\Dataset_Dragon_Ball o assets_library)
     repo_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
