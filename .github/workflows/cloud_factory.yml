@@ -116,8 +116,16 @@ jobs:
 
           if [ -f "$PREVIEW" ]; then
             echo "🚀 Subiendo preview a GitHub Releases..."
-            gh release create "$TAG" --title "KineForge Video Previews" --notes "Previsualizaciones automáticas para streaming en navegadores y móviles" --clobber 2>/dev/null || true
-            gh release upload "$TAG" "$PREVIEW" --clobber
+            if gh release view "$TAG" >/dev/null 2>&1; then
+              echo "Release $TAG ya existe. Actualizando preview con --clobber..."
+              gh release upload "$TAG" "$PREVIEW" --clobber || true
+            else
+              echo "Release $TAG no existe aún. Creando release y subiendo preview..."
+              gh release create "$TAG" "$PREVIEW" \
+                --title "KineForge Video Previews" \
+                --notes "Previsualizaciones automáticas para streaming en navegadores y móviles" \
+                --target main || true
+            fi
 
             PREVIEW_URL="https://github.com/${{ github.repository }}/releases/download/${TAG}/preview_capitulo_${CHAPTER}.mp4"
             WEB_PLAYER="https://javy16s.github.io/Kineforge-Cloud-Render/?ch=${CHAPTER}"
