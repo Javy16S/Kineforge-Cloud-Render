@@ -7,9 +7,9 @@ on:
   workflow_dispatch:
     inputs:
       channel:
-        description: "Canal destino (Nombre del Environment en GitHub, ej: canal1, canal2)"
+        description: "Canal destino (Nombre del Environment en GitHub, ej: Zorojin, Trunkten)"
         required: true
-        default: "canal1"
+        default: "Zorojin"
         type: string
       history_index:
         description: "Índice de la historia en Google Sheets (0 = primera)"
@@ -32,9 +32,9 @@ permissions:
 
 jobs:
   produce_and_upload:
-    name: "Produce and Upload Chapter (${{ github.event.inputs.channel || 'canal1' }})"
+    name: "Produce and Upload Chapter (${{ github.event.inputs.channel || 'Zorojin' }})"
     runs-on: ubuntu-latest
-    environment: ${{ github.event.inputs.channel || 'canal1' }}
+    environment: ${{ github.event.inputs.channel || 'Zorojin' }}
 
     steps:
       - name: "Checkout repository and assets library"
