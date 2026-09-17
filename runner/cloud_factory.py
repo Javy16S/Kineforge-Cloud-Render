@@ -246,7 +246,7 @@ async def main():
 
     # 3. Generación de Voces Cinemáticas (Fish Audio SOTA con fallback garantizado a Edge-TTS)
     fish_api_key = (args.fish_api_key or os.environ.get("FISH_API_KEY") or "").strip()
-    fish_default_model = (args.fish_default_model_id or os.environ.get("FISH_DEFAULT_MODEL_ID") or "").strip() or None
+    fish_default_model = (args.fish_default_model_id or os.environ.get("FISH_DEFAULT_MODEL_ID") or "").strip() or "3f45a7fd7a614655a61eb7027b955783"
 
     # Cargar mapa de voces personalizado si existe fish_voices.json
     for possible_json in ["fish_voices.json", os.path.join(os.path.dirname(__file__), "fish_voices.json")]:
