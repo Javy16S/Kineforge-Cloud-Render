@@ -538,7 +538,7 @@ async def main():
                 self.scens_dir = assets_lib_dir
             
             self.pools = {}
-            self.current_scenario = "Habitación del Tiempo"
+            self.current_scenario = "Planeta Tierra"
             self.current_char = "Goku"
             self.current_phase = "Base"
 
@@ -640,9 +640,19 @@ async def main():
                 "namek": "planetanamek",
                 "namekusei": "planetanamek",
                 "tierra": "planetatierra",
+                "planetatierra": "planetatierra",
+                "montepaoz": "planetatierra",
+                "paoz": "planetatierra",
+                "corporacioncapsula": "planetatierra",
+                "capsulecorp": "planetatierra",
+                "capsula": "planetatierra",
                 "kamehouse": "planetatierra",
                 "habitacion": "habitaciondeltiempo",
+                "habitaciondeltiempo": "habitaciondeltiempo",
                 "saladeltiempo": "habitaciondeltiempo",
+                "templo": "habitaciondeltiempo",
+                "templosagrado": "habitaciondeltiempo",
+                "kamisama": "habitaciondeltiempo",
                 "espacio": "espacio",
                 "universo": "espacio",
                 "bills": "planetabills",
@@ -756,7 +766,7 @@ async def main():
             for k, folder in self.scen_map.items():
                 if k in clean_scen or clean_scen in k:
                     return folder
-            return "Habitación del Tiempo"
+            return "Planeta Tierra"
 
         def get_scenario_image(self, scenario_name=None):
             target = scenario_name or self.current_scenario
@@ -903,15 +913,15 @@ async def main():
 
                 # 5. Búsqueda semántica de escenario en texto
                 scen_keywords = {
-                    "Habitación del Tiempo": ["habitación del tiempo", "puerta", "vacío", "vacio", "blanco", "reloj", "gravedad", "dimensión blanca"],
-                    "Planeta Namek": ["namek", "namekusei", "cielo verde", "agua verde", "esferas del dragón"],
-                    "Planeta Tierra": ["tierra", "kame house", "montañas", "ciudad", "isla", "cielo azul", "bosque"],
-                    "Espacio": ["espacio", "universo", "galaxias", "estrellas", "nave", "vacío cósmico"],
+                    "Habitación del Tiempo": ["habitación del tiempo", "habitacion del tiempo", "sala del tiempo", "templo sagrado", "kami-sama", "kamisama", "templo de kami", "palacio sagrado", "puerta mística", "puerta mistica", "vacío blanco", "vacio blanco", "dimensión blanca", "reloj de arena", "reloj gigante", "gravedad aumentada"],
+                    "Planeta Namek": ["namek", "namekusei", "cielo verde", "agua verde", "esferas del dragón", "esferas del dragon"],
+                    "Planeta Tierra": ["tierra", "planeta tierra", "monte paoz", "paoz", "casa", "bosque", "montaña", "montanas", "montañas", "corporación cápsula", "corporacion capsula", "capsula", "cápsula", "capital del oeste", "kame house", "ciudad", "isla", "cielo azul", "patio", "patio de entrenamiento", "laboratorio"],
+                    "Espacio": ["espacio", "universo", "galaxias", "estrellas", "nave", "vacío cósmico", "vacio cosmico"],
                     "Planeta Bills": ["bills", "árbol", "arbol", "pirámide", "piramide", "whis", "templo de bills"],
                     "Templo Zeno Sama": ["zeno", "zeno sama", "templo zeno", "palacio de zeno"],
                     "Planeta Vegetta": ["planeta vegeta", "planeta vegetta", "reino saiyajin"],
                     "Planeta Kaioshin": ["kaioshin", "mundo supremo", "árbol sagrado", "tierra sagrada"],
-                    "Extras": ["destrucción", "combate", "pelea", "explosión", "cráter", "ring", "torneo"]
+                    "Extras": ["destrucción", "destruccion", "combate", "pelea", "explosión", "explosion", "cráter", "crater", "ring", "torneo"]
                 }
                 for scen, kws in scen_keywords.items():
                     if any(k in text for k in kws):
