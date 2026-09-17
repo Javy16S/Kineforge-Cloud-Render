@@ -21,6 +21,7 @@ import asyncio
 import argparse
 import subprocess
 import urllib.request
+import requests
 
 if hasattr(sys.stdout, 'reconfigure'):
     sys.stdout.reconfigure(encoding='utf-8', errors='replace')
@@ -275,13 +276,48 @@ async def main():
     else:
         print("\n🎙️ Generando locuciones con Edge-TTS (Configura FISH_API_KEY en Secrets para calidad Cine)...")
 
-    import edge_tts
-    sem = asyncio.Semaphore(5)
+    fish_backend = (os.environ.get("FISH_BACKEND") or "s2.1-pro-free").strip()
 
-    def _synthesize_fish_sync(session, req, out_path):
-        with open(out_path, "wb") as f:
-            for chunk in session.tts(req):
-                f.write(chunk)
+    def _synthesize_fish_sync(session, req, out_path, api_key=None, ref_id=None):
+        """Sintetiza usando el backend gratuito s2.1-pro-free (sin cuota de pago)"""
+        try:
+            with open(out_path, "wb") as f:
+                for chunk in session.tts(req, backend=fish_backend):
+                    f.write(chunk)
+            if os.path.exists(out_path) and os.path.getsize(out_path) >= 200:
+                return
+        except Exception as err:
+            # Si el SDK falla o da 402 Payment Required, usar llamada directa HTTP con cabecera model: s2.1-pro-free
+            if api_key:
+                try:
+                    import requests as http_req
+                    payload = {
+                        "text": req.text,
+                        "format": "mp3",
+                        "sample_rate": 48000
+                    }
+                    if ref_id:
+                        payload["reference_id"] = ref_id
+                    
+                    resp = http_req.post(
+                        "https://api.fish.audio/v1/tts",
+                        headers={
+                            "Authorization": f"Bearer {api_key}",
+                            "Content-Type": "application/json",
+                            "model": "s2.1-pro-free"
+                        },
+                        json=payload,
+                        timeout=30
+                    )
+                    if resp.status_code == 200 and len(resp.content) >= 200:
+                        with open(out_path, "wb") as f:
+                            f.write(resp.content)
+                        return
+                    else:
+                        raise Exception(f"HTTP {resp.status_code}: {resp.text[:100]}")
+                except Exception as http_err:
+                    raise Exception(f"SDK err: {err} | HTTP err: {http_err}")
+            raise err
 
     def _apply_rvc_if_available(audio_path, rvc_model_name, pitch_shift=0):
         """Aplica RVC al audio sintetizado si el modelo .pth está disponible localmente o en la nube"""
@@ -346,7 +382,7 @@ async def main():
                             sample_rate=48000,
                             latency="balanced"
                         )
-                        await asyncio.to_thread(_synthesize_fish_sync, fish_session, req, out_file)
+                        await asyncio.to_thread(_synthesize_fish_sync, fish_session, req, out_file, api_key=fish_api_key, ref_id=ref_id)
                         if os.path.exists(out_file) and os.path.getsize(out_file) >= 200:
                             generated = True
                             
