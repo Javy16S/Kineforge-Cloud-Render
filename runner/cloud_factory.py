@@ -296,7 +296,7 @@ async def main():
                     payload = {
                         "text": req.text,
                         "format": "mp3",
-                        "sample_rate": 48000
+                        "sample_rate": 44100
                     }
                     if ref_id:
                         payload["reference_id"] = ref_id
@@ -381,7 +381,7 @@ async def main():
                             text=text,
                             reference_id=ref_id,
                             format="mp3",
-                            sample_rate=48000,
+                            sample_rate=44100,
                             latency="balanced"
                         )
                         await asyncio.to_thread(_synthesize_fish_sync, fish_session, req, out_file, api_key=fish_api_key, ref_id=ref_id)
