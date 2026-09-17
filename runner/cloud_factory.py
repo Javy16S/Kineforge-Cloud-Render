@@ -276,6 +276,8 @@ async def main():
     else:
         print("\n🎙️ Generando locuciones con Edge-TTS (Configura FISH_API_KEY en Secrets para calidad Cine)...")
 
+    import edge_tts
+    sem = asyncio.Semaphore(5)
     fish_backend = (os.environ.get("FISH_BACKEND") or "s2.1-pro-free").strip()
 
     def _synthesize_fish_sync(session, req, out_path, api_key=None, ref_id=None):
