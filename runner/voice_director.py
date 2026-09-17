@@ -35,11 +35,11 @@ FISH_CATALOG = {
 
 # Registro Maestro de Personajes: Mapeo de Personaje -> (Voz Fish Audio, Modo [direct/rvc], Modelo RVC, Semitonos Pitch)
 CHARACTER_REGISTRY = {
-    # 🎙️ NARRACIÓN
+    # 🎙️ NARRACIÓN (100% Pura Fish Audio SOTA)
     "Narrador": {
         "fish_id": FISH_CATALOG["narrador"],
-        "mode": "rvc",
-        "rvc_model": "JoseLavat",
+        "mode": "direct",
+        "rvc_model": None,
         "pitch": 0,
         "role": "Narrador Épico Dragon Ball"
     },
