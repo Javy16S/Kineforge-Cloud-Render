@@ -26,8 +26,8 @@ FISH_CATALOG = {
     "narrador": "3f45a7fd7a614655a61eb7027b955783",
     "masculino_1": "dc0746cd45dd40deb6bca32dc87fd7f5",
     "masculino_2": "f4210324af9d4a28a9cfe15f74a9cd84",
-    "masculino_3": "dfa5b230c8054f429e434f4a6e9bbdec",
-    "masculino_4": "dfa5b230c8054f429e434f4a6e9bbdec",
+    "masculino_3": "b6054754fb8041f8ae2d146f8a77d426",  # Ippo Makunouchi (Doblaje Latino Heroico)
+    "masculino_4": "b6054754fb8041f8ae2d146f8a77d426",
     "femenino_1": "bfed5c0810a347dbb62e8ccce7f59c48",
     "femenino_2": "e296306da5d449999f6e35c2b9f60aea",
     "femenino_medio": "e296306da5d449999f6e35c2b9f60aea"
@@ -44,32 +44,32 @@ CHARACTER_REGISTRY = {
         "role": "Narrador Épico Dragon Ball"
     },
 
-    # ⚔️ PROTAGONISTAS HEROICOS (Masculino 3 - Voz Muy Buena)
+    # ⚔️ PROTAGONISTAS HEROICOS (Masculino 3 - Ippo Doblaje Latino)
     "Goku": {
         "fish_id": FISH_CATALOG["masculino_3"],
         "mode": "direct",
-        "rvc_model": "Goku",
+        "rvc_model": None,
         "pitch": 0,
         "role": "Guerrero Saiyajin Heroico"
     },
     "Luffy": {
         "fish_id": FISH_CATALOG["masculino_3"],
         "mode": "direct",
-        "rvc_model": "Luffy",
+        "rvc_model": None,
         "pitch": 0,
         "role": "Capitán Pirata Enérgico"
     },
     "Gohan": {
         "fish_id": FISH_CATALOG["masculino_3"],
         "mode": "direct",
-        "rvc_model": "Gohan",
+        "rvc_model": None,
         "pitch": 0,
         "role": "Héroe Híbrido Noble"
     },
     "Trunks": {
         "fish_id": FISH_CATALOG["masculino_4"],
         "mode": "direct",
-        "rvc_model": "Trunks",
+        "rvc_model": None,
         "pitch": 0,
         "role": "Guerrero del Futuro"
     },
