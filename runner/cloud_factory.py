@@ -398,17 +398,27 @@ async def main():
                             if mode == "rvc" and rvc_model:
                                 applied_rvc = await asyncio.to_thread(_apply_rvc_if_available, out_file, rvc_model, pitch)
                                 
-                            # Aplicar boost de ganancia específico del personaje para igualar al Narrador (ej. Goku +6.5 dB)
+                            # Aplicar modulación de tono (pitch) y ganancia (gain_db) en post-procesado
+                            af_filters = []
+                            if pitch and pitch != 0 and not applied_rvc:
+                                ratio = 2.0 ** (float(pitch) / 12.0)
+                                new_rate = int(round(44100 * ratio))
+                                tempo = 1.0 / ratio
+                                af_filters.append(f"asetrate={new_rate},atempo={tempo:.5f},aresample=44100")
                             if gain_db and gain_db != 0.0:
-                                temp_boost = out_file.replace(".mp3", "_boost.mp3")
-                                subprocess.run(["ffmpeg", "-y", "-i", out_file, "-af", f"volume={gain_db:+.1f}dB", "-c:a", "libmp3lame", "-b:a", "192k", temp_boost], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-                                if os.path.exists(temp_boost) and os.path.getsize(temp_boost) > 200:
-                                    os.replace(temp_boost, out_file)
+                                af_filters.append(f"volume={gain_db:+.1f}dB")
+                            
+                            if af_filters:
+                                temp_mod = out_file.replace(".mp3", "_mod.mp3")
+                                subprocess.run(["ffmpeg", "-y", "-i", out_file, "-af", ",".join(af_filters), "-c:a", "libmp3lame", "-b:a", "192k", temp_mod], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                                if os.path.exists(temp_mod) and os.path.getsize(temp_mod) > 200:
+                                    os.replace(temp_mod, out_file)
                                 
+                            pitch_tag = f" | Pitch: {pitch:+.1f}st" if pitch else ""
                             if applied_rvc:
-                                print(f"  🎭 [Fish Audio + RVC: {rvc_model}] ({char} - {role} | {gain_db:+.1f}dB): {text[:35]}...")
+                                print(f"  🎭 [Fish Audio + RVC: {rvc_model}] ({char} - {role} | {gain_db:+.1f}dB{pitch_tag}): {text[:35]}...")
                             else:
-                                print(f"  ✨ [Fish Audio Directo] ({char} - {role} | {gain_db:+.1f}dB): {text[:35]}...")
+                                print(f"  ✨ [Fish Audio Directo] ({char} - {role} | {gain_db:+.1f}dB{pitch_tag}): {text[:35]}...")
                     except Exception as e:
                         print(f"  ⚠️ [Fish Audio falló para {char}: {e}]. Conmutando a Edge-TTS...")
                         if os.path.exists(out_file):

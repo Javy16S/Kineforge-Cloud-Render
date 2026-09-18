@@ -142,15 +142,33 @@ CHARACTER_REGISTRY = {
         "fish_id": FISH_CATALOG["masculino_1"],
         "mode": "direct",
         "rvc_model": "Bills",
-        "pitch": 0,
-        "role": "Dios de la Destrucción"
+        "pitch": -1.5,
+        "gain_db": 4.5,
+        "role": "Dios de la Destrucción Imponente"
+    },
+    "Beerus": {
+        "fish_id": FISH_CATALOG["masculino_1"],
+        "mode": "direct",
+        "rvc_model": "Bills",
+        "pitch": -1.5,
+        "gain_db": 4.5,
+        "role": "Dios de la Destrucción Imponente"
+    },
+    "Bills": {
+        "fish_id": FISH_CATALOG["masculino_1"],
+        "mode": "direct",
+        "rvc_model": "Bills",
+        "pitch": -1.5,
+        "gain_db": 4.5,
+        "role": "Dios de la Destrucción Imponente"
     },
     "Whis": {
-        "fish_id": FISH_CATALOG["masculino_3"],
+        "fish_id": FISH_CATALOG["masculino_2"],
         "mode": "direct",
         "rvc_model": "Whis",
-        "pitch": +1,
-        "role": "Ángel Guía Refinado"
+        "pitch": +2.5,
+        "gain_db": 5.0,
+        "role": "Ángel Guía Aristocrático y Refinado"
     },
     "Muten_Roshi": {
         "fish_id": FISH_CATALOG["masculino_1"],
