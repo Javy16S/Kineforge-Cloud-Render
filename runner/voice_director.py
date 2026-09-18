@@ -170,6 +170,30 @@ CHARACTER_REGISTRY = {
         "gain_db": 5.0,
         "role": "Ángel Guía Aristocrático y Refinado"
     },
+    "Jiren": {
+        "fish_id": FISH_CATALOG["masculino_1"],
+        "mode": "direct",
+        "rvc_model": "Jiren",
+        "pitch": -2.0,
+        "gain_db": 4.5,
+        "role": "Guerrero Implacable y Sobrecogedor"
+    },
+    "Sombra_de_Jiren": {
+        "fish_id": FISH_CATALOG["masculino_1"],
+        "mode": "direct",
+        "rvc_model": "Jiren",
+        "pitch": -2.0,
+        "gain_db": 4.5,
+        "role": "Espejismo Implacable"
+    },
+    "Shin": {
+        "fish_id": FISH_CATALOG["masculino_4"],
+        "mode": "direct",
+        "rvc_model": "Shin",
+        "pitch": +1.5,
+        "gain_db": 5.0,
+        "role": "Kaio-shin Supremo Noble"
+    },
     "Muten_Roshi": {
         "fish_id": FISH_CATALOG["masculino_1"],
         "mode": "direct",
