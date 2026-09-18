@@ -45,11 +45,13 @@ CHARACTER_REGISTRY = {
     },
 
     # ⚔️ PROTAGONISTAS HEROICOS (Masculino 3 - Ippo Doblaje Latino)
+    # Calibración de volumen: +6.5 dB para igualar potencia acústica al Narrador
     "Goku": {
         "fish_id": FISH_CATALOG["masculino_3"],
         "mode": "direct",
         "rvc_model": None,
         "pitch": 0,
+        "gain_db": 6.5,
         "role": "Guerrero Saiyajin Heroico"
     },
     "Luffy": {
@@ -57,6 +59,7 @@ CHARACTER_REGISTRY = {
         "mode": "direct",
         "rvc_model": None,
         "pitch": 0,
+        "gain_db": 6.0,
         "role": "Capitán Pirata Enérgico"
     },
     "Gohan": {
@@ -64,6 +67,7 @@ CHARACTER_REGISTRY = {
         "mode": "direct",
         "rvc_model": None,
         "pitch": 0,
+        "gain_db": 6.0,
         "role": "Héroe Híbrido Noble"
     },
     "Trunks": {
@@ -71,6 +75,7 @@ CHARACTER_REGISTRY = {
         "mode": "direct",
         "rvc_model": None,
         "pitch": 0,
+        "gain_db": 6.0,
         "role": "Guerrero del Futuro"
     },
 
@@ -284,29 +289,29 @@ CHARACTER_REGISTRY = {
 def resolve_character_voice(char_name):
     """
     Resuelve la configuración de voz para cualquier personaje del guion.
-    Retorna: (fish_model_id, mode, rvc_model, pitch, role)
+    Retorna: (fish_model_id, mode, rvc_model, pitch, role, gain_db)
     """
     c_norm = char_name.strip().replace(" ", "_")
     
     # 1. Búsqueda exacta
     if c_norm in CHARACTER_REGISTRY:
         cfg = CHARACTER_REGISTRY[c_norm]
-        return cfg["fish_id"], cfg["mode"], cfg.get("rvc_model"), cfg.get("pitch", 0), cfg["role"]
+        return cfg["fish_id"], cfg["mode"], cfg.get("rvc_model"), cfg.get("pitch", 0), cfg["role"], cfg.get("gain_db", 0.0)
     
     # 2. Búsqueda por subcadena / alias
     for k, cfg in CHARACTER_REGISTRY.items():
         if k.lower() in c_norm.lower() or c_norm.lower() in k.lower():
-            return cfg["fish_id"], cfg["mode"], cfg.get("rvc_model"), cfg.get("pitch", 0), cfg["role"]
+            return cfg["fish_id"], cfg["mode"], cfg.get("rvc_model"), cfg.get("pitch", 0), cfg["role"], cfg.get("gain_db", 0.0)
             
     # 3. Detección heurística por género
     c_lower = c_norm.lower()
     if any(f in c_lower for f in ["bulma", "videl", "milk", "chichi", "18", "androide_18", "nami", "robin", "yamato", "hancock", "mujer", "chica"]):
         cfg = CHARACTER_REGISTRY["Androide_18"]
-        return cfg["fish_id"], "direct", None, 0, "Femenino Genérico"
+        return cfg["fish_id"], "direct", None, 0, "Femenino Genérico", cfg.get("gain_db", 0.0)
         
     # 4. Fallback a Narrador Oficial
     cfg = CHARACTER_REGISTRY["Narrador"]
-    return cfg["fish_id"], cfg["mode"], cfg.get("rvc_model"), cfg.get("pitch", 0), "Narrador / Masculino General"
+    return cfg["fish_id"], cfg["mode"], cfg.get("rvc_model"), cfg.get("pitch", 0), "Narrador / Masculino General", cfg.get("gain_db", 0.0)
 
 def export_fish_voices_json(output_path="fish_voices.json"):
     """Exporta el mapeo directo Personaje -> fish_model_id para consumo rápido en la nube"""

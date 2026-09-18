@@ -96,17 +96,22 @@ FISH_VOICE_MAP = {}
 
 def get_fish_model_id(char_name, default_model=None):
     if resolve_character_voice:
-        fid, mode, rvc_m, pitch, role = resolve_character_voice(char_name)
+        res = resolve_character_voice(char_name)
+        if len(res) == 6:
+            fid, mode, rvc_m, pitch, role, gain_db = res
+        else:
+            fid, mode, rvc_m, pitch, role = res
+            gain_db = 0.0
         if fid:
-            return fid, mode, rvc_m, pitch, role
+            return fid, mode, rvc_m, pitch, role, gain_db
 
     c_norm = char_name.strip().replace(" ", "_")
     if c_norm in FISH_VOICE_MAP:
-        return FISH_VOICE_MAP[c_norm], "direct", None, 0, "Personalizado"
+        return FISH_VOICE_MAP[c_norm], "direct", None, 0, "Personalizado", 0.0
     for k, v in FISH_VOICE_MAP.items():
         if k.lower() in c_norm.lower() or c_norm.lower() in k.lower():
-            return v, "direct", None, 0, "Personalizado"
-    return default_model, "direct", None, 0, "Default"
+            return v, "direct", None, 0, "Personalizado", 0.0
+    return default_model, "direct", None, 0, "Default", 0.0
 
 KEN_BURNS_PRESETS = [
     {"start": {"x": 0.0, "y": 0.0, "w": 1.0, "h": 1.0}, "end": {"x": 0.04, "y": 0.04, "w": 0.92, "h": 0.92}},
@@ -372,7 +377,7 @@ async def main():
             
             if not os.path.exists(out_file) or os.path.getsize(out_file) < 200:
                 generated = False
-                ref_id, mode, rvc_model, pitch, role = get_fish_model_id(char, default_model=fish_default_model)
+                ref_id, mode, rvc_model, pitch, role, gain_db = get_fish_model_id(char, default_model=fish_default_model)
 
                 # Intentar primero con Fish Audio si está disponible y hay un modelo asignado
                 if fish_session and ref_id:
@@ -393,10 +398,17 @@ async def main():
                             if mode == "rvc" and rvc_model:
                                 applied_rvc = await asyncio.to_thread(_apply_rvc_if_available, out_file, rvc_model, pitch)
                                 
+                            # Aplicar boost de ganancia específico del personaje para igualar al Narrador (ej. Goku +6.5 dB)
+                            if gain_db and gain_db != 0.0:
+                                temp_boost = out_file.replace(".mp3", "_boost.mp3")
+                                subprocess.run(["ffmpeg", "-y", "-i", out_file, "-af", f"volume={gain_db:+.1f}dB", "-c:a", "libmp3lame", "-b:a", "192k", temp_boost], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                                if os.path.exists(temp_boost) and os.path.getsize(temp_boost) > 200:
+                                    os.replace(temp_boost, out_file)
+                                
                             if applied_rvc:
-                                print(f"  🎭 [Fish Audio + RVC: {rvc_model}] ({char} - {role}): {text[:35]}...")
+                                print(f"  🎭 [Fish Audio + RVC: {rvc_model}] ({char} - {role} | {gain_db:+.1f}dB): {text[:35]}...")
                             else:
-                                print(f"  ✨ [Fish Audio Directo] ({char} - {role}): {text[:35]}...")
+                                print(f"  ✨ [Fish Audio Directo] ({char} - {role} | {gain_db:+.1f}dB): {text[:35]}...")
                     except Exception as e:
                         print(f"  ⚠️ [Fish Audio falló para {char}: {e}]. Conmutando a Edge-TTS...")
                         if os.path.exists(out_file):
