@@ -367,10 +367,14 @@ def render_project(manifest_path: str, assets_dir: str, output_path: str, ffmpeg
         music_vol = float(manifest.get("musicVolume", 0.20))
         fade_out_dur = 3.0
         fade_start = max(0.0, total_duration - fade_out_dur)
+        # Studio Audio Ducking (Sidechain Compression):
+        # La música respira naturalmente: se atenúa suavemente (-8 dB) cuando entran los diálogos
+        # y asciende con fuerza cinematográfica durante las pausas dramáticas o clímax.
         filter_graph = (
-            f"{audio_inputs[0]}aresample=48000,volume=1.0[v_voice];"
-            f"{audio_inputs[1]}aresample=48000,volume={music_vol:.3f},afade=t=out:st={fade_start:.2f}:d={fade_out_dur:.2f}[v_music];"
-            f"[v_voice][v_music]amix=inputs=2:duration=first:dropout_transition=0:normalize=0[a_out]"
+            f"{audio_inputs[0]}aresample=48000,volume=1.0,asplit=2[v_voice_main][v_voice_side];"
+            f"{audio_inputs[1]}aresample=48000,volume={music_vol:.3f},afade=t=out:st={fade_start:.2f}:d={fade_out_dur:.2f}[v_music_raw];"
+            f"[v_music_raw][v_voice_side]sidechaincompress=threshold=0.07:ratio=4.5:attack=45:release=450[v_music_ducked];"
+            f"[v_voice_main][v_music_ducked]amix=inputs=2:duration=first:dropout_transition=0:normalize=0[a_out]"
         )
         audio_map = "[a_out]"
     elif len(audio_inputs) == 1:
