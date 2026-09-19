@@ -41,6 +41,20 @@ except ImportError:
         CHARACTER_REGISTRY = {}
         FISH_CATALOG = {}
 
+# Importar DatasetRegistry y Catálogo Dinámico
+try:
+    from dataset_registry import DatasetRegistry, get_registry
+except ImportError:
+    try:
+        from runner.dataset_registry import DatasetRegistry, get_registry
+    except ImportError:
+        try:
+            sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "python"))
+            from services.dataset_registry import DatasetRegistry, get_registry
+        except Exception:
+            DatasetRegistry = None
+            get_registry = None
+
 SHEETS_CSV_URL = "https://docs.google.com/spreadsheets/d/14G4pyQLz6jGe8AW1yyU8KV4JHy1LmpF78-w1Riq3i2E/export?format=csv"
 
 VOICE_MAP = {
@@ -124,7 +138,7 @@ KEN_BURNS_PRESETS = [
 def parse_args():
     parser = argparse.ArgumentParser(description="KineForge Autonomous Cloud Factory")
     parser.add_argument("--history-index", type=int, default=0, help="Índice de la historia en Google Sheets (0 = primera)")
-    parser.add_argument("--chapter-num", type=int, default=1, help="Número de capítulo a producir (1..5)")
+    parser.add_argument("--chapter-num", default="1", help="Número de capítulo a producir (1..5 o 'full')")
     parser.add_argument("--work-dir", default="/tmp/kineforge_factory", help="Directorio temporal de trabajo")
     parser.add_argument("--output-video", default="/tmp/final_video.mp4", help="Ruta del video final")
     parser.add_argument("--dry-run", action="store_true", help="Simular subida a YouTube sin consumir cuota")
@@ -511,7 +525,8 @@ async def main():
     music_playlist = []
     if music_files:
         import random
-        rng = random.Random(args.chapter_num + args.history_index * 100)
+        seed_val = hash(str(args.chapter_num)) + args.history_index * 100
+        rng = random.Random(seed_val)
         shuffled = list(music_files)
         rng.shuffle(shuffled)
         while len(music_playlist) < max(len(shuffled) * 3, 25):
@@ -563,6 +578,14 @@ async def main():
             self.current_scenario = "Planeta Tierra"
             self.current_char = "Goku"
             self.current_phase = "Base"
+
+            # Registro Maestro Dinámico
+            self.registry = None
+            if get_registry is not None:
+                try:
+                    self.registry = get_registry(assets_lib_dir)
+                except Exception as e:
+                    print(f"[*] Aviso: No se pudo instanciar DatasetRegistry: {e}")
 
             # Indexación dinámica de carpetas de personajes
             self.char_map = {}
@@ -647,7 +670,7 @@ async def main():
                 "gritando": "Enfadado",
                 "agresivo": "Enfadado",
                 "triste": "Triste",
-                "herido": "Triste",
+                "herido": "Herido",
                 "derrotado": "Triste",
                 "llorando": "Triste",
                 "preocupado": "Triste",
@@ -655,7 +678,13 @@ async def main():
                 "serio": "Neutral",
                 "normal": "Neutral",
                 "pensativo": "Neutral",
-                "calmado": "Neutral"
+                "calmado": "Neutral",
+                "combate": "Combate",
+                "pelea": "Combate",
+                "lucha": "Combate",
+                "sorprendido": "Sorprendido",
+                "impactado": "Sorprendido",
+                "comico": "Comico"
             }
 
             self.scen_aliases = {
@@ -727,6 +756,12 @@ async def main():
             return "Goku"
 
         def get_character_image(self, character, phase="Base", emotion="Neutral"):
+            # Si el Registro Maestro está activo, resolver vía Grafo Semántico garantizado
+            if self.registry:
+                img, _ = self.registry.resolve_asset(character, phase=phase, emotion=emotion)
+                if img:
+                    return img
+
             folder_name = self.resolve_character_dir(character)
             
             # Normalizar fase
@@ -857,11 +892,26 @@ async def main():
                 "Yamato": ["yamato", "hijo de kaido"]
             }
 
-            # Diccionario de detección de emociones por acciones y gestos
+            # Diccionario de detección de emociones y acciones por texto
             emotion_keywords = {
+                "Combate": [
+                    "combate", "pelea", "lucha", "kamehameha", "final flash", "patada", "arremeti", 
+                    "intercambio de golpes", "choque de golpes", "postura de batalla", "chocaron", "ráfaga de ki"
+                ],
+                "Herido": [
+                    "herid", "dolor", "sangr", "debilitad", "exhaust", "jade", "inconsciente", "dañado", "agoní", 
+                    "suelo", "malherido", "ropa rota", "mal herido"
+                ],
+                "Sorprendido": [
+                    "sorprend", "asombr", "impactad", "abrió los ojos", "abrio los ojos", "perplej", "incredul", 
+                    "imposible", "qué?!", "que?!", "no puede ser"
+                ],
+                "Comico": [
+                    "gota", "comico", "cómico", "ridicul", "torpe", "hambre", "comiendo", "tragó", "trago"
+                ],
                 "Enfadado": [
                     "ceño", "frunció", "fruncio", "puño", "puños", "ira", "rabia", "enfado", "furio", "furia", 
-                    "grit", "rugi", "apretó", "apreto", "diente", "ataqu", "golp", "arremeti", "fiero", "odio", 
+                    "grit", "rugi", "apretó", "apreto", "diente", "ataqu", "golp", "fiero", "odio", 
                     "tensión", "tension", "asesin", "estall", "furor", "rabios", "amenaz", "violento"
                 ],
                 "Alegre": [
@@ -869,9 +919,8 @@ async def main():
                     "orgullos", "carcajad", "tranquil", "optimis", "victoria", "celebr"
                 ],
                 "Triste": [
-                    "herid", "dolor", "derrot", "cayó", "cayo", "caer", "jade", "exhaust", "sangr", "lágrim", 
-                    "lagrim", "llor", "miedo", "tembl", "aterr", "impotent", "desesper", "preocup", "agoní", 
-                    "agonia", "grave", "debilitad", "suelo", "inconsciente", "temor"
+                    "derrot", "cayó", "cayo", "caer", "lágrim", "lagrim", "llor", "miedo", "tembl", "aterr", 
+                    "impotent", "desesper", "preocup", "temor", "lamento"
                 ],
                 "Neutral": [
                     "observ", "mir", "analiz", "pensat", "seri", "silenci", "calm", "cruzó los brazos", "cruzo los brazos", 

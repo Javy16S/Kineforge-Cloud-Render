@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+from __future__ import annotations
 """
 KineForge Cloud Pipeline - Industrial Chunked FFmpeg Renderer
 Renderiza proyectos KineForge a video MP4 (H.264 / AAC) con arquitectura segmentada ultra rápida,
@@ -25,6 +26,8 @@ try:
     import numpy as np
     HAS_OPENCV = True
 except ImportError:
+    cv2 = None
+    np = None
     HAS_OPENCV = False
 
 RESOLUTION_MAP = {
