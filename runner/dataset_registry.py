@@ -9,6 +9,7 @@ import os
 import sys
 import json
 import re
+import random
 import unicodedata
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple, Any
@@ -364,20 +365,27 @@ class DatasetRegistry:
         return sorted(list(self.catalog["characters"][char_name].get("phases", {}).keys()))
 
     def _next_image_from_path(self, dir_path: str) -> Optional[str]:
-        """Obtiene la siguiente imagen del pool para rotación uniforme sin repetición."""
+        """Obtiene la siguiente imagen del pool para rotación uniforme sin repetición con barajado aleatorio."""
         if dir_path not in self.pools:
             files = []
             if os.path.exists(dir_path) and os.path.isdir(dir_path):
                 files = [
                     os.path.join(dir_path, f)
-                    for f in sorted(os.listdir(dir_path))
+                    for f in os.listdir(dir_path)
                     if f.lower().endswith(('.jpg', '.jpeg', '.png', '.webp'))
                 ]
+            if files:
+                random.shuffle(files)
             self.pools[dir_path] = {"files": files, "idx": 0}
 
         pool = self.pools[dir_path]
         if not pool["files"]:
             return None
+        
+        # Si hemos completado una vuelta entera al pool, volver a barajar para máxima variedad
+        if pool["idx"] > 0 and pool["idx"] % len(pool["files"]) == 0 and len(pool["files"]) > 1:
+            random.shuffle(pool["files"])
+
         img = pool["files"][pool["idx"] % len(pool["files"])]
         pool["idx"] += 1
         return img

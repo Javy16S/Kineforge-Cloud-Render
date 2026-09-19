@@ -1,524 +1,454 @@
 {
   "version": "2.0",
-  "root_dir": "E:\\Dataset_Dragon_Ball\\Ordered Images",
+  "root_dir": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library",
   "characters": {
     "Androide_17": {
       "phases": {
         "DBS_Ranger": {
           "Triste": {
             "count": 1,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Androide_17\\DBS_Ranger\\Triste"
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Androide_17\\DBS_Ranger\\Triste"
           }
         },
         "DBZ_Original": {
           "Enfadado": {
-            "count": 5,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Androide_17\\DBZ_Original\\Enfadado"
+            "count": 4,
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Androide_17\\DBZ_Original\\Enfadado"
+          },
+          "Neutral": {
+            "count": 25,
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Androide_17\\DBZ_Original\\Neutral"
           },
           "Triste": {
             "count": 4,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Androide_17\\DBZ_Original\\Triste"
-          },
-          "Neutral": {
-            "count": 31,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Androide_17\\DBZ_Original\\Neutral"
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Androide_17\\DBZ_Original\\Triste"
           }
         }
       },
-      "total_images": 41
+      "total_images": 34
     },
     "Androide_18": {
       "phases": {
         "Base": {
           "Alegre": {
             "count": 1,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Androide_18\\Base\\Alegre"
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Androide_18\\Base\\Alegre"
           },
           "Enfadado": {
-            "count": 31,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Androide_18\\Base\\Enfadado"
-          },
-          "Triste": {
-            "count": 24,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Androide_18\\Base\\Triste"
+            "count": 25,
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Androide_18\\Base\\Enfadado"
           },
           "Neutral": {
-            "count": 110,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Androide_18\\Base\\Neutral"
+            "count": 25,
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Androide_18\\Base\\Neutral"
+          },
+          "Triste": {
+            "count": 16,
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Androide_18\\Base\\Triste"
           }
         }
       },
-      "total_images": 166
+      "total_images": 67
     },
     "Bills_Beerus": {
       "phases": {
         "Base": {
           "Alegre": {
             "count": 13,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Bills_Beerus\\Base\\Alegre"
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Bills_Beerus\\Base\\Alegre"
           },
           "Enfadado": {
-            "count": 202,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Bills_Beerus\\Base\\Enfadado"
-          },
-          "Triste": {
-            "count": 54,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Bills_Beerus\\Base\\Triste"
+            "count": 25,
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Bills_Beerus\\Base\\Enfadado"
           },
           "Neutral": {
-            "count": 201,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Bills_Beerus\\Base\\Neutral"
+            "count": 25,
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Bills_Beerus\\Base\\Neutral"
+          },
+          "Triste": {
+            "count": 25,
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Bills_Beerus\\Base\\Triste"
           }
         }
       },
-      "total_images": 470
+      "total_images": 88
     },
     "Bulma": {
       "phases": {
         "Base": {
           "Alegre": {
             "count": 25,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Bulma\\Base\\Alegre"
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Bulma\\Base\\Alegre"
           },
           "Enfadado": {
-            "count": 94,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Bulma\\Base\\Enfadado"
-          },
-          "Triste": {
-            "count": 115,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Bulma\\Base\\Triste"
+            "count": 25,
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Bulma\\Base\\Enfadado"
           },
           "Neutral": {
-            "count": 330,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Bulma\\Base\\Neutral"
+            "count": 25,
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Bulma\\Base\\Neutral"
+          },
+          "Triste": {
+            "count": 25,
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Bulma\\Base\\Triste"
           }
         }
       },
-      "total_images": 564
+      "total_images": 100
     },
     "Capitan_Ginyu": {
       "phases": {
         "Base": {
           "Enfadado": {
-            "count": 26,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Capitan_Ginyu\\Base\\Enfadado"
-          },
-          "Triste": {
-            "count": 2,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Capitan_Ginyu\\Base\\Triste"
+            "count": 25,
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Capitan_Ginyu\\Base\\Enfadado"
           },
           "Neutral": {
             "count": 6,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Capitan_Ginyu\\Base\\Neutral"
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Capitan_Ginyu\\Base\\Neutral"
+          },
+          "Triste": {
+            "count": 2,
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Capitan_Ginyu\\Base\\Triste"
           }
         }
       },
-      "total_images": 34
+      "total_images": 33
     },
     "Cell": {
       "phases": {
         "Imperfecto": {
           "Triste": {
-            "count": 2,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Cell\\Imperfecto\\Triste"
+            "count": 1,
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Cell\\Imperfecto\\Triste"
           }
         },
         "Super_Perfecto": {
           "Triste": {
-            "count": 104,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Cell\\Super_Perfecto\\Triste"
+            "count": 25,
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Cell\\Super_Perfecto\\Triste"
           }
         }
       },
-      "total_images": 106
+      "total_images": 26
     },
     "Freezer": {
       "phases": {
         "Forma_1": {
           "Alegre": {
             "count": 7,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Freezer\\Forma_1\\Alegre"
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Freezer\\Forma_1\\Alegre"
           },
           "Enfadado": {
-            "count": 395,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Freezer\\Forma_1\\Enfadado"
-          },
-          "Triste": {
-            "count": 67,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Freezer\\Forma_1\\Triste"
+            "count": 25,
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Freezer\\Forma_1\\Enfadado"
           },
           "Neutral": {
-            "count": 73,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Freezer\\Forma_1\\Neutral"
+            "count": 25,
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Freezer\\Forma_1\\Neutral"
+          },
+          "Triste": {
+            "count": 25,
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Freezer\\Forma_1\\Triste"
           }
         },
         "Forma_Final": {
           "Triste": {
             "count": 17,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Freezer\\Forma_Final\\Triste"
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Freezer\\Forma_Final\\Triste"
           }
-        },
-        "Golden_Freezer": {}
+        }
       },
-      "total_images": 559
+      "total_images": 99
     },
     "Gohan": {
       "phases": {
-        "Adult": {
-          "Enfadado": {
-            "count": 1,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Gohan\\Adult\\Enfadado"
-          },
-          "Combate": {
-            "count": 3,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Gohan\\Adult\\Combate"
-          }
-        },
         "Base": {
           "Alegre": {
-            "count": 44,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Gohan\\Base\\Alegre"
+            "count": 25,
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Gohan\\Base\\Alegre"
           },
           "Enfadado": {
-            "count": 48,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Gohan\\Base\\Enfadado"
+            "count": 25,
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Gohan\\Base\\Enfadado"
+          },
+          "Neutral": {
+            "count": 25,
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Gohan\\Base\\Neutral"
           },
           "Triste": {
             "count": 12,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Gohan\\Base\\Triste"
-          },
-          "Neutral": {
-            "count": 197,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Gohan\\Base\\Neutral"
-          },
-          "Kid": {
-            "count": 33,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Gohan\\Kid"
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Gohan\\Base\\Triste"
           }
         },
         "SSJ1": {
           "Enfadado": {
-            "count": 20,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Gohan\\SSJ1\\Enfadado"
-          },
-          "Triste": {
-            "count": 2,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Gohan\\SSJ1\\Triste"
+            "count": 4,
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Gohan\\SSJ1\\Enfadado"
           },
           "Neutral": {
-            "count": 11,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Gohan\\SSJ1\\Neutral"
+            "count": 2,
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Gohan\\SSJ1\\Neutral"
+          },
+          "Triste": {
+            "count": 1,
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Gohan\\SSJ1\\Triste"
           }
         },
         "SSJ2": {
           "Enfadado": {
-            "count": 4,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Gohan\\SSJ2\\Enfadado"
-          },
-          "Neutral": {
-            "count": 3,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Gohan\\SSJ2\\Neutral"
-          }
-        },
-        "Teen": {
-          "Enfadado": {
-            "count": 6,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Gohan\\Teen\\Enfadado"
-          },
-          "Combate": {
             "count": 2,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Gohan\\Teen\\Combate"
-          },
-          "Herido": {
-            "count": 1,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Gohan\\Teen\\Herido"
-          },
-          "Neutral": {
-            "count": 2,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Gohan\\Teen\\Neutral"
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Gohan\\SSJ2\\Enfadado"
           }
         }
       },
-      "total_images": 389
+      "total_images": 96
     },
     "Goku": {
       "phases": {
         "Ataques": {
           "Kamehameha": {
             "count": 1,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Goku\\Ataques\\Kamehameha"
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Goku\\Ataques\\Kamehameha"
           }
         },
         "Base": {
           "Alegre": {
             "count": 68,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Goku\\Base\\Alegre"
-          },
-          "Enfadado": {
-            "count": 82,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Goku\\Base\\Enfadado"
-          },
-          "Triste": {
-            "count": 7,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Goku\\Base\\Triste"
-          },
-          "Neutral": {
-            "count": 86,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Goku\\Base\\Neutral"
-          },
-          "Sorprendido": {
-            "count": 43,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Goku\\Base\\Sorprendido"
-          },
-          "Confiado": {
-            "count": 9,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Goku\\Base\\Confiado"
-          },
-          "Confundido": {
-            "count": 3,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Goku\\Base\\Confundido"
-          },
-          "Combate": {
-            "count": 66,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Goku\\Base\\Combate"
-          },
-          "Herido": {
-            "count": 46,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Goku\\Base\\Herido"
-          },
-          "Preocupado": {
-            "count": 3,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Goku\\Base\\Preocupado"
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Goku\\Base\\Alegre"
           },
           "Avergonzado": {
             "count": 6,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Goku\\Base\\Avergonzado"
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Goku\\Base\\Avergonzado"
           },
-          "Genkidama": {
-            "count": 15,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Goku\\Base\\Genkidama"
+          "Combate": {
+            "count": 66,
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Goku\\Base\\Combate"
           },
           "Comico": {
-            "count": 35,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Goku\\Base\\Comico"
+            "count": 34,
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Goku\\Base\\Comico"
+          },
+          "Confiado": {
+            "count": 9,
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Goku\\Base\\Confiado"
+          },
+          "Confundido": {
+            "count": 3,
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Goku\\Base\\Confundido"
+          },
+          "Enfadado": {
+            "count": 82,
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Goku\\Base\\Enfadado"
           },
           "Entrenamiento": {
             "count": 16,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Goku\\Base\\Entrenamiento"
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Goku\\Base\\Entrenamiento"
           },
           "Fin_Z": {
             "count": 4,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Goku\\Base\\Fin_Z"
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Goku\\Base\\Fin_Z"
+          },
+          "Genkidama": {
+            "count": 15,
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Goku\\Base\\Genkidama"
+          },
+          "Herido": {
+            "count": 44,
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Goku\\Base\\Herido"
+          },
+          "Neutral": {
+            "count": 86,
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Goku\\Base\\Neutral"
+          },
+          "Preocupado": {
+            "count": 3,
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Goku\\Base\\Preocupado"
+          },
+          "Sorprendido": {
+            "count": 43,
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Goku\\Base\\Sorprendido"
+          },
+          "Triste": {
+            "count": 7,
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Goku\\Base\\Triste"
           },
           "Kaioken": {
             "count": 6,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Goku\\Kaioken"
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Goku\\Kaioken"
           },
           "Kid": {
             "count": 5,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Goku\\Kid"
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Goku\\Kid"
           }
         },
         "SSG": {
           "Enfadado": {
             "count": 1,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Goku\\SSG\\Enfadado"
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Goku\\SSG\\Enfadado"
           }
         },
         "SSJ1": {
           "Alegre": {
             "count": 9,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Goku\\SSJ1\\Alegre"
-          },
-          "Enfadado": {
-            "count": 40,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Goku\\SSJ1\\Enfadado"
-          },
-          "Neutral": {
-            "count": 21,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Goku\\SSJ1\\Neutral"
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Goku\\SSJ1\\Alegre"
           },
           "Combate": {
             "count": 31,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Goku\\SSJ1\\Combate"
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Goku\\SSJ1\\Combate"
           },
           "Confiado": {
             "count": 4,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Goku\\SSJ1\\Confiado"
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Goku\\SSJ1\\Confiado"
+          },
+          "Enfadado": {
+            "count": 40,
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Goku\\SSJ1\\Enfadado"
           },
           "Herido": {
             "count": 3,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Goku\\SSJ1\\Herido"
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Goku\\SSJ1\\Herido"
+          },
+          "Neutral": {
+            "count": 21,
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Goku\\SSJ1\\Neutral"
           }
         },
         "SSJ2": {
-          "Enfadado": {
-            "count": 2,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Goku\\SSJ2\\Enfadado"
-          },
           "Combate": {
             "count": 4,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Goku\\SSJ2\\Combate"
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Goku\\SSJ2\\Combate"
+          },
+          "Enfadado": {
+            "count": 2,
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Goku\\SSJ2\\Enfadado"
           }
         },
         "SSJ3": {
+          "Combate": {
+            "count": 3,
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Goku\\SSJ3\\Combate"
+          },
           "Enfadado": {
             "count": 1,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Goku\\SSJ3\\Enfadado"
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Goku\\SSJ3\\Enfadado"
           },
           "Neutral": {
             "count": 1,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Goku\\SSJ3\\Neutral"
-          },
-          "Combate": {
-            "count": 3,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Goku\\SSJ3\\Combate"
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Goku\\SSJ3\\Neutral"
           }
         },
         "SSJBLUE": {
           "Alegre": {
             "count": 1,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Goku\\SSJBLUE\\Alegre"
-          },
-          "Enfadado": {
-            "count": 3,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Goku\\SSJBLUE\\Enfadado"
-          },
-          "Neutral": {
-            "count": 1,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Goku\\SSJBLUE\\Neutral"
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Goku\\SSJBLUE\\Alegre"
           },
           "Combate": {
             "count": 1,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Goku\\SSJBLUE\\Combate"
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Goku\\SSJBLUE\\Combate"
+          },
+          "Enfadado": {
+            "count": 3,
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Goku\\SSJBLUE\\Enfadado"
           },
           "Herido": {
             "count": 1,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Goku\\SSJBLUE\\Herido"
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Goku\\SSJBLUE\\Herido"
+          },
+          "Neutral": {
+            "count": 1,
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Goku\\SSJBLUE\\Neutral"
           }
         },
         "SSJGOD": {
           "Alegre": {
             "count": 4,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Goku\\SSJGOD\\Alegre"
-          },
-          "Enfadado": {
-            "count": 12,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Goku\\SSJGOD\\Enfadado"
-          },
-          "Neutral": {
-            "count": 6,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Goku\\SSJGOD\\Neutral"
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Goku\\SSJGOD\\Alegre"
           },
           "Combate": {
             "count": 7,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Goku\\SSJGOD\\Combate"
-          },
-          "Herido": {
-            "count": 4,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Goku\\SSJGOD\\Herido"
-          },
-          "Sorprendido": {
-            "count": 3,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Goku\\SSJGOD\\Sorprendido"
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Goku\\SSJGOD\\Combate"
           },
           "Comico": {
             "count": 2,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Goku\\SSJGOD\\Comico"
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Goku\\SSJGOD\\Comico"
           },
           "Confiado": {
             "count": 1,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Goku\\SSJGOD\\Confiado"
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Goku\\SSJGOD\\Confiado"
+          },
+          "Enfadado": {
+            "count": 12,
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Goku\\SSJGOD\\Enfadado"
+          },
+          "Herido": {
+            "count": 4,
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Goku\\SSJGOD\\Herido"
+          },
+          "Neutral": {
+            "count": 6,
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Goku\\SSJGOD\\Neutral"
+          },
+          "Sorprendido": {
+            "count": 3,
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Goku\\SSJGOD\\Sorprendido"
           }
         },
         "ULTRAINSTINTO": {
           "Enfadado": {
             "count": 1,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Goku\\ULTRAINSTINTO\\Enfadado"
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Goku\\ULTRAINSTINTO\\Enfadado"
           }
         }
       },
-      "total_images": 668
+      "total_images": 665
     },
     "Goten": {
       "phases": {
         "Base": {
           "Alegre": {
-            "count": 17,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Goten\\Base\\Alegre"
+            "count": 2,
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Goten\\Base\\Alegre"
           },
           "Enfadado": {
-            "count": 10,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Goten\\Base\\Enfadado"
-          },
-          "Triste": {
-            "count": 26,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Goten\\Base\\Triste"
+            "count": 1,
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Goten\\Base\\Enfadado"
           },
           "Neutral": {
-            "count": 3,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Goten\\Neutral"
+            "count": 7,
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Goten\\Base\\Neutral"
           },
-          "Combate": {
-            "count": 8,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Goten\\Combate"
+          "Triste": {
+            "count": 4,
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Goten\\Base\\Triste"
           }
-        },
-        "SSJ1": {},
-        "SSJBLUE": {},
-        "SSJGOD": {},
-        "ULTRAINSTINTO": {}
+        }
       },
-      "total_images": 176
+      "total_images": 14
     },
     "Gotenks": {
       "phases": {
-        "Base": {
-          "Triste": {
-            "count": 3,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Gotenks\\Base\\Triste"
-          },
-          "Neutral": {
-            "count": 4,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Gotenks\\Base\\Neutral"
-          }
-        },
         "SSJ1": {
           "Enfadado": {
-            "count": 34,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Gotenks\\SSJ1\\Enfadado"
-          },
-          "Triste": {
-            "count": 1,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Gotenks\\SSJ1\\Triste"
-          },
-          "Neutral": {
-            "count": 11,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Gotenks\\SSJ1\\Neutral"
+            "count": 3,
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Gotenks\\SSJ1\\Enfadado"
           }
         },
         "SSJ3": {
           "Enfadado": {
-            "count": 20,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Gotenks\\SSJ3\\Enfadado"
-          },
-          "Triste": {
-            "count": 3,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Gotenks\\SSJ3\\Triste"
+            "count": 2,
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Gotenks\\SSJ3\\Enfadado"
           }
-        },
-        "SSJBLUE": {},
-        "SSJGOD": {},
-        "ULTRAINSTINTO": {}
+        }
       },
-      "total_images": 76
+      "total_images": 5
     },
     "Jiren": {
       "phases": {
         "Base": {
           "Enfadado": {
             "count": 3,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Jiren\\Base\\Enfadado"
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Jiren\\Base\\Enfadado"
           }
         }
       },
@@ -528,129 +458,121 @@
       "phases": {
         "Base": {
           "Alegre": {
-            "count": 189,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Krilin\\Base\\Alegre"
+            "count": 25,
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Krilin\\Base\\Alegre"
           },
           "Enfadado": {
-            "count": 386,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Krilin\\Base\\Enfadado"
-          },
-          "Triste": {
-            "count": 273,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Krilin\\Base\\Triste"
+            "count": 25,
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Krilin\\Base\\Enfadado"
           },
           "Neutral": {
-            "count": 716,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Krilin\\Base\\Neutral"
+            "count": 25,
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Krilin\\Base\\Neutral"
+          },
+          "Triste": {
+            "count": 25,
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Krilin\\Base\\Triste"
           }
         }
       },
-      "total_images": 1564
+      "total_images": 100
     },
     "Majin_Buu": {
       "phases": {
         "Base": {
           "Alegre": {
-            "count": 9,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Majin_Buu\\Base\\Alegre"
+            "count": 1,
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Majin_Buu\\Base\\Alegre"
           }
         },
         "Buu_Gordo": {
-          "Alegre": {
-            "count": 26,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Majin_Buu\\Buu_Gordo\\Alegre"
-          },
           "Enfadado": {
-            "count": 134,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Majin_Buu\\Buu_Gordo\\Enfadado"
-          },
-          "Triste": {
-            "count": 41,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Majin_Buu\\Buu_Gordo\\Triste"
+            "count": 6,
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Majin_Buu\\Buu_Gordo\\Enfadado"
           },
           "Neutral": {
-            "count": 20,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Majin_Buu\\Buu_Gordo\\Neutral"
+            "count": 2,
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Majin_Buu\\Buu_Gordo\\Neutral"
           }
         }
       },
-      "total_images": 230
+      "total_images": 9
     },
     "Mr_Satan": {
       "phases": {
         "Base": {
           "Alegre": {
-            "count": 9,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Mr_Satan\\Base\\Alegre"
+            "count": 2,
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Mr_Satan\\Base\\Alegre"
           },
           "Enfadado": {
-            "count": 146,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Mr_Satan\\Base\\Enfadado"
-          },
-          "Triste": {
-            "count": 4,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Mr_Satan\\Base\\Triste"
+            "count": 15,
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Mr_Satan\\Base\\Enfadado"
           },
           "Neutral": {
-            "count": 10,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Mr_Satan\\Base\\Neutral"
+            "count": 3,
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Mr_Satan\\Base\\Neutral"
+          },
+          "Triste": {
+            "count": 2,
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Mr_Satan\\Base\\Triste"
           }
         }
       },
-      "total_images": 169
+      "total_images": 22
     },
     "Muten_Roshi": {
       "phases": {
         "Normal": {
           "Alegre": {
             "count": 6,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Muten_Roshi\\Normal\\Alegre"
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Muten_Roshi\\Normal\\Alegre"
           },
           "Enfadado": {
-            "count": 54,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Muten_Roshi\\Normal\\Enfadado"
+            "count": 25,
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Muten_Roshi\\Normal\\Enfadado"
+          },
+          "Neutral": {
+            "count": 25,
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Muten_Roshi\\Normal\\Neutral"
           },
           "Triste": {
             "count": 4,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Muten_Roshi\\Normal\\Triste"
-          },
-          "Neutral": {
-            "count": 46,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Muten_Roshi\\Normal\\Neutral"
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Muten_Roshi\\Normal\\Triste"
           }
         }
       },
-      "total_images": 110
+      "total_images": 60
     },
     "Piccolo": {
       "phases": {
         "Base": {
           "Alegre": {
-            "count": 20,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Piccolo\\Base\\Alegre"
+            "count": 15,
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Piccolo\\Base\\Alegre"
           },
           "Enfadado": {
-            "count": 440,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Piccolo\\Base\\Enfadado"
-          },
-          "Triste": {
-            "count": 117,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Piccolo\\Base\\Triste"
+            "count": 25,
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Piccolo\\Base\\Enfadado"
           },
           "Neutral": {
-            "count": 569,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Piccolo\\Base\\Neutral"
+            "count": 25,
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Piccolo\\Base\\Neutral"
+          },
+          "Triste": {
+            "count": 25,
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Piccolo\\Base\\Triste"
           }
         }
       },
-      "total_images": 1146
+      "total_images": 90
     },
     "Pilaf_Trio": {
       "phases": {
         "Base": {
           "Alegre": {
             "count": 3,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Pilaf_Trio\\Base\\Alegre"
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Pilaf_Trio\\Base\\Alegre"
           }
         }
       },
@@ -659,13 +581,13 @@
     "Shisami": {
       "phases": {
         "Base": {
-          "Enfadado": {
-            "count": 14,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Shisami\\Base\\Enfadado"
-          },
           "Alegre": {
             "count": 1,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Shisami\\Base\\Alegre"
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Shisami\\Base\\Alegre"
+          },
+          "Enfadado": {
+            "count": 14,
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Shisami\\Base\\Enfadado"
           }
         }
       },
@@ -676,7 +598,7 @@
         "Base": {
           "Neutral": {
             "count": 1,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Tagoma\\Base\\Neutral"
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Tagoma\\Base\\Neutral"
           }
         }
       },
@@ -687,26 +609,26 @@
         "Base": {
           "Alegre": {
             "count": 1,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Tenshinhan\\Base\\Alegre"
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Tenshinhan\\Base\\Alegre"
           },
           "Enfadado": {
-            "count": 36,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Tenshinhan\\Base\\Enfadado"
+            "count": 25,
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Tenshinhan\\Base\\Enfadado"
           },
           "Neutral": {
             "count": 5,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Tenshinhan\\Base\\Neutral"
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Tenshinhan\\Base\\Neutral"
           }
         }
       },
-      "total_images": 42
+      "total_images": 31
     },
     "Toppo": {
       "phases": {
         "Base": {
           "Enfadado": {
             "count": 16,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Toppo\\Base\\Enfadado"
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Toppo\\Base\\Enfadado"
           }
         }
       },
@@ -715,223 +637,222 @@
     "Trunks_Niño": {
       "phases": {
         "Base": {
-          "Enfadado": {
-            "count": 30,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Trunks_Niño\\Base\\Enfadado"
+          "Alegre": {
+            "count": 2,
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Trunks_Niño\\Base\\Alegre"
           },
-          "Triste": {
-            "count": 22,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Trunks_Niño\\Base\\Triste"
+          "Enfadado": {
+            "count": 4,
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Trunks_Niño\\Base\\Enfadado"
           },
           "Neutral": {
-            "count": 48,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Trunks_Niño\\Base\\Neutral"
+            "count": 25,
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Trunks_Niño\\Base\\Neutral"
           },
-          "Alegre": {
-            "count": 3,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Trunks_Niño\\Base\\Alegre"
+          "Triste": {
+            "count": 2,
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Trunks_Niño\\Base\\Triste"
           }
         },
         "SSJ1": {
-          "Neutral": {
-            "count": 61,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Trunks_Niño\\SSJ1\\Neutral"
-          },
           "Alegre": {
-            "count": 3,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Trunks_Niño\\SSJ1\\Alegre"
+            "count": 2,
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Trunks_Niño\\SSJ1\\Alegre"
           },
           "Enfadado": {
-            "count": 17,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Trunks_Niño\\SSJ1\\Enfadado"
+            "count": 2,
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Trunks_Niño\\SSJ1\\Enfadado"
+          },
+          "Neutral": {
+            "count": 10,
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Trunks_Niño\\SSJ1\\Neutral"
           },
           "Triste": {
-            "count": 15,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Trunks_Niño\\SSJ1\\Triste"
+            "count": 2,
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Trunks_Niño\\SSJ1\\Triste"
           }
         }
       },
-      "total_images": 199
+      "total_images": 49
     },
     "Trunks_del_Futuro": {
       "phases": {
         "Base": {
-          "Triste": {
-            "count": 7,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Trunks_del_Futuro\\Base\\Triste"
-          },
           "Enfadado": {
-            "count": 46,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Trunks_del_Futuro\\Base\\Enfadado"
+            "count": 25,
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Trunks_del_Futuro\\Base\\Enfadado"
+          },
+          "Triste": {
+            "count": 5,
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Trunks_del_Futuro\\Base\\Triste"
           }
         },
         "SSJ1": {
           "Triste": {
             "count": 11,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Trunks_del_Futuro\\SSJ1\\Triste"
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Trunks_del_Futuro\\SSJ1\\Triste"
           }
-        },
-        "SSJ2": {}
+        }
       },
-      "total_images": 64
+      "total_images": 41
     },
     "Vegeta": {
       "phases": {
         "Base": {
           "Alegre": {
-            "count": 13,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Vegeta\\Base\\Alegre"
+            "count": 10,
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Vegeta\\Base\\Alegre"
           },
           "Enfadado": {
-            "count": 901,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Vegeta\\Base\\Enfadado"
-          },
-          "Triste": {
-            "count": 162,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Vegeta\\Base\\Triste"
+            "count": 25,
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Vegeta\\Base\\Enfadado"
           },
           "Neutral": {
-            "count": 683,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Vegeta\\Base\\Neutral"
+            "count": 25,
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Vegeta\\Base\\Neutral"
+          },
+          "Triste": {
+            "count": 25,
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Vegeta\\Base\\Triste"
           }
         },
         "SSJ1": {
           "Alegre": {
-            "count": 3,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Vegeta\\SSJ1\\Alegre"
+            "count": 1,
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Vegeta\\SSJ1\\Alegre"
           },
           "Enfadado": {
-            "count": 366,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Vegeta\\SSJ1\\Enfadado"
-          },
-          "Triste": {
-            "count": 52,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Vegeta\\SSJ1\\Triste"
+            "count": 25,
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Vegeta\\SSJ1\\Enfadado"
           },
           "Neutral": {
-            "count": 82,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Vegeta\\SSJ1\\Neutral"
+            "count": 25,
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Vegeta\\SSJ1\\Neutral"
+          },
+          "Triste": {
+            "count": 24,
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Vegeta\\SSJ1\\Triste"
           }
         },
         "SSJBLUE": {
           "Alegre": {
             "count": 1,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Vegeta\\SSJBLUE\\Alegre"
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Vegeta\\SSJBLUE\\Alegre"
           },
           "Enfadado": {
-            "count": 33,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Vegeta\\SSJBLUE\\Enfadado"
-          },
-          "Triste": {
-            "count": 3,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Vegeta\\SSJBLUE\\Triste"
+            "count": 25,
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Vegeta\\SSJBLUE\\Enfadado"
           },
           "Neutral": {
             "count": 13,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Vegeta\\SSJBLUE\\Neutral"
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Vegeta\\SSJBLUE\\Neutral"
+          },
+          "Triste": {
+            "count": 3,
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Vegeta\\SSJBLUE\\Triste"
           }
         }
       },
-      "total_images": 2312
+      "total_images": 202
     },
     "Videl": {
       "phases": {
         "Base": {
           "Triste": {
-            "count": 13,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Videl\\Base\\Triste"
+            "count": 3,
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Videl\\Base\\Triste"
           }
         }
       },
-      "total_images": 13
+      "total_images": 3
     },
     "Whis": {
       "phases": {
         "Base": {
           "Alegre": {
             "count": 19,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Whis\\Base\\Alegre"
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Whis\\Base\\Alegre"
           },
           "Enfadado": {
             "count": 21,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Whis\\Base\\Enfadado"
-          },
-          "Triste": {
-            "count": 58,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Whis\\Base\\Triste"
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Whis\\Base\\Enfadado"
           },
           "Neutral": {
-            "count": 148,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Whis\\Base\\Neutral"
+            "count": 25,
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Whis\\Base\\Neutral"
+          },
+          "Triste": {
+            "count": 25,
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Whis\\Base\\Triste"
           }
         }
       },
-      "total_images": 246
+      "total_images": 90
     },
     "Yamcha": {
       "phases": {
         "Base": {
           "Alegre": {
             "count": 2,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Yamcha\\Base\\Alegre"
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Yamcha\\Base\\Alegre"
           },
           "Enfadado": {
-            "count": 62,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Yamcha\\Base\\Enfadado"
-          },
-          "Triste": {
-            "count": 31,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Yamcha\\Base\\Triste"
+            "count": 25,
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Yamcha\\Base\\Enfadado"
           },
           "Neutral": {
-            "count": 15,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Yamcha\\Base\\Neutral"
+            "count": 14,
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Yamcha\\Base\\Neutral"
+          },
+          "Triste": {
+            "count": 25,
+            "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Characters\\Yamcha\\Base\\Triste"
           }
         }
       },
-      "total_images": 110
+      "total_images": 66
     }
   },
   "scenarios": {
     "Espacio": {
-      "count": 37,
-      "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Scenarios\\Espacio"
+      "count": 30,
+      "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Scenarios\\Espacio"
     },
     "Extras": {
-      "count": 40,
-      "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Scenarios\\Extras"
+      "count": 26,
+      "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Scenarios\\Extras"
     },
     "Habitación del Tiempo": {
-      "count": 609,
-      "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Scenarios\\Habitación del Tiempo"
+      "count": 30,
+      "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Scenarios\\Habitación del Tiempo"
     },
     "Planeta Bills": {
-      "count": 501,
-      "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Scenarios\\Planeta Bills"
+      "count": 30,
+      "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Scenarios\\Planeta Bills"
     },
     "Planeta Kaioshin": {
-      "count": 503,
-      "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Scenarios\\Planeta Kaioshin"
+      "count": 30,
+      "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Scenarios\\Planeta Kaioshin"
     },
     "Planeta Namek": {
-      "count": 936,
-      "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Scenarios\\Planeta Namek"
+      "count": 30,
+      "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Scenarios\\Planeta Namek"
     },
     "Planeta Tierra": {
-      "count": 201,
-      "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Scenarios\\Planeta Tierra"
+      "count": 30,
+      "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Scenarios\\Planeta Tierra"
     },
     "Planeta Vegetta": {
-      "count": 224,
-      "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Scenarios\\Planeta Vegetta"
+      "count": 30,
+      "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Scenarios\\Planeta Vegetta"
     },
     "Templo Zeno Sama": {
-      "count": 85,
-      "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Scenarios\\Templo Zeno Sama"
+      "count": 30,
+      "path": "C:\\Users\\javie\\Desktop\\Kineforge-Cloud-Render\\assets_library\\Scenarios\\Templo Zeno Sama"
     }
   },
   "stats": {
     "total_characters": 28,
-    "total_images": 9492
+    "total_images": 2028
   }
 }

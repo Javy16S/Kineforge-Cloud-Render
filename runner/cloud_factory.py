@@ -728,7 +728,10 @@ async def main():
             if dir_path not in self.pools:
                 files = []
                 if os.path.exists(dir_path) and os.path.isdir(dir_path):
-                    files = [os.path.join(dir_path, f) for f in sorted(os.listdir(dir_path)) if f.lower().endswith(('.jpg', '.jpeg', '.png', '.webp'))]
+                    files = [os.path.join(dir_path, f) for f in os.listdir(dir_path) if f.lower().endswith(('.jpg', '.jpeg', '.png', '.webp'))]
+                if files:
+                    import random
+                    random.shuffle(files)
                 self.pools[dir_path] = {"files": files, "idx": 0}
             return self.pools[dir_path]["files"]
 
@@ -739,6 +742,9 @@ async def main():
             pool = self.pools[dir_path]
             img = pool["files"][pool["idx"] % len(pool["files"])]
             pool["idx"] += 1
+            if pool["idx"] % len(pool["files"]) == 0 and len(pool["files"]) > 1:
+                import random
+                random.shuffle(pool["files"])
             return img
 
         def resolve_character_dir(self, char_raw):
