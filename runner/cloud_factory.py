@@ -167,7 +167,17 @@ def split_text_into_dynamic_cuts(text, target_words=10):
     return segments
 
 def parse_script_with_dynamic_pacing(guion_text):
-    paragraphs = [p.strip() for p in guion_text.split("\n") if p.strip()]
+    paragraphs = []
+    # Filtrar líneas de corte o cortesía final de Gemini (ej: ---, ¿Te gustaría..., Nota:)
+    for line in guion_text.split("\n"):
+        line_s = line.strip()
+        if not line_s:
+            continue
+        if re.match(r'^(?:[-—=_*]{3,}|\s*¿(?:Te|Quieres|Deseas)\s+gustar[ií]a|nota(?:\s+del\s+autor)?\s*:|espero\s+que\s+(?:te|les)\s+haya\s+gustado)', line_s, re.IGNORECASE):
+            print(f"🧹 Filtrado cierre conversacional de IA: '{line_s[:60]}...'")
+            break
+        paragraphs.append(line_s)
+
     atomic_cuts = []
     
     # Expresión regular: Soporta "Personaje (Fase, Emoción): texto", "Personaje (Emoción): texto", "Narrador [Escenario]: texto", "Narrador: texto"
