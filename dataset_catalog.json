@@ -82,7 +82,7 @@
             "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Bills_Beerus\\Base\\Alegre"
           },
           "Enfadado": {
-            "count": 111,
+            "count": 96,
             "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Bills_Beerus\\Base\\Enfadado"
           },
           "Triste": {
@@ -90,7 +90,7 @@
             "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Bills_Beerus\\Base\\Triste"
           },
           "Neutral": {
-            "count": 199,
+            "count": 197,
             "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Bills_Beerus\\Base\\Neutral"
           },
           "Combate": {
@@ -98,12 +98,12 @@
             "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Bills_Beerus\\Base\\Combate"
           },
           "Comico": {
-            "count": 20,
+            "count": 14,
             "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Bills_Beerus\\Base\\Comico"
           }
         }
       },
-      "total_images": 452
+      "total_images": 429
     },
     "Bulma": {
       "phases": {
@@ -199,6 +199,32 @@
         }
       },
       "total_images": 606
+    },
+    "Champa": {
+      "phases": {
+        "Base": {
+          "Enfadado": {
+            "count": 3,
+            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Champa\\Base\\Enfadado"
+          }
+        }
+      },
+      "total_images": 3
+    },
+    "Dyspo": {
+      "phases": {
+        "Base": {
+          "Combate": {
+            "count": 3,
+            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Dyspo\\Base\\Combate"
+          },
+          "Neutral": {
+            "count": 2,
+            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Dyspo\\Base\\Neutral"
+          }
+        }
+      },
+      "total_images": 5
     },
     "Freezer": {
       "phases": {
@@ -311,7 +337,7 @@
             "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Gohan\\Base\\Alegre"
           },
           "Enfadado": {
-            "count": 48,
+            "count": 47,
             "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Gohan\\Base\\Enfadado"
           },
           "Triste": {
@@ -323,7 +349,7 @@
             "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Gohan\\Base\\Neutral"
           },
           "Kid": {
-            "count": 416,
+            "count": 415,
             "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Gohan\\Kid"
           }
         },
@@ -370,7 +396,7 @@
           }
         }
       },
-      "total_images": 726
+      "total_images": 724
     },
     "Goku": {
       "phases": {
@@ -520,7 +546,7 @@
             "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Goku\\SSJBLUE\\Neutral"
           },
           "Combate": {
-            "count": 1,
+            "count": 2,
             "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Goku\\SSJBLUE\\Combate"
           },
           "Herido": {
@@ -562,12 +588,7 @@
             "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Goku\\SSJGOD\\Confiado"
           }
         },
-        "ULTRAINSTINTO": {
-          "Enfadado": {
-            "count": 1,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Goku\\ULTRAINSTINTO\\Enfadado"
-          }
-        }
+        "ULTRAINSTINTO": {}
       },
       "total_images": 666
     },
@@ -1123,7 +1144,7 @@
       "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Scenarios\\Espacio"
     },
     "Extras": {
-      "count": 525,
+      "count": 533,
       "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Scenarios\\Extras"
     },
     "Habitación del Tiempo": {
@@ -1156,7 +1177,7 @@
     }
   },
   "stats": {
-    "total_characters": 30,
-    "total_images": 10473
+    "total_characters": 32,
+    "total_images": 10456
   }
 }
