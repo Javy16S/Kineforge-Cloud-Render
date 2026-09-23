@@ -78,32 +78,32 @@
       "phases": {
         "Base": {
           "Alegre": {
-            "count": 5,
+            "count": 3,
             "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Bills_Beerus\\Base\\Alegre"
           },
           "Enfadado": {
-            "count": 96,
+            "count": 29,
             "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Bills_Beerus\\Base\\Enfadado"
           },
           "Triste": {
-            "count": 29,
+            "count": 6,
             "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Bills_Beerus\\Base\\Triste"
           },
           "Neutral": {
-            "count": 197,
+            "count": 56,
             "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Bills_Beerus\\Base\\Neutral"
           },
           "Combate": {
-            "count": 88,
+            "count": 44,
             "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Bills_Beerus\\Base\\Combate"
           },
           "Comico": {
-            "count": 14,
+            "count": 5,
             "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Bills_Beerus\\Base\\Comico"
           }
         }
       },
-      "total_images": 429
+      "total_images": 143
     },
     "Bulma": {
       "phases": {
@@ -121,7 +121,7 @@
             "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Bulma\\Base\\Triste"
           },
           "Neutral": {
-            "count": 337,
+            "count": 339,
             "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Bulma\\Base\\Neutral"
           },
           "Sorprendido": {
@@ -134,7 +134,7 @@
           }
         }
       },
-      "total_images": 561
+      "total_images": 563
     },
     "Capitan_Ginyu": {
       "phases": {
@@ -204,12 +204,16 @@
       "phases": {
         "Base": {
           "Enfadado": {
-            "count": 3,
+            "count": 6,
             "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Champa\\Base\\Enfadado"
+          },
+          "Combate": {
+            "count": 1,
+            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Champa\\Base\\Combate"
           }
         }
       },
-      "total_images": 3
+      "total_images": 7
     },
     "Dodoria": {
       "phases": {
@@ -333,10 +337,14 @@
           "Neutral": {
             "count": 12,
             "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Freezer\\Golden_Freezer\\Neutral"
+          },
+          "Enfadado": {
+            "count": 1,
+            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Freezer\\Golden_Freezer\\Enfadado"
           }
         }
       },
-      "total_images": 638
+      "total_images": 639
     },
     "Gohan": {
       "phases": {
@@ -348,6 +356,10 @@
           "Combate": {
             "count": 3,
             "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Gohan\\Adult\\Combate"
+          },
+          "Neutral": {
+            "count": 1,
+            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Gohan\\Adult\\Neutral"
           }
         },
         "Base": {
@@ -425,7 +437,7 @@
           }
         }
       },
-      "total_images": 342
+      "total_images": 343
     },
     "Goku": {
       "phases": {
@@ -449,7 +461,7 @@
             "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Goku\\Base\\Triste"
           },
           "Neutral": {
-            "count": 86,
+            "count": 91,
             "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Goku\\Base\\Neutral"
           },
           "Sorprendido": {
@@ -595,15 +607,15 @@
             "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Goku\\SSJGOD\\Enfadado"
           },
           "Neutral": {
-            "count": 6,
+            "count": 8,
             "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Goku\\SSJGOD\\Neutral"
           },
           "Combate": {
-            "count": 7,
+            "count": 14,
             "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Goku\\SSJGOD\\Combate"
           },
           "Herido": {
-            "count": 4,
+            "count": 6,
             "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Goku\\SSJGOD\\Herido"
           },
           "Sorprendido": {
@@ -621,7 +633,7 @@
         },
         "ULTRAINSTINTO": {}
       },
-      "total_images": 676
+      "total_images": 692
     },
     "Goten": {
       "phases": {
@@ -682,6 +694,10 @@
           "Neutral": {
             "count": 11,
             "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Gotenks\\SSJ1\\Neutral"
+          },
+          "Combate": {
+            "count": 1,
+            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Gotenks\\SSJ1\\Combate"
           }
         },
         "SSJ3": {
@@ -698,7 +714,7 @@
         "SSJGOD": {},
         "ULTRAINSTINTO": {}
       },
-      "total_images": 78
+      "total_images": 79
     },
     "Jiren": {
       "phases": {
@@ -1093,7 +1109,7 @@
             "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Vegeta\\Base\\Alegre"
           },
           "Enfadado": {
-            "count": 65,
+            "count": 66,
             "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Vegeta\\Base\\Enfadado"
           },
           "Triste": {
@@ -1101,11 +1117,11 @@
             "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Vegeta\\Base\\Triste"
           },
           "Neutral": {
-            "count": 96,
+            "count": 98,
             "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Vegeta\\Base\\Neutral"
           },
           "Herido": {
-            "count": 8,
+            "count": 9,
             "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Vegeta\\Base\\Herido"
           },
           "Sorprendido": {
@@ -1158,7 +1174,7 @@
           }
         }
       },
-      "total_images": 1784
+      "total_images": 1788
     },
     "Videl": {
       "phases": {
@@ -1203,16 +1219,24 @@
             "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Whis\\Base\\Triste"
           },
           "Neutral": {
-            "count": 130,
+            "count": 168,
             "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Whis\\Base\\Neutral"
+          },
+          "Combate": {
+            "count": 3,
+            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Whis\\Base\\Combate"
           },
           "Comico": {
             "count": 10,
             "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Whis\\Base\\Comico"
+          },
+          "Sorprendido": {
+            "count": 2,
+            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Whis\\Base\\Sorprendido"
           }
         }
       },
-      "total_images": 229
+      "total_images": 272
     },
     "Yajirobe": {
       "phases": {
@@ -1275,7 +1299,7 @@
       "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Scenarios\\Espacio"
     },
     "Extras": {
-      "count": 637,
+      "count": 671,
       "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Scenarios\\Extras"
     },
     "Habitación del Tiempo": {
@@ -1309,6 +1333,6 @@
   },
   "stats": {
     "total_characters": 35,
-    "total_images": 9824
+    "total_images": 9610
   }
 }
