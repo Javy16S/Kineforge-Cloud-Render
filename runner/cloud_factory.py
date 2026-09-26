@@ -18,6 +18,7 @@ import io
 import time
 import shutil
 import asyncio
+import threading
 import argparse
 import subprocess
 import urllib.request
@@ -350,17 +351,24 @@ async def main():
                     raise Exception(f"SDK err: {err} | HTTP err: {http_err}")
             raise err
 
+    _rvc_engine = None
+    _rvc_current_model = None
+    _rvc_lock = threading.Lock()
+
     def _apply_rvc_if_available(audio_path, rvc_model_name, pitch_shift=0):
         """Aplica RVC al audio sintetizado si el modelo .pth está disponible localmente o en la nube"""
+        nonlocal _rvc_engine, _rvc_current_model
         if not rvc_model_name:
             return False
         
         # Buscar modelo .pth en posibles rutas
         model_candidates = [
-            f"resources/models/rvc/{rvc_model_name}.pth",
-            f"models/rvc/{rvc_model_name}.pth",
-            f"rvc_models/{rvc_model_name}.pth",
-            os.path.join(os.path.dirname(__file__), "..", "resources", "models", "rvc", f"{rvc_model_name}.pth")
+            os.path.join("resources", "models", "rvc", f"{rvc_model_name}.pth"),
+            os.path.join("models", "rvc", f"{rvc_model_name}.pth"),
+            os.path.join("rvc_models", f"{rvc_model_name}.pth"),
+            os.path.join(os.path.dirname(__file__), "..", "resources", "models", "rvc", f"{rvc_model_name}.pth"),
+            os.path.join(os.getcwd(), "resources", "models", "rvc", f"{rvc_model_name}.pth"),
+            f"resources/models/rvc/{rvc_model_name}.pth"
         ]
         model_path = None
         for cand in model_candidates:
@@ -370,25 +378,50 @@ async def main():
                 
         if not model_path:
             return False
+
+        # Buscar archivo .index correspondiente
+        index_candidates = [
+            model_path.replace(".pth", ".index"),
+            os.path.join(os.path.dirname(model_path), f"{rvc_model_name}.index")
+        ]
+        index_path = ""
+        for cand in index_candidates:
+            if os.path.exists(cand):
+                index_path = os.path.abspath(cand)
+                break
             
         try:
-            import torch
-            from rvc_python.infer import RVCInference
-            device = "cuda" if torch.cuda.is_available() else "cpu"
-            rvc_engine = RVCInference(device=device)
-            temp_rvc_out = audio_path.replace(".mp3", "_rvc.wav")
-            rvc_engine.infer_file(
-                input_path=audio_path,
-                model_path=model_path,
-                output_path=temp_rvc_out,
-                f0_up_key=pitch_shift
-            )
-            if os.path.exists(temp_rvc_out) and os.path.getsize(temp_rvc_out) > 200:
-                # Convertir de vuelta a MP3 48kHz
-                subprocess.run(["ffmpeg", "-y", "-i", temp_rvc_out, "-ar", "48000", "-b:a", "192k", audio_path], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-                try: os.remove(temp_rvc_out)
-                except: pass
-                return True
+            with _rvc_lock:
+                import torch
+                from rvc_python.infer import RVCInference
+                device = "cuda:0" if torch.cuda.is_available() else "cpu:0"
+                if _rvc_engine is None:
+                    _rvc_engine = RVCInference(device=device)
+
+                if _rvc_current_model != model_path:
+                    _rvc_engine.load_model(model_path, index_path=index_path)
+                    _rvc_current_model = model_path
+
+                pitch_val = int(round(float(pitch_shift))) if pitch_shift else 0
+                _rvc_engine.set_params(
+                    f0up_key=pitch_val,
+                    f0method="rmvpe",
+                    index_rate=0.75,
+                    protect=0.33,
+                    rms_mix_rate=1.0
+                )
+                temp_rvc_out = audio_path.replace(".mp3", "_rvc.wav")
+                _rvc_engine.infer_file(
+                    input_path=audio_path,
+                    output_path=temp_rvc_out
+                )
+                if os.path.exists(temp_rvc_out) and os.path.getsize(temp_rvc_out) > 200:
+                    # Convertir de vuelta a MP3 48kHz
+                    subprocess.run(["ffmpeg", "-y", "-i", temp_rvc_out, "-ar", "48000", "-b:a", "192k", audio_path], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                    try: os.remove(temp_rvc_out)
+                    except: pass
+                    print(f"    ✨ RVC timbre aplicado con éxito ({rvc_model_name}, pitch={pitch_val})")
+                    return True
         except Exception as e:
             print(f"    ⚠️ RVC post-processing no disponible ({e}). Se mantiene audio Fish Audio original.")
         return False

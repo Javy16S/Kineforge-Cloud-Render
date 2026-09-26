@@ -6,3 +6,4 @@ edge-tts>=6.1.12
 opencv-python-headless>=4.8.0
 numpy>=1.23.0
 fish-audio-sdk>=1.3.0
+rvc-python>=0.1.5
