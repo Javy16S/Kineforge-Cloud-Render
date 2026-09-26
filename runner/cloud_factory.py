@@ -639,7 +639,7 @@ async def main():
                         clean_key = self._clean_str(folder)
                         self.char_map[clean_key] = folder
 
-            # Indexación dinámica de carpetas de escenarios
+            # Indexación dinámica de carpetas de escenarios (soporta subcarpetas ej. Planeta_Tierra/Torneo_Artes_Marciales)
             self.scen_map = {}
             if os.path.exists(self.scens_dir) and os.path.isdir(self.scens_dir):
                 for folder in os.listdir(self.scens_dir):
@@ -647,6 +647,12 @@ async def main():
                     if os.path.isdir(f_full):
                         clean_key = self._clean_str(folder)
                         self.scen_map[clean_key] = folder
+                        for subf in os.listdir(f_full):
+                            sub_full = os.path.join(f_full, subf)
+                            if os.path.isdir(sub_full):
+                                rel_path = os.path.join(folder, subf)
+                                self.scen_map[self._clean_str(subf)] = rel_path
+                                self.scen_map[self._clean_str(rel_path)] = rel_path
 
             # Mapeo de alias comunes
             self.char_aliases = {
@@ -735,12 +741,22 @@ async def main():
                 "namekusei": "planetanamek",
                 "tierra": "planetatierra",
                 "planetatierra": "planetatierra",
-                "montepaoz": "planetatierra",
-                "paoz": "planetatierra",
-                "corporacioncapsula": "planetatierra",
-                "capsulecorp": "planetatierra",
-                "capsula": "planetatierra",
-                "kamehouse": "planetatierra",
+                "montepaoz": "montepaozu",
+                "montepaozu": "montepaozu",
+                "paoz": "montepaozu",
+                "corporacioncapsula": "ciudadoeste",
+                "capsulecorp": "ciudadoeste",
+                "capsula": "ciudadoeste",
+                "ciudadoeste": "ciudadoeste",
+                "kamehouse": "kamehouse",
+                "desiertorocas": "desiertorocas",
+                "juegosdecell": "juegosdecell",
+                "cellgames": "juegosdecell",
+                "torneoartesmarciales": "torneoartesmarciales",
+                "torneo": "torneoartesmarciales",
+                "tenkaichibudokai": "torneoartesmarciales",
+                "barcocrucero": "barcocrucero",
+                "palaciokamisama": "palaciokamisama",
                 "habitacion": "habitaciondeltiempo",
                 "habitaciondeltiempo": "habitaciondeltiempo",
                 "saladeltiempo": "habitaciondeltiempo",
@@ -771,7 +787,10 @@ async def main():
             if dir_path not in self.pools:
                 files = []
                 if os.path.exists(dir_path) and os.path.isdir(dir_path):
-                    files = [os.path.join(dir_path, f) for f in os.listdir(dir_path) if f.lower().endswith(('.jpg', '.jpeg', '.png', '.webp'))]
+                    for r, _, fs in os.walk(dir_path):
+                        for f in fs:
+                            if f.lower().endswith(('.jpg', '.jpeg', '.png', '.webp')):
+                                files.append(os.path.join(r, f))
                 if files:
                     import random
                     random.shuffle(files)
