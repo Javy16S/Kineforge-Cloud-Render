@@ -10,7 +10,7 @@
             "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Androide_17\\Base\\Neutral"
           },
           "Combate": {
-            "count": 7,
+            "count": 6,
             "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Androide_17\\Base\\Combate"
           },
           "Herido": {
@@ -18,7 +18,7 @@
             "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Androide_17\\Base\\Herido"
           },
           "Alegre": {
-            "count": 2,
+            "count": 1,
             "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Androide_17\\Base\\Alegre"
           }
         },
@@ -33,7 +33,7 @@
           }
         }
       },
-      "total_images": 34
+      "total_images": 32
     },
     "Androide_18": {
       "phases": {
@@ -348,38 +348,26 @@
       "phases": {
         "Base": {
           "Alegre": {
-            "count": 2,
+            "count": 1,
             "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Gohan\\Base\\Alegre"
           },
           "Enfadado": {
-            "count": 7,
+            "count": 2,
             "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Gohan\\Base\\Enfadado"
           },
-          "Triste": {
-            "count": 1,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Gohan\\Base\\Triste"
-          },
           "Neutral": {
-            "count": 91,
+            "count": 35,
             "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Gohan\\Base\\Neutral"
           },
           "Combate": {
-            "count": 10,
+            "count": 5,
             "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Gohan\\Base\\Combate"
-          },
-          "Herido": {
-            "count": 1,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Gohan\\Base\\Herido"
           }
         },
         "Definitivo": {
           "Neutral": {
-            "count": 9,
+            "count": 1,
             "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Gohan\\Definitivo\\Neutral"
-          },
-          "Combate": {
-            "count": 2,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Gohan\\Definitivo\\Combate"
           },
           "Enfadado": {
             "count": 1,
@@ -387,17 +375,9 @@
           }
         },
         "SSJ1": {
-          "Enfadado": {
-            "count": 2,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Gohan\\SSJ1\\Enfadado"
-          },
           "Combate": {
             "count": 2,
             "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Gohan\\SSJ1\\Combate"
-          },
-          "Herido": {
-            "count": 1,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Gohan\\SSJ1\\Herido"
           },
           "Sorprendido": {
             "count": 1,
@@ -411,30 +391,26 @@
           }
         }
       },
-      "total_images": 131
+      "total_images": 49
     },
     "Gohan_Kid": {
       "phases": {
         "Base": {
-          "Triste": {
-            "count": 2,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Gohan_Kid\\Base\\Triste"
-          },
           "Neutral": {
-            "count": 158,
+            "count": 109,
             "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Gohan_Kid\\Base\\Neutral"
           },
           "Herido": {
-            "count": 8,
+            "count": 5,
             "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Gohan_Kid\\Base\\Herido"
           },
           "Combate": {
-            "count": 14,
+            "count": 9,
             "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Gohan_Kid\\Base\\Combate"
           }
         }
       },
-      "total_images": 182
+      "total_images": 123
     },
     "Gohan_Teen": {
       "phases": {
@@ -454,7 +430,7 @@
         },
         "SSJ1": {
           "Neutral": {
-            "count": 14,
+            "count": 6,
             "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Gohan_Teen\\SSJ1\\Neutral"
           },
           "Combate": {
@@ -467,17 +443,13 @@
             "count": 2,
             "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Gohan_Teen\\SSJ2\\Herido"
           },
-          "Neutral": {
-            "count": 4,
-            "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Gohan_Teen\\SSJ2\\Neutral"
-          },
           "Enfadado": {
             "count": 5,
             "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Characters\\Gohan_Teen\\SSJ2\\Enfadado"
           }
         }
       },
-      "total_images": 53
+      "total_images": 41
     },
     "Goku": {
       "phases": {
@@ -1376,10 +1348,6 @@
       "count": 81,
       "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Scenarios\\Espacio"
     },
-    "Extras": {
-      "count": 799,
-      "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Scenarios\\Extras"
-    },
     "Habitacion_del_Tiempo": {
       "count": 24,
       "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Scenarios\\Habitacion_del_Tiempo"
@@ -1389,24 +1357,56 @@
       "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Scenarios\\Planeta_Bills"
     },
     "Planeta_Kaio_Sama": {
-      "count": 135,
+      "count": 134,
       "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Scenarios\\Planeta_Kaio_Sama"
     },
     "Planeta_Kaioshin": {
-      "count": 72,
+      "count": 70,
       "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Scenarios\\Planeta_Kaioshin"
     },
     "Planeta_Namek": {
-      "count": 591,
+      "count": 428,
       "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Scenarios\\Planeta_Namek"
     },
+    "Planeta_Tierra/Barco_Crucero": {
+      "count": 35,
+      "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Scenarios\\Planeta_Tierra\\Barco_Crucero"
+    },
+    "Planeta_Tierra/Ciudad_Oeste": {
+      "count": 154,
+      "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Scenarios\\Planeta_Tierra\\Ciudad_Oeste"
+    },
+    "Planeta_Tierra/Desierto_Rocas": {
+      "count": 182,
+      "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Scenarios\\Planeta_Tierra\\Desierto_Rocas"
+    },
+    "Planeta_Tierra/Juegos_de_Cell": {
+      "count": 19,
+      "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Scenarios\\Planeta_Tierra\\Juegos_de_Cell"
+    },
+    "Planeta_Tierra/Kame_House": {
+      "count": 20,
+      "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Scenarios\\Planeta_Tierra\\Kame_House"
+    },
+    "Planeta_Tierra/Monte_Paozu": {
+      "count": 23,
+      "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Scenarios\\Planeta_Tierra\\Monte_Paozu"
+    },
+    "Planeta_Tierra/Palacio_Kami_Sama": {
+      "count": 51,
+      "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Scenarios\\Planeta_Tierra\\Palacio_Kami_Sama"
+    },
+    "Planeta_Tierra/Torneo_Artes_Marciales": {
+      "count": 30,
+      "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Scenarios\\Planeta_Tierra\\Torneo_Artes_Marciales"
+    },
     "Templo_Zeno_Sama": {
-      "count": 9,
+      "count": 1,
       "path": "E:\\Dataset_Dragon_Ball\\Ordered Images\\Scenarios\\Templo_Zeno_Sama"
     }
   },
   "stats": {
     "total_characters": 45,
-    "total_images": 4830
+    "total_images": 4675
   }
 }
