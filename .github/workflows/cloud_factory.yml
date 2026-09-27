@@ -16,6 +16,11 @@ on:
         required: false
         default: "0"
         type: string
+      story:
+        description: "Título o identificador de la historia en Google Sheets"
+        required: false
+        default: ""
+        type: string
       chapter_num:
         description: "Número de capítulo a producir (1..5 o 'full')"
         required: true
@@ -71,6 +76,7 @@ jobs:
         run: |
           HIST_IDX="${{ github.event.inputs.history_index || '0' }}"
           CHAPTER="${{ github.event.inputs.chapter_num || '1' }}"
+          STORY="${{ github.event.inputs.story || '' }}"
           DRY_RUN_FLAG=""
           if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then
             DRY_RUN_FLAG="--dry-run"
@@ -78,6 +84,7 @@ jobs:
 
           python runner/cloud_factory.py \
             --history-index "${HIST_IDX}" \
+            --story "${STORY}" \
             --chapter-num "${CHAPTER}" \
             --work-dir "${RUNNER_TEMP}/factory_work" \
             --output-video "${RUNNER_TEMP}/video_capitulo_${CHAPTER}.mp4" \
@@ -130,8 +137,10 @@ jobs:
                 --target main || true
             fi
 
+            STORY_RAW="${{ github.event.inputs.story || '' }}"
+            ENCODED_STORY=$(python -c "import urllib.parse, sys; print(urllib.parse.quote(sys.argv[1]))" "${STORY_RAW}")
             PREVIEW_URL="https://github.com/${{ github.repository }}/releases/download/${TAG}/preview_capitulo_${CHAPTER}.mp4"
-            WEB_PLAYER="https://javy16s.github.io/Kineforge-Cloud-Render/?ch=${CHAPTER}"
+            WEB_PLAYER="https://javy16s.github.io/Kineforge-Cloud-Render/?ch=${CHAPTER}&story=${ENCODED_STORY}&t=$(date +%s)"
 
             echo "## 🎬 ¡Previsualización Lista para Móvil y Navegador!" >> $GITHUB_STEP_SUMMARY
             echo "" >> $GITHUB_STEP_SUMMARY

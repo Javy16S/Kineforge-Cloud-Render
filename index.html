@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
@@ -306,13 +306,26 @@
 
     function loadChapter(ch) {
       const fileName = ch === 'full' ? 'preview_capitulo_full.mp4' : `preview_capitulo_${ch}.mp4`;
-      const videoUrl = REPO_BASE + fileName;
+      const videoUrl = REPO_BASE + fileName + '?t=' + Date.now();
       
       player.src = videoUrl;
       btnDownload.href = videoUrl;
-      videoTitle.innerText = ch === 'full' 
-        ? "Película Completa (Capítulos 1 al 5) - Previsualización de Prueba"
-        : `Capítulo ${ch} - Previsualización en Tiempo Real`;
+
+      const storyParam = getQueryParam("story") || getQueryParam("title");
+      if (storyParam) {
+        try {
+          const decoded = decodeURIComponent(storyParam);
+          videoTitle.innerText = ch === 'full'
+            ? `${decoded} | Película Completa (Caps 1 al 5)`
+            : `${decoded} | Capítulo ${ch}`;
+        } catch(e) {
+          videoTitle.innerText = `${storyParam} | Capítulo ${ch}`;
+        }
+      } else {
+        videoTitle.innerText = ch === 'full' 
+          ? "Película Completa (Capítulos 1 al 5) - Previsualización KineForge"
+          : `Capítulo ${ch} - Previsualización KineForge`;
+      }
 
       buttons.forEach(btn => {
         if (ch === 'full') {

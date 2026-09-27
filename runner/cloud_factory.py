@@ -139,6 +139,7 @@ KEN_BURNS_PRESETS = [
 def parse_args():
     parser = argparse.ArgumentParser(description="KineForge Autonomous Cloud Factory")
     parser.add_argument("--history-index", type=int, default=0, help="Índice de la historia en Google Sheets (0 = primera)")
+    parser.add_argument("--story", default="", help="Título de la historia o búsqueda por texto en Google Sheets")
     parser.add_argument("--chapter-num", default="1", help="Número de capítulo a producir (1..5 o 'full')")
     parser.add_argument("--work-dir", default="/tmp/kineforge_factory", help="Directorio temporal de trabajo")
     parser.add_argument("--output-video", default="/tmp/final_video.mp4", help="Ruta del video final")
@@ -243,10 +244,45 @@ async def main():
     reader = csv.DictReader(io.StringIO(csv_content))
     rows = list(reader)
 
-    if args.history_index >= len(rows):
-        raise IndexError(f"Índice de historia {args.history_index} fuera de rango (total {len(rows)})")
+    if not rows:
+        raise ValueError("El archivo Google Sheets está vacío o no se pudo descargar.")
 
-    story_row = rows[args.history_index]
+    # Selección inteligente de historia
+    story_row = None
+    target_story = (args.story or "").strip()
+    if target_story:
+        # 1. Si es un entero puro, usarlo como índice
+        if target_story.isdigit():
+            s_idx = int(target_story)
+            if s_idx < len(rows):
+                story_row = rows[s_idx]
+                print(f"🎯 Historia seleccionada por índice ({s_idx}): {story_row.get('TÍTULO DEL VIDEO')}")
+
+        # 2. Coincidencia por título de vídeo
+        if not story_row:
+            t_clean = re.sub(r'[^a-zA-Z0-9áéíóúÁÉÍÓÚñÑ]', '', target_story).lower()
+            for r_idx, r in enumerate(rows):
+                row_title = r.get('TÍTULO DEL VIDEO', '').strip()
+                row_clean = re.sub(r'[^a-zA-Z0-9áéíóúÁÉÍÓÚñÑ]', '', row_title).lower()
+                if t_clean and (t_clean in row_clean or row_clean in t_clean):
+                    story_row = r
+                    print(f"🎯 Historia seleccionada por título (Fila {r_idx}): {row_title}")
+                    break
+
+        # 3. Coincidencia en cualquier columna
+        if not story_row:
+            for r_idx, r in enumerate(rows):
+                row_str = " ".join(r.values()).lower()
+                if target_story.lower() in row_str:
+                    story_row = r
+                    print(f"🎯 Historia encontrada por coincidencia de texto (Fila {r_idx}): {r.get('TÍTULO DEL VIDEO')}")
+                    break
+
+    if not story_row:
+        if args.history_index >= len(rows):
+            raise IndexError(f"Índice de historia {args.history_index} fuera de rango (total {len(rows)})")
+        story_row = rows[args.history_index]
+        print(f"🎯 Historia seleccionada por índice por defecto ({args.history_index}): {story_row.get('TÍTULO DEL VIDEO')}")
     sheet_title = story_row.get('TÍTULO DEL VIDEO', 'Goku Encerrado Mil Años')
     
     chapter_arg = str(args.chapter_num).strip().lower()
