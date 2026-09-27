@@ -1,6 +1,17 @@
 {
-  "stories": {},
-  "last_story": "h0",
+  "stories": {
+    "h1": {
+      "id": "h1",
+      "title": "¿QUÉ HABRÍA PASADO SI FREEZER HUBIERA CONSEGUIDO SU DESEO DE INMORTALIDAD?",
+      "chapters": {
+        "1": {
+          "file": "preview_h1_cap_1.mp4",
+          "updated_at": "2026-09-27T19:22:54.811635Z"
+        }
+      }
+    }
+  },
+  "last_story": "h1",
   "last_chapter": "1",
-  "last_updated": "2026-09-27T00:00:00Z"
+  "last_updated": "2026-09-27T19:22:54.811649Z"
 }
