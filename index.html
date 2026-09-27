@@ -6,7 +6,7 @@
   <title>KineForge Cloud Studio - Cinema Web Player</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
@@ -139,15 +139,54 @@
       background: #131b2e;
       border: 1px solid #1e293b;
       border-radius: 16px;
-      padding: 16px 20px;
+      padding: 18px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
     }
-    .selector-label {
-      font-size: 13px;
-      font-weight: 600;
+    .section-title {
+      font-size: 12px;
+      font-weight: 700;
       color: #94a3b8;
-      margin-bottom: 12px;
       text-transform: uppercase;
-      letter-spacing: 0.5px;
+      letter-spacing: 0.8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .story-select-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .story-select {
+      background: #0b1120;
+      border: 1px solid #334155;
+      color: #f8fafc;
+      font-size: 14px;
+      font-weight: 600;
+      padding: 12px 14px;
+      border-radius: 10px;
+      outline: none;
+      cursor: pointer;
+      width: 100%;
+      font-family: inherit;
+      transition: all 0.2s ease;
+    }
+    .story-select:focus {
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3);
+    }
+    .story-select option {
+      background: #0f172a;
+      color: #f8fafc;
+      padding: 8px;
+    }
+
+    .chapter-section {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
     }
     .chapter-buttons {
       display: grid;
@@ -158,7 +197,7 @@
       background: #1e293b;
       color: #cbd5e1;
       border: 1px solid #334155;
-      padding: 10px 14px;
+      padding: 10px 12px;
       border-radius: 10px;
       font-size: 13px;
       font-weight: 600;
@@ -167,8 +206,9 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 6px;
+      gap: 8px;
       text-decoration: none;
+      position: relative;
     }
     .btn-ch:hover {
       background: #334155;
@@ -181,11 +221,34 @@
       border-color: #60a5fa;
       box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
     }
+    .btn-ch.not-rendered {
+      opacity: 0.55;
+      border-style: dashed;
+    }
+    .btn-ch.not-rendered:hover {
+      opacity: 0.85;
+    }
+    .ch-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #64748b;
+      flex-shrink: 0;
+    }
+    .ch-dot.available {
+      background: #10b981;
+      box-shadow: 0 0 6px #10b981;
+    }
+    .btn-ch.active .ch-dot.available {
+      background: #ffffff;
+      box-shadow: 0 0 6px #ffffff;
+    }
+
     .actions-row {
       display: flex;
       flex-wrap: wrap;
       gap: 10px;
-      margin-top: 6px;
+      margin-top: 4px;
     }
     .btn-action {
       flex: 1;
@@ -231,7 +294,7 @@
       body { padding: 10px; }
       .header { padding: 8px 0 14px 0; }
       .meta-bar { padding: 12px 14px; }
-      .selector-card { padding: 12px 14px; }
+      .selector-card { padding: 14px; }
       .chapter-buttons { grid-template-columns: repeat(2, 1fr); }
     }
   </style>
@@ -267,17 +330,52 @@
     </div>
 
     <div class="selector-card">
-      <div class="selector-label">Seleccionar Capítulo para Visualizar:</div>
-      <div class="chapter-buttons">
-        <button class="btn-ch active" onclick="loadChapter(1)">Capítulo 1</button>
-        <button class="btn-ch" onclick="loadChapter(2)">Capítulo 2</button>
-        <button class="btn-ch" onclick="loadChapter(3)">Capítulo 3</button>
-        <button class="btn-ch" onclick="loadChapter(4)">Capítulo 4</button>
-        <button class="btn-ch" onclick="loadChapter(5)">Capítulo 5</button>
-        <button class="btn-ch" onclick="loadChapter('full')">Película Completa</button>
+      <!-- Selector de Historia -->
+      <div class="story-select-wrap">
+        <div class="section-title">
+          <span>📖</span>
+          <span>Historia Activa:</span>
+        </div>
+        <select id="storySelect" class="story-select" onchange="onStorySelected(this.value)">
+          <option value="h0">Cargando catálogo de historias...</option>
+        </select>
       </div>
 
-      <div class="actions-row" style="margin-top: 16px;">
+      <!-- Selector de Capítulos -->
+      <div class="chapter-section">
+        <div class="section-title">
+          <span>🎞️</span>
+          <span>Capítulos de la Historia Seleccionada:</span>
+        </div>
+        <div class="chapter-buttons">
+          <button class="btn-ch" id="btn-ch-1" onclick="selectChapter('1')">
+            <span class="ch-dot" id="dot-ch-1"></span>
+            <span>Capítulo 1</span>
+          </button>
+          <button class="btn-ch" id="btn-ch-2" onclick="selectChapter('2')">
+            <span class="ch-dot" id="dot-ch-2"></span>
+            <span>Capítulo 2</span>
+          </button>
+          <button class="btn-ch" id="btn-ch-3" onclick="selectChapter('3')">
+            <span class="ch-dot" id="dot-ch-3"></span>
+            <span>Capítulo 3</span>
+          </button>
+          <button class="btn-ch" id="btn-ch-4" onclick="selectChapter('4')">
+            <span class="ch-dot" id="dot-ch-4"></span>
+            <span>Capítulo 4</span>
+          </button>
+          <button class="btn-ch" id="btn-ch-5" onclick="selectChapter('5')">
+            <span class="ch-dot" id="dot-ch-5"></span>
+            <span>Capítulo 5</span>
+          </button>
+          <button class="btn-ch" id="btn-ch-full" onclick="selectChapter('full')">
+            <span class="ch-dot" id="dot-ch-full"></span>
+            <span>Película Completa</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="actions-row">
         <a id="btnDownload" href="#" target="_blank" class="btn-action btn-download">
           📥 Descargar MP4 Ligero
         </a>
@@ -288,7 +386,7 @@
     </div>
 
     <p class="tip-box">
-      💡 <strong>Optimizado para móvil:</strong> Este reproductor transmite vídeo codificado en H.264 con metadatos FastStart al inicio. Puedes avanzar y retroceder sin descargar los 2 GB del master.
+      💡 <strong>Aislamiento por Historia:</strong> Cada historia guarda y visualiza únicamente sus propios capítulos. Los puntos verdes indican capítulos ya renderizados.
     </p>
   </main>
 
@@ -297,48 +395,162 @@
     const player = document.getElementById("cloudPlayer");
     const videoTitle = document.getElementById("videoTitle");
     const btnDownload = document.getElementById("btnDownload");
-    const buttons = document.querySelectorAll(".btn-ch");
+    const storySelect = document.getElementById("storySelect");
+
+    let manifest = { stories: {}, last_story: "h0", last_chapter: "1" };
+    let currentStoryId = "h0";
+    let currentChapter = "1";
 
     function getQueryParam(param) {
       const urlParams = new URLSearchParams(window.location.search);
       return urlParams.get(param);
     }
 
-    function loadChapter(ch) {
-      const fileName = ch === 'full' ? 'preview_capitulo_full.mp4' : `preview_capitulo_${ch}.mp4`;
-      const videoUrl = REPO_BASE + fileName + '?t=' + Date.now();
-      
-      player.src = videoUrl;
-      btnDownload.href = videoUrl;
+    function updateUrlState() {
+      const newUrl = new URL(window.location.href);
+      newUrl.searchParams.set("story", currentStoryId);
+      newUrl.searchParams.set("ch", currentChapter);
+      window.history.replaceState({}, "", newUrl.toString());
+    }
 
-      const storyParam = getQueryParam("story") || getQueryParam("title");
-      if (storyParam) {
-        try {
-          const decoded = decodeURIComponent(storyParam);
-          videoTitle.innerText = ch === 'full'
-            ? `${decoded} | Película Completa (Caps 1 al 5)`
-            : `${decoded} | Capítulo ${ch}`;
-        } catch(e) {
-          videoTitle.innerText = `${storyParam} | Capítulo ${ch}`;
+    async function loadManifest() {
+      try {
+        const resp = await fetch("manifest_previews.json?t=" + Date.now());
+        if (resp.ok) {
+          manifest = await resp.json();
+        }
+      } catch (err) {
+        console.warn("No se pudo cargar manifest_previews.json remoto, usando fallback:", err);
+      }
+      initPlayerCatalog();
+    }
+
+    function initPlayerCatalog() {
+      const paramStory = getQueryParam("story") || getQueryParam("s");
+      const paramTitle = getQueryParam("title");
+      const paramCh = getQueryParam("ch") || getQueryParam("c");
+
+      // Si el manifest tiene historias, poblamos el desplegable
+      storySelect.innerHTML = "";
+      const storyKeys = Object.keys(manifest.stories || {});
+
+      if (storyKeys.length > 0) {
+        storyKeys.forEach(sId => {
+          const s = manifest.stories[sId];
+          const opt = document.createElement("option");
+          opt.value = sId;
+          opt.textContent = `${s.id.toUpperCase()} - ${s.title || 'Historia ' + s.id}`;
+          storySelect.appendChild(opt);
+        });
+
+        // Determinar historia inicial
+        if (paramStory && manifest.stories[paramStory]) {
+          currentStoryId = paramStory;
+        } else if (manifest.last_story && manifest.stories[manifest.last_story]) {
+          currentStoryId = manifest.last_story;
+        } else {
+          currentStoryId = storyKeys[0];
         }
       } else {
-        videoTitle.innerText = ch === 'full' 
-          ? "Película Completa (Capítulos 1 al 5) - Previsualización KineForge"
-          : `Capítulo ${ch} - Previsualización KineForge`;
+        // Fallback cuando el manifest aún no tiene registros
+        const fallbackId = paramStory || "h0";
+        const fallbackTitle = paramTitle ? decodeURIComponent(paramTitle) : "Historia KineForge";
+        const opt = document.createElement("option");
+        opt.value = fallbackId;
+        opt.textContent = fallbackTitle;
+        storySelect.appendChild(opt);
+        currentStoryId = fallbackId;
       }
 
-      buttons.forEach(btn => {
-        if (ch === 'full') {
-          btn.classList.toggle("active", btn.innerText.includes("Película"));
-        } else {
-          btn.classList.toggle("active", btn.innerText.includes(`Capítulo ${ch}`));
-        }
+      storySelect.value = currentStoryId;
+
+      // Determinar capítulo inicial
+      if (paramCh) {
+        currentChapter = String(paramCh);
+      } else if (manifest.stories && manifest.stories[currentStoryId] && manifest.stories[currentStoryId].chapters) {
+        const chList = Object.keys(manifest.stories[currentStoryId].chapters);
+        currentChapter = chList.length > 0 ? chList[chList.length - 1] : "1";
+      } else {
+        currentChapter = manifest.last_chapter || "1";
+      }
+
+      renderChapterState();
+      playCurrentChapter();
+    }
+
+    function renderChapterState() {
+      const storyData = (manifest.stories && manifest.stories[currentStoryId]) || null;
+      const chaptersAvailable = (storyData && storyData.chapters) ? storyData.chapters : {};
+
+      const allChapters = ['1', '2', '3', '4', '5', 'full'];
+      allChapters.forEach(ch => {
+        const btn = document.getElementById(`btn-ch-${ch}`);
+        const dot = document.getElementById(`dot-ch-${ch}`);
+        if (!btn || !dot) return;
+
+        const isRendered = !!chaptersAvailable[ch];
+        const isActive = String(currentChapter) === String(ch);
+
+        btn.classList.toggle("active", isActive);
+        btn.classList.toggle("not-rendered", !isRendered);
+
+        dot.classList.toggle("available", isRendered);
       });
     }
 
-    // Inicializar según URL o Capítulo 1 por defecto
-    const paramCh = getQueryParam("ch") || getQueryParam("c") || "1";
-    loadChapter(paramCh);
+    function onStorySelected(sId) {
+      currentStoryId = sId;
+      // Al cambiar de historia, seleccionar el primer capítulo disponible o el 1
+      const storyData = manifest.stories && manifest.stories[sId];
+      if (storyData && storyData.chapters) {
+        const available = Object.keys(storyData.chapters);
+        if (available.length > 0 && !available.includes(currentChapter)) {
+          currentChapter = available[0];
+        }
+      }
+      renderChapterState();
+      playCurrentChapter();
+      updateUrlState();
+    }
+
+    function selectChapter(ch) {
+      currentChapter = String(ch);
+      renderChapterState();
+      playCurrentChapter();
+      updateUrlState();
+    }
+
+    function playCurrentChapter() {
+      const fileName = `preview_${currentStoryId}_cap_${currentChapter}.mp4`;
+      const videoUrl = REPO_BASE + fileName + '?t=' + Date.now();
+
+      // Configurar fuente y fallback
+      player.src = videoUrl;
+      btnDownload.href = videoUrl;
+
+      player.onerror = () => {
+        // Fallback a preview_capitulo_{ch}.mp4 para retrocompatibilidad
+        const fallbackUrl = `${REPO_BASE}preview_capitulo_${currentChapter}.mp4?t=` + Date.now();
+        if (player.src !== fallbackUrl) {
+          console.warn("Fallback a enlace estándar:", fallbackUrl);
+          player.src = fallbackUrl;
+          btnDownload.href = fallbackUrl;
+        }
+      };
+
+      // Título
+      const storyData = (manifest.stories && manifest.stories[currentStoryId]) || null;
+      const titleText = storyData && storyData.title 
+        ? storyData.title 
+        : (getQueryParam("title") ? decodeURIComponent(getQueryParam("title")) : "Historia KineForge");
+
+      videoTitle.innerText = currentChapter === 'full'
+        ? `${titleText} | Película Completa (1 al 5)`
+        : `${titleText} | Capítulo ${currentChapter}`;
+    }
+
+    // Iniciar carga del manifest
+    loadManifest();
   </script>
 </body>
 </html>

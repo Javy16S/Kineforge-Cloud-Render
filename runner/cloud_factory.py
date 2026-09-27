@@ -249,6 +249,7 @@ async def main():
 
     # Selección inteligente de historia
     story_row = None
+    story_idx = 0
     target_story = (args.story or "").strip()
     if target_story:
         # 1. Si es un entero puro, usarlo como índice
@@ -256,6 +257,7 @@ async def main():
             s_idx = int(target_story)
             if s_idx < len(rows):
                 story_row = rows[s_idx]
+                story_idx = s_idx
                 print(f"🎯 Historia seleccionada por índice ({s_idx}): {story_row.get('TÍTULO DEL VIDEO')}")
 
         # 2. Coincidencia por título de vídeo
@@ -266,6 +268,7 @@ async def main():
                 row_clean = re.sub(r'[^a-zA-Z0-9áéíóúÁÉÍÓÚñÑ]', '', row_title).lower()
                 if t_clean and (t_clean in row_clean or row_clean in t_clean):
                     story_row = r
+                    story_idx = r_idx
                     print(f"🎯 Historia seleccionada por título (Fila {r_idx}): {row_title}")
                     break
 
@@ -275,15 +278,27 @@ async def main():
                 row_str = " ".join(r.values()).lower()
                 if target_story.lower() in row_str:
                     story_row = r
+                    story_idx = r_idx
                     print(f"🎯 Historia encontrada por coincidencia de texto (Fila {r_idx}): {r.get('TÍTULO DEL VIDEO')}")
                     break
 
     if not story_row:
         if args.history_index >= len(rows):
             raise IndexError(f"Índice de historia {args.history_index} fuera de rango (total {len(rows)})")
+        story_idx = args.history_index
         story_row = rows[args.history_index]
         print(f"🎯 Historia seleccionada por índice por defecto ({args.history_index}): {story_row.get('TÍTULO DEL VIDEO')}")
     sheet_title = story_row.get('TÍTULO DEL VIDEO', 'Goku Encerrado Mil Años')
+
+    # Guardar story_info.json para el pipeline de preview y metadatos
+    story_info = {
+        "story_idx": story_idx,
+        "story_id": f"h{story_idx}",
+        "story_title": sheet_title,
+        "chapter": str(args.chapter_num).strip().lower()
+    }
+    with open(os.path.join(args.work_dir, "story_info.json"), "w", encoding="utf-8") as s_f:
+        json.dump(story_info, s_f, indent=2, ensure_ascii=False)
     
     chapter_arg = str(args.chapter_num).strip().lower()
     if chapter_arg in ["full", "completo", "0", "pelicula"]:
