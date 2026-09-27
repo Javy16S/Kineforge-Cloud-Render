@@ -9,9 +9,19 @@
           "updated_at": "2026-09-27T19:22:54.811635Z"
         }
       }
+    },
+    "h0": {
+      "id": "h0",
+      "title": "¿QHPS si GOKU se ENCIERRA tras ser HUMILLADO por JIREN para DOMINAR el ULTRA INSTINTO?",
+      "chapters": {
+        "1": {
+          "file": "preview_h0_cap_1.mp4",
+          "updated_at": "2026-09-27T20:56:21.498696Z"
+        }
+      }
     }
   },
-  "last_story": "h1",
+  "last_story": "h0",
   "last_chapter": "1",
-  "last_updated": "2026-09-27T19:22:54.811649Z"
+  "last_updated": "2026-09-27T20:56:21.498709Z"
 }
