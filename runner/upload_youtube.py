@@ -68,7 +68,19 @@ def upload_video_resumable(youtube, video_path: str, metadata: dict):
     description = metadata.get("description", "Subido automáticamente vía KineForge Cloud Pipeline")
     tags = metadata.get("tags", ["KineForge", "Anime", "Dr Luffycs"])
     category_id = str(metadata.get("categoryId", "1")) # 1 = Film & Animation, 24 = Entertainment
-    privacy_status = metadata.get("privacyStatus", "unlisted") # 'private', 'unlisted', 'public'
+    publish_at = metadata.get("publishAt")
+    publish_at_local = metadata.get("publishAtLocal")
+
+    status_dict = {
+        "selfDeclaredMadeForKids": metadata.get("madeForKids", False),
+    }
+
+    if publish_at:
+        # Requisito estricto de YouTube Data API: para programar, privacyStatus debe ser 'private'
+        status_dict["privacyStatus"] = "private"
+        status_dict["publishAt"] = publish_at
+    else:
+        status_dict["privacyStatus"] = privacy_status
 
     body = {
         "snippet": {
@@ -77,15 +89,16 @@ def upload_video_resumable(youtube, video_path: str, metadata: dict):
             "tags": tags,
             "categoryId": category_id,
         },
-        "status": {
-            "privacyStatus": privacy_status,
-            "selfDeclaredMadeForKids": metadata.get("madeForKids", False),
-        }
+        "status": status_dict
     }
 
     print(f"\n📤 Preparando subida a YouTube:")
     print(f"   Título:     {body['snippet']['title']}")
-    print(f"   Privacidad: {privacy_status}")
+    if publish_at:
+        print(f"   Estado:     📅 PROGRAMADO (Privado en Studio hasta el estreno)")
+        print(f"   Estreno:    {publish_at_local or publish_at}")
+    else:
+        print(f"   Privacidad: {privacy_status}")
     print(f"   Categoría:  {category_id}")
     print(f"   Archivo:    {video_path} ({os.path.getsize(video_path) / (1024*1024):.2f} MB)")
 

@@ -1,0 +1,9 @@
+{
+  "version": "1.0",
+  "timezone": "Europe/Madrid",
+  "target_time": "20:30",
+  "days_gap": 2,
+  "last_scheduled_iso": null,
+  "last_scheduled_local": null,
+  "scheduled_videos": []
+}

@@ -33,6 +33,16 @@ from render import render_project
 from upload_youtube import get_authenticated_service, upload_video_resumable
 
 try:
+    from scheduler import calculate_next_publish_date, record_scheduled_video, load_schedule_registry
+except ImportError:
+    try:
+        from runner.scheduler import calculate_next_publish_date, record_scheduled_video, load_schedule_registry
+    except ImportError:
+        calculate_next_publish_date = None
+        record_scheduled_video = None
+        load_schedule_registry = None
+
+try:
     from voice_director import resolve_character_voice, CHARACTER_REGISTRY, FISH_CATALOG
 except ImportError:
     try:
@@ -149,6 +159,12 @@ def parse_args():
     parser.add_argument("--music-dir", default=None, help="Ruta a carpeta de música (ej: E:\\Dataset_Dragon_Ball\\Music)")
     parser.add_argument("--fish-api-key", default=None, help="API Key de Fish Audio (o variable FISH_API_KEY)")
     parser.add_argument("--fish-default-model-id", default=None, help="ID de modelo por defecto de Fish Audio (o variable FISH_DEFAULT_MODEL_ID)")
+    parser.add_argument("--publish-at", default=None, help="Fecha ISO UTC manual para programar en YouTube (ej: 2026-10-01T18:30:00Z)")
+    parser.add_argument("--schedule-mode", default="auto", choices=["auto", "scheduled", "unlisted", "private", "public"],
+                        help="Modo de publicación en YouTube (auto = programado cada 2 días a las 20:30 España)")
+    parser.add_argument("--days-gap", type=int, default=2, help="Días de separación entre estrenos programados (default: 2)")
+    parser.add_argument("--target-hour", type=int, default=20, help="Hora peninsular de España para el estreno (default: 20)")
+    parser.add_argument("--target-minute", type=int, default=30, help="Minuto para el estreno (default: 30)")
     return parser.parse_args()
 
 def split_text_into_dynamic_cuts(text, target_words=10):
@@ -1241,12 +1257,34 @@ async def main():
     with open(manifest_file, "w", encoding="utf-8") as f:
         json.dump(manifest, f, indent=2, ensure_ascii=False)
 
+    publish_at_utc = None
+    publish_at_local = None
+
+    if calculate_next_publish_date and args.schedule_mode in ["auto", "scheduled"]:
+        publish_at_utc, publish_at_local = calculate_next_publish_date(
+            days_gap=args.days_gap,
+            target_hour=args.target_hour,
+            target_minute=args.target_minute,
+            custom_publish_at=args.publish_at
+        )
+        print(f"\n📅 Programación de estreno en YouTube calculada:")
+        print(f"   Hora local (España): {publish_at_local}")
+        print(f"   UTC (YouTube API):   {publish_at_utc}")
+
+    privacy_status = "unlisted"
+    if args.schedule_mode in ["unlisted", "private", "public"]:
+        privacy_status = args.schedule_mode
+    elif publish_at_utc:
+        privacy_status = "private"
+
     metadata = {
         "title": display_title,
         "description": f"{display_title} producido y renderizado en la nube.\n\n#DragonBall #Goku #AnimeFanfic #Zorojin",
         "tags": ["Dragon Ball", "Goku", "Zorojin", "Habitacion del Tiempo", "Anime Fanfic", "Super Saiyajin", "Pelicula Completa"],
         "categoryId": "1",
-        "privacyStatus": "unlisted",
+        "privacyStatus": privacy_status,
+        "publishAt": publish_at_utc,
+        "publishAtLocal": publish_at_local,
         "madeForKids": False,
         "dryRun": args.dry_run,
         "subtitles": srt_path
@@ -1255,18 +1293,40 @@ async def main():
     with open(metadata_file, "w", encoding="utf-8") as f:
         json.dump(metadata, f, indent=2, ensure_ascii=False)
 
+    # Actualizar story_info.json con la programación calculada
+    story_info["publish_at_local"] = publish_at_local
+    story_info["publish_at_utc"] = publish_at_utc
+    with open(os.path.join(args.work_dir, "story_info.json"), "w", encoding="utf-8") as s_f:
+        json.dump(story_info, s_f, indent=2, ensure_ascii=False)
+
     # 7. Renderizar Video con FFmpeg
     print(f"\n🎬 Renderizando vídeo MP4 final con motor v3.0 ({len(manifest_clips)} clips)...")
     render_project(manifest_file, assets_dir, args.output_video, ffmpeg_bin="ffmpeg")
 
     # 8. Subir a YouTube
     print("\n🚀 Subiendo a YouTube con subtítulos sincronizados...")
+    uploaded_video_id = None
     if args.dry_run:
         print("ℹ️ Modo Dry-Run activo: No se subirá a YouTube.")
+        if publish_at_local:
+            print(f"ℹ️ En producción real, este vídeo se programaría para: {publish_at_local}")
     else:
         try:
             youtube = get_authenticated_service()
-            upload_video_resumable(youtube, args.output_video, metadata)
+            uploaded_video_id = upload_video_resumable(youtube, args.output_video, metadata)
+            if uploaded_video_id and publish_at_utc and record_scheduled_video:
+                record_scheduled_video(
+                    video_id=uploaded_video_id,
+                    title=display_title,
+                    story_id=story_info.get("story_id", "h0"),
+                    chapter=args.chapter_num,
+                    publish_at_utc=publish_at_utc,
+                    publish_at_local=publish_at_local,
+                    schedule_path="publish_schedule.json"
+                )
+                story_info["youtube_id"] = uploaded_video_id
+                with open(os.path.join(args.work_dir, "story_info.json"), "w", encoding="utf-8") as s_f:
+                    json.dump(story_info, s_f, indent=2, ensure_ascii=False)
         except Exception as e:
             err_msg = str(e)
             if "quotaExceeded" in err_msg or "quota" in err_msg.lower():

@@ -134,6 +134,7 @@
     .tag-blue { background: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3); }
     .tag-emerald { background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); }
     .tag-purple { background: rgba(168, 85, 247, 0.15); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.3); }
+    .tag-amber { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); }
 
     .selector-card {
       background: #131b2e;
@@ -283,6 +284,15 @@
       background: #1e293b;
       color: #f1f5f9;
     }
+    .btn-youtube {
+      background: #450a0a;
+      color: #fca5a5;
+      border: 1px solid #dc2626;
+    }
+    .btn-youtube:hover {
+      background: #dc2626;
+      color: #ffffff;
+    }
     .tip-box {
       font-size: 12px;
       color: #64748b;
@@ -325,6 +335,7 @@
           <span class="tag tag-blue">⚡ 720p FastStart (~35 MB)</span>
           <span class="tag tag-emerald">🔊 48,000 Hz Broadcast Stereo</span>
           <span class="tag tag-purple">🎬 OpenCV Subpixel Ken Burns</span>
+          <span class="tag tag-amber" id="tagSchedule" style="display: none;"></span>
         </div>
       </div>
     </div>
@@ -378,6 +389,9 @@
       <div class="actions-row">
         <a id="btnDownload" href="#" target="_blank" class="btn-action btn-download">
           📥 Descargar MP4 Ligero
+        </a>
+        <a id="btnYouTube" href="#" target="_blank" class="btn-action btn-youtube" style="display: none;">
+          ▶️ Ver en YouTube
         </a>
         <a href="https://github.com/Javy16S/Kineforge-Cloud-Render/actions" target="_blank" class="btn-action btn-github">
           ⚙️ Ver Ejecuciones en GitHub Actions
@@ -547,6 +561,29 @@
       videoTitle.innerText = currentChapter === 'full'
         ? `${titleText} | Película Completa (1 al 5)`
         : `${titleText} | Capítulo ${currentChapter}`;
+
+      // Mostrar info de programación en YouTube si existe
+      const chData = (storyData && storyData.chapters && storyData.chapters[currentChapter]) || null;
+      const tagSchedule = document.getElementById("tagSchedule");
+      const btnYouTube = document.getElementById("btnYouTube");
+
+      if (chData && chData.scheduled_for) {
+        if (tagSchedule) {
+          tagSchedule.style.display = "inline-flex";
+          tagSchedule.innerText = `📅 Estreno: ${chData.scheduled_for}`;
+        }
+      } else if (tagSchedule) {
+        tagSchedule.style.display = "none";
+      }
+
+      if (chData && chData.youtube_url) {
+        if (btnYouTube) {
+          btnYouTube.style.display = "inline-flex";
+          btnYouTube.href = chData.youtube_url;
+        }
+      } else if (btnYouTube) {
+        btnYouTube.style.display = "none";
+      }
     }
 
     // Iniciar carga del manifest

@@ -31,6 +31,22 @@ on:
         required: false
         default: false
         type: boolean
+      schedule_mode:
+        description: "Modo de publicación en YouTube (auto, scheduled, unlisted, private, public)"
+        required: false
+        default: "auto"
+        type: choice
+        options:
+          - "auto"
+          - "scheduled"
+          - "unlisted"
+          - "private"
+          - "public"
+      publish_at:
+        description: "Fecha ISO UTC manual para programar (opcional, ej: 2026-10-01T18:30:00Z)"
+        required: false
+        default: ""
+        type: string
 
 permissions:
   contents: write
@@ -82,12 +98,20 @@ jobs:
             DRY_RUN_FLAG="--dry-run"
           fi
 
+          SCHED_MODE="${{ github.event.inputs.schedule_mode || 'auto' }}"
+          PUBLISH_AT="${{ github.event.inputs.publish_at || '' }}"
+          SCHED_FLAGS="--schedule-mode ${SCHED_MODE}"
+          if [ -n "$PUBLISH_AT" ]; then
+            SCHED_FLAGS="${SCHED_FLAGS} --publish-at ${PUBLISH_AT}"
+          fi
+
           python runner/cloud_factory.py \
             --history-index "${HIST_IDX}" \
             --story "${STORY}" \
             --chapter-num "${CHAPTER}" \
             --work-dir "${RUNNER_TEMP}/factory_work" \
             --output-video "${RUNNER_TEMP}/video_capitulo_${CHAPTER}.mp4" \
+            ${SCHED_FLAGS} \
             ${DRY_RUN_FLAG}
 
       - name: "Generate Lightweight Web/Mobile Preview (720p FastStart)"
@@ -159,25 +183,28 @@ jobs:
             echo "🚀 Subiendo preview y catálogo a GitHub Releases..."
             if gh release view "$TAG" >/dev/null 2>&1; then
               echo "Release $TAG ya existe. Actualizando assets con --clobber..."
-              gh release upload "$TAG" "$PREVIEW" "$FALLBACK_PREVIEW" "manifest_previews.json" --clobber || true
+              gh release upload "$TAG" "$PREVIEW" "$FALLBACK_PREVIEW" "manifest_previews.json" "publish_schedule.json" --clobber || true
             else
               echo "Release $TAG no existe aún. Creando release y subiendo assets..."
-              gh release create "$TAG" "$PREVIEW" "$FALLBACK_PREVIEW" "manifest_previews.json" \
+              gh release create "$TAG" "$PREVIEW" "$FALLBACK_PREVIEW" "manifest_previews.json" "publish_schedule.json" \
                 --title "KineForge Video Previews" \
                 --notes "Previsualizaciones automáticas para streaming en navegadores y móviles" \
                 --target main || true
             fi
 
-            # 2. Persistir manifest en la rama main para GitHub Pages
+            # 2. Persistir manifest y calendario en la rama main para GitHub Pages
             git config user.name "github-actions[bot]"
             git config user.email "github-actions[bot]@users.noreply.github.com"
-            git add manifest_previews.json || true
-            git commit -m "chore(manifest): update previews catalog [skip ci]" || true
+            git add manifest_previews.json publish_schedule.json || true
+            git commit -m "chore(schedule): update previews & schedule catalog [skip ci]" || true
             git push origin main || true
 
             ENCODED_TITLE=$(python -c "import urllib.parse, sys; print(urllib.parse.quote(sys.argv[1]))" "${STORY_TITLE}")
             PREVIEW_URL="https://github.com/${{ github.repository }}/releases/download/${TAG}/preview_${STORY_ID}_cap_${CHAPTER}.mp4"
             WEB_PLAYER="https://javy16s.github.io/Kineforge-Cloud-Render/?story=${STORY_ID}&ch=${CHAPTER}&title=${ENCODED_TITLE}&t=$(date +%s)"
+
+            PUBLISH_LOCAL=$(python -c "import json; print(json.load(open('${INFO_FILE}', encoding='utf-8')).get('publish_at_local') or '')" 2>/dev/null || true)
+            YT_ID=$(python -c "import json; print(json.load(open('${INFO_FILE}', encoding='utf-8')).get('youtube_id') or '')" 2>/dev/null || true)
 
             echo "## 🎬 ¡Previsualización Lista para Móvil y Navegador!" >> $GITHUB_STEP_SUMMARY
             echo "" >> $GITHUB_STEP_SUMMARY
@@ -192,6 +219,12 @@ jobs:
             echo "| **Historia** | ${STORY_TITLE} |" >> $GITHUB_STEP_SUMMARY
             echo "| **ID Historia** | \`${STORY_ID}\` |" >> $GITHUB_STEP_SUMMARY
             echo "| **Capítulo** | ${CHAPTER} |" >> $GITHUB_STEP_SUMMARY
+            if [ -n "$PUBLISH_LOCAL" ]; then
+              echo "| **📅 Estreno en YouTube** | **${PUBLISH_LOCAL}** (Programado Privado) |" >> $GITHUB_STEP_SUMMARY
+            fi
+            if [ -n "$YT_ID" ]; then
+              echo "| **🔗 Vídeo en YouTube** | [https://youtu.be/${YT_ID}](https://youtu.be/${YT_ID}) |" >> $GITHUB_STEP_SUMMARY
+            fi
             echo "| **Peso Preview Web** | **${PREVIEW_MB} MB** |" >> $GITHUB_STEP_SUMMARY
             echo "| **Peso Master (1080p)** | ${MASTER_MB} MB |" >> $GITHUB_STEP_SUMMARY
             echo "| **Modo** | ${{ github.event.inputs.dry_run == 'true' && '🧪 Testing (Dry-Run)' || '🚀 Producción' }} |" >> $GITHUB_STEP_SUMMARY

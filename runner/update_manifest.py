@@ -76,10 +76,19 @@ def update_manifest(info_path, manifest_path="manifest_previews.json", release_t
     if "chapters" not in manifest["stories"][story_id]:
         manifest["stories"][story_id]["chapters"] = {}
 
-    manifest["stories"][story_id]["chapters"][chapter] = {
+    publish_at_local = info.get("publish_at_local")
+    youtube_id = info.get("youtube_id")
+
+    chapter_entry = {
         "file": preview_file,
         "updated_at": datetime.utcnow().isoformat() + "Z"
     }
+    if publish_at_local:
+        chapter_entry["scheduled_for"] = publish_at_local
+    if youtube_id:
+        chapter_entry["youtube_url"] = f"https://youtu.be/{youtube_id}"
+
+    manifest["stories"][story_id]["chapters"][chapter] = chapter_entry
 
     manifest["last_story"] = story_id
     manifest["last_chapter"] = chapter
