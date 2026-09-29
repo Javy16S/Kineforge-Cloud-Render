@@ -1329,9 +1329,18 @@ async def main():
                     json.dump(story_info, s_f, indent=2, ensure_ascii=False)
         except Exception as e:
             err_msg = str(e)
+            try:
+                with open(os.path.join(args.work_dir, "upload_error.txt"), "w", encoding="utf-8") as ef:
+                    ef.write(err_msg)
+            except Exception:
+                pass
+
             if "quotaExceeded" in err_msg or "quota" in err_msg.lower():
                 print(f"\n⚠️ [AVISO DE CUOTA] Límite diario de la API de YouTube superado: {e}")
                 print("ℹ️ El vídeo se ha renderizado íntegramente y estará disponible en el reproductor Web / Móvil y en Artifacts.")
+            elif "invalid_grant" in err_msg or "expired" in err_msg.lower():
+                print(f"\n❌ [ERROR CRÍTICO YOUTUBE] El token de YouTube ha caducado o ha sido revocado: {e}")
+                print("👉 Ejecuta 'python runner/get_youtube_token.py' para generar un nuevo YT_REFRESH_TOKEN y actualízalo en GitHub Secrets.")
             else:
                 print(f"\n⚠️ [AVISO YOUTUBE] Error en subida a YouTube: {e}")
                 print("ℹ️ Continuando con la generación de preview y guardado de artefactos.")

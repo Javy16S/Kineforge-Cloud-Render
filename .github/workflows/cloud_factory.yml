@@ -228,6 +228,16 @@ jobs:
             echo "| **Peso Preview Web** | **${PREVIEW_MB} MB** |" >> $GITHUB_STEP_SUMMARY
             echo "| **Peso Master (1080p)** | ${MASTER_MB} MB |" >> $GITHUB_STEP_SUMMARY
             echo "| **Modo** | ${{ github.event.inputs.dry_run == 'true' && '🧪 Testing (Dry-Run)' || '🚀 Producción' }} |" >> $GITHUB_STEP_SUMMARY
+
+            if [ -f "${RUNNER_TEMP}/factory_work/upload_error.txt" ]; then
+              ERR_TXT=$(cat "${RUNNER_TEMP}/factory_work/upload_error.txt")
+              echo "" >> $GITHUB_STEP_SUMMARY
+              echo "### ⚠️ Aviso de Subida a YouTube" >> $GITHUB_STEP_SUMMARY
+              echo "> ❌ No se pudo subir a YouTube: \`${ERR_TXT}\`" >> $GITHUB_STEP_SUMMARY
+              if echo "$ERR_TXT" | grep -q "invalid_grant"; then
+                echo "> 🔑 **Causa:** El token OAuth (\`YT_REFRESH_TOKEN\`) ha caducado en Google Cloud. Ejecuta localmente \`python runner/get_youtube_token.py\` para generar uno nuevo y actualízalo en GitHub Secrets." >> $GITHUB_STEP_SUMMARY
+              fi
+            fi
           fi
 
       - name: "Save rendered video as Artifact"
