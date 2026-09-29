@@ -17,12 +17,13 @@
       "chapters": {
         "1": {
           "file": "preview_h0_cap_1.mp4",
-          "updated_at": "2026-09-28T23:01:32.041913Z"
+          "updated_at": "2026-09-29T22:00:28.340524Z",
+          "scheduled_for": "01/10/2026 a las 20:30 (CEST)"
         }
       }
     }
   },
-  "last_story": "h1",
+  "last_story": "h0",
   "last_chapter": "1",
-  "last_updated": "2026-09-29T21:34:25.869164Z"
+  "last_updated": "2026-09-29T22:00:28.340534Z"
 }
