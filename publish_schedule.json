@@ -3,7 +3,17 @@
   "timezone": "Europe/Madrid",
   "target_time": "20:30",
   "days_gap": 2,
-  "last_scheduled_iso": null,
-  "last_scheduled_local": null,
-  "scheduled_videos": []
+  "last_scheduled_iso": "2026-10-02T18:30:00Z",
+  "last_scheduled_local": "02/10/2026 a las 20:30 (CEST)",
+  "scheduled_videos": [
+    {
+      "story_id": "h1",
+      "chapter": "1",
+      "title": "¿QUÉ HABRÍA PASADO SI FREEZER HUBIERA CONSEGUIDO SU DESEO DE INMORTALIDAD? | Capítulo 1",
+      "video_id": "_ZNHxokbTxo",
+      "publish_at_utc": "2026-10-02T18:30:00Z",
+      "publish_at_local": "02/10/2026 a las 20:30 (CEST)",
+      "recorded_at": "2026-09-30T00:34:58Z"
+    }
+  ]
 }
