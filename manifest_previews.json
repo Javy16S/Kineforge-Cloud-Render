@@ -18,9 +18,9 @@
       "chapters": {
         "1": {
           "file": "preview_h0_cap_1.mp4",
-          "updated_at": "2026-09-30T22:00:06.152446Z",
-          "scheduled_for": "06/10/2026 a las 20:30 (CEST)",
-          "youtube_url": "https://youtu.be/QJxJHmFJGyg"
+          "updated_at": "2026-10-01T22:26:04.716258Z",
+          "scheduled_for": "10/10/2026 a las 20:30 (CEST)",
+          "youtube_url": "https://youtu.be/iwdHsuZJFc8"
         },
         "2": {
           "file": "preview_h0_cap_2.mp4",
@@ -38,6 +38,6 @@
     }
   },
   "last_story": "h0",
-  "last_chapter": "3",
-  "last_updated": "2026-10-01T08:19:33.556580Z"
+  "last_chapter": "1",
+  "last_updated": "2026-10-01T22:26:04.716290Z"
 }
