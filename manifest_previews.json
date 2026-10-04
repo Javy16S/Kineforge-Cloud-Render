@@ -53,9 +53,21 @@
           "youtube_url": "https://youtu.be/b-euJbUPeUU"
         }
       }
+    },
+    "h2": {
+      "id": "h2",
+      "title": "EL REY VEGETA REGRESA DEL INFIERNO Y EXIGE EL TRONO A SU PROPIO HIJO",
+      "chapters": {
+        "1": {
+          "file": "preview_h2_cap_1.mp4",
+          "updated_at": "2026-10-04T08:27:47.984803Z",
+          "scheduled_for": "20/10/2026 a las 20:30 (CEST)",
+          "youtube_url": "https://youtu.be/gpgasw1_frk"
+        }
+      }
     }
   },
-  "last_story": "h0",
+  "last_story": "h2",
   "last_chapter": "1",
-  "last_updated": "2026-10-03T20:39:27.717546Z"
+  "last_updated": "2026-10-04T08:27:47.984812Z"
 }

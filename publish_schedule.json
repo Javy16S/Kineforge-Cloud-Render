@@ -3,8 +3,8 @@
   "timezone": "Europe/Madrid",
   "target_time": "20:30",
   "days_gap": 2,
-  "last_scheduled_iso": "2026-10-18T18:30:00Z",
-  "last_scheduled_local": "18/10/2026 a las 20:30 (CEST)",
+  "last_scheduled_iso": "2026-10-20T18:30:00Z",
+  "last_scheduled_local": "20/10/2026 a las 20:30 (CEST)",
   "scheduled_videos": [
     {
       "story_id": "h1",
@@ -86,6 +86,15 @@
       "publish_at_utc": "2026-10-18T18:30:00Z",
       "publish_at_local": "18/10/2026 a las 20:30 (CEST)",
       "recorded_at": "2026-10-03T20:38:07Z"
+    },
+    {
+      "story_id": "h2",
+      "chapter": "1",
+      "title": "EL REY VEGETA REGRESA DEL INFIERNO Y EXIGE EL TRONO A SU PROPIO HIJO | Capítulo 1",
+      "video_id": "gpgasw1_frk",
+      "publish_at_utc": "2026-10-20T18:30:00Z",
+      "publish_at_local": "20/10/2026 a las 20:30 (CEST)",
+      "recorded_at": "2026-10-04T08:24:53Z"
     }
   ]
 }
