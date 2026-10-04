@@ -3,8 +3,8 @@
   "timezone": "Europe/Madrid",
   "target_time": "20:30",
   "days_gap": 2,
-  "last_scheduled_iso": "2026-10-20T18:30:00Z",
-  "last_scheduled_local": "20/10/2026 a las 20:30 (CEST)",
+  "last_scheduled_iso": "2026-10-22T18:30:00Z",
+  "last_scheduled_local": "22/10/2026 a las 20:30 (CEST)",
   "scheduled_videos": [
     {
       "story_id": "h1",
@@ -95,6 +95,15 @@
       "publish_at_utc": "2026-10-20T18:30:00Z",
       "publish_at_local": "20/10/2026 a las 20:30 (CEST)",
       "recorded_at": "2026-10-04T08:24:53Z"
+    },
+    {
+      "story_id": "h0",
+      "chapter": "1",
+      "title": "¿QHPS si GOKU se ENCIERRA tras ser HUMILLADO por JIREN para DOMINAR el ULTRA INSTINTO? | Capítulo 1",
+      "video_id": "cQJyFGs9kDU",
+      "publish_at_utc": "2026-10-22T18:30:00Z",
+      "publish_at_local": "22/10/2026 a las 20:30 (CEST)",
+      "recorded_at": "2026-10-04T20:57:31Z"
     }
   ]
 }
