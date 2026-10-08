@@ -1,9 +1,6 @@
 name: "KineForge Autonomous Cloud Factory"
 
 on:
-  schedule:
-    # 18:00 UTC = 20:00 hora local de España (CEST / las 8)
-    - cron: '0 18 * * *'
   workflow_dispatch:
     inputs:
       channel:
@@ -12,9 +9,9 @@ on:
         default: "Zorojin"
         type: string
       history_index:
-        description: "Índice de la historia en Google Sheets (0 = primera)"
+        description: "Índice de la historia en Google Sheets (0 = primera, opcional)"
         required: false
-        default: "0"
+        default: ""
         type: string
       story:
         description: "Título o identificador de la historia en Google Sheets"
@@ -90,12 +87,17 @@ jobs:
           FISH_API_KEY: ${{ secrets.FISH_API_KEY }}
           FISH_DEFAULT_MODEL_ID: ${{ secrets.FISH_DEFAULT_MODEL_ID }}
         run: |
-          HIST_IDX="${{ github.event.inputs.history_index || '0' }}"
+          HIST_IDX="${{ github.event.inputs.history_index || '' }}"
           CHAPTER="${{ github.event.inputs.chapter_num || '1' }}"
           STORY="${{ github.event.inputs.story || '' }}"
           DRY_RUN_FLAG=""
           if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then
             DRY_RUN_FLAG="--dry-run"
+          fi
+
+          HIST_FLAGS=""
+          if [ -n "$HIST_IDX" ]; then
+            HIST_FLAGS="--history-index ${HIST_IDX}"
           fi
 
           SCHED_MODE="${{ github.event.inputs.schedule_mode || 'auto' }}"
@@ -106,7 +108,7 @@ jobs:
           fi
 
           python runner/cloud_factory.py \
-            --history-index "${HIST_IDX}" \
+            ${HIST_FLAGS} \
             --story "${STORY}" \
             --chapter-num "${CHAPTER}" \
             --work-dir "${RUNNER_TEMP}/factory_work" \

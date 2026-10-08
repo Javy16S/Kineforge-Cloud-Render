@@ -148,7 +148,7 @@ KEN_BURNS_PRESETS = [
 
 def parse_args():
     parser = argparse.ArgumentParser(description="KineForge Autonomous Cloud Factory")
-    parser.add_argument("--history-index", type=int, default=0, help="Índice de la historia en Google Sheets (0 = primera)")
+    parser.add_argument("--history-index", type=int, default=None, help="Índice de la historia en Google Sheets (0 = primera, opcional)")
     parser.add_argument("--story", default="", help="Título de la historia o búsqueda por texto en Google Sheets")
     parser.add_argument("--chapter-num", default="1", help="Número de capítulo a producir (1..5 o 'full')")
     parser.add_argument("--work-dir", default="/tmp/kineforge_factory", help="Directorio temporal de trabajo")
@@ -265,7 +265,7 @@ async def main():
 
     # Selección inteligente de historia
     story_row = None
-    story_idx = 0
+    story_idx = None
     target_story = (args.story or "").strip()
     if target_story:
         # 1. Si es un entero puro, usarlo como índice
@@ -275,6 +275,8 @@ async def main():
                 story_row = rows[s_idx]
                 story_idx = s_idx
                 print(f"🎯 Historia seleccionada por índice ({s_idx}): {story_row.get('TÍTULO DEL VIDEO')}")
+            else:
+                raise IndexError(f"Índice de historia '{target_story}' fuera de rango (total filas: {len(rows)}).")
 
         # 2. Coincidencia por título de vídeo
         if not story_row:
@@ -298,13 +300,28 @@ async def main():
                     print(f"🎯 Historia encontrada por coincidencia de texto (Fila {r_idx}): {r.get('TÍTULO DEL VIDEO')}")
                     break
 
-    if not story_row:
+        if not story_row:
+            raise ValueError(
+                f"❌ Error: La historia solicitada '{target_story}' no se encontró en Google Sheets.\n"
+                f"   Comprueba que el título coincida con alguna fila o que Make envíe el valor correcto."
+            )
+
+    elif args.history_index is not None and args.history_index >= 0:
         if args.history_index >= len(rows):
             raise IndexError(f"Índice de historia {args.history_index} fuera de rango (total {len(rows)})")
         story_idx = args.history_index
         story_row = rows[args.history_index]
-        print(f"🎯 Historia seleccionada por índice por defecto ({args.history_index}): {story_row.get('TÍTULO DEL VIDEO')}")
-    sheet_title = story_row.get('TÍTULO DEL VIDEO', 'Goku Encerrado Mil Años')
+        print(f"🎯 Historia seleccionada por índice explícito ({args.history_index}): {story_row.get('TÍTULO DEL VIDEO')}")
+    else:
+        raise ValueError(
+            "❌ Error: No se ha especificado ninguna historia ni índice válido para procesar.\n"
+            "   Tanto '--story' como '--history-index' llegaron vacíos desde GitHub Actions / Make.\n"
+            "   Asegúrate de que en Make/Webhook el campo 'story' esté mapeado correctamente al título de la fila."
+        )
+
+    sheet_title = story_row.get('TÍTULO DEL VIDEO', '').strip()
+    if not sheet_title:
+        sheet_title = f"Historia_{story_idx}"
 
     # Guardar story_info.json para el pipeline de preview y metadatos
     story_info = {
@@ -331,8 +348,11 @@ async def main():
         cap_text = story_row.get(f'CAPÍTULO {args.chapter_num}', '').strip()
         display_title = f"{sheet_title} | Capítulo {args.chapter_num}"
 
-    if not cap_text:
-        raise ValueError(f"No se encontró texto para el CAPÍTULO {args.chapter_num} en la fila seleccionada.")
+    if not cap_text or not cap_text.strip():
+        raise ValueError(
+            f"❌ Error: El guion del CAPÍTULO {args.chapter_num} para la historia '{sheet_title}' (Fila {story_idx}) está VACÍO en Google Sheets.\n"
+            f"   Por favor, rellena el texto del guion en la columna correspondiente antes de generar el video."
+        )
 
     print(f"📖 Título: {display_title}")
     print(f"   Palabras: {len(cap_text.split()):,} | Caracteres: {len(cap_text):,}")
