@@ -45,9 +45,8 @@
         },
         "full": {
           "file": "preview_h0_cap_full.mp4",
-          "updated_at": "2026-10-03T08:57:53.832120Z",
-          "scheduled_for": "16/10/2026 a las 20:30 (CEST)",
-          "youtube_url": "https://youtu.be/b-euJbUPeUU"
+          "updated_at": "2026-10-08T09:04:57.500617Z",
+          "scheduled_for": "01/11/2026 a las 20:30 (CET)"
         }
       }
     },
@@ -62,9 +61,20 @@
           "youtube_url": "https://youtu.be/gpgasw1_frk"
         }
       }
+    },
+    "h3": {
+      "id": "h3",
+      "title": "CELL SOBREVIVIÓ: DIEZ AÑOS DESPUÉS REGRESA CON EL PODER DE UN DIOS",
+      "chapters": {
+        "1": {
+          "file": "preview_h3_cap_1.mp4",
+          "updated_at": "2026-10-10T21:46:57.475685Z",
+          "scheduled_for": "01/11/2026 a las 20:30 (CET)"
+        }
+      }
     }
   },
-  "last_story": "h0",
-  "last_chapter": "5",
-  "last_updated": "2026-10-08T08:17:20.297852Z"
+  "last_story": "h3",
+  "last_chapter": "1",
+  "last_updated": "2026-10-10T21:46:57.475699Z"
 }
