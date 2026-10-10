@@ -655,7 +655,8 @@ async def main():
     music_playlist = []
     if music_files:
         import random
-        seed_val = hash(str(args.chapter_num)) + args.history_index * 100
+        seed_idx = story_idx if story_idx is not None else (args.history_index or 0)
+        seed_val = hash(str(args.chapter_num)) + seed_idx * 100
         rng = random.Random(seed_val)
         shuffled = list(music_files)
         rng.shuffle(shuffled)
