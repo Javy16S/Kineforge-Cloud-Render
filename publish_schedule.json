@@ -3,8 +3,8 @@
   "timezone": "Europe/Madrid",
   "target_time": "20:30",
   "days_gap": 2,
-  "last_scheduled_iso": "2026-11-09T19:30:00Z",
-  "last_scheduled_local": "09/11/2026 a las 20:30 (CET)",
+  "last_scheduled_iso": "2026-11-11T19:30:00Z",
+  "last_scheduled_local": "11/11/2026 a las 20:30 (CET)",
   "scheduled_videos": [
     {
       "story_id": "h1",
@@ -185,6 +185,15 @@
       "publish_at_utc": "2026-11-09T19:30:00Z",
       "publish_at_local": "09/11/2026 a las 20:30 (CET)",
       "recorded_at": "2026-10-14T08:33:37Z"
+    },
+    {
+      "story_id": "h3",
+      "chapter": "5",
+      "title": "CELL SOBREVIVIÓ: DIEZ AÑOS DESPUÉS REGRESA CON EL PODER DE UN DIOS | Capítulo 5",
+      "video_id": "Jw8BJ3-4wAU",
+      "publish_at_utc": "2026-11-11T19:30:00Z",
+      "publish_at_local": "11/11/2026 a las 20:30 (CET)",
+      "recorded_at": "2026-10-15T08:40:52Z"
     }
   ]
 }
