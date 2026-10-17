@@ -3,8 +3,8 @@
   "timezone": "Europe/Madrid",
   "target_time": "20:30",
   "days_gap": 2,
-  "last_scheduled_iso": "2026-11-13T19:30:00Z",
-  "last_scheduled_local": "13/11/2026 a las 20:30 (CET)",
+  "last_scheduled_iso": "2026-11-15T19:30:00Z",
+  "last_scheduled_local": "15/11/2026 a las 20:30 (CET)",
   "scheduled_videos": [
     {
       "story_id": "h1",
@@ -203,6 +203,15 @@
       "publish_at_utc": "2026-11-13T19:30:00Z",
       "publish_at_local": "13/11/2026 a las 20:30 (CET)",
       "recorded_at": "2026-10-16T08:26:05Z"
+    },
+    {
+      "story_id": "h4",
+      "chapter": "2",
+      "title": "BROLY: EL SAIYAJIN QUE ARRASÓ UNA GALAXIA PARA ENCONTRAR A GOKU | Capítulo 2",
+      "video_id": "lDO4B3UwLCY",
+      "publish_at_utc": "2026-11-15T19:30:00Z",
+      "publish_at_local": "15/11/2026 a las 20:30 (CET)",
+      "recorded_at": "2026-10-17T08:28:56Z"
     }
   ]
 }
