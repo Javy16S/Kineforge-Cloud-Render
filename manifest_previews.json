@@ -138,11 +138,29 @@
           "updated_at": "2026-10-20T08:27:00.946595Z",
           "scheduled_for": "21/11/2026 a las 20:30 (CET)",
           "youtube_url": "https://youtu.be/ZH1Vp2681uk"
+        },
+        "full": {
+          "file": "preview_h4_cap_full.mp4",
+          "updated_at": "2026-10-20T10:10:38.683059Z",
+          "scheduled_for": "21/11/2026 a las 20:30 (CET)",
+          "youtube_url": "https://youtu.be/jdlYeylZoPQ"
+        }
+      }
+    },
+    "h5": {
+      "id": "h5",
+      "title": "ZENO SE ABURRE Y BORRA UN UNIVERSO: GOKU TIENE 24 HORAS PARA DETENERLO",
+      "chapters": {
+        "1": {
+          "file": "preview_h5_cap_1.mp4",
+          "updated_at": "2026-10-21T08:37:54.561604Z",
+          "scheduled_for": "23/11/2026 a las 20:30 (CET)",
+          "youtube_url": "https://youtu.be/Nc32qcPtArU"
         }
       }
     }
   },
-  "last_story": "h4",
-  "last_chapter": "5",
-  "last_updated": "2026-10-20T08:27:00.946608Z"
+  "last_story": "h5",
+  "last_chapter": "1",
+  "last_updated": "2026-10-21T08:37:54.561617Z"
 }
