@@ -3,8 +3,8 @@
   "timezone": "Europe/Madrid",
   "target_time": "20:30",
   "days_gap": 2,
-  "last_scheduled_iso": "2026-11-27T19:30:00Z",
-  "last_scheduled_local": "27/11/2026 a las 20:30 (CET)",
+  "last_scheduled_iso": "2026-11-29T19:30:00Z",
+  "last_scheduled_local": "29/11/2026 a las 20:30 (CET)",
   "scheduled_videos": [
     {
       "story_id": "h1",
@@ -266,6 +266,15 @@
       "publish_at_utc": "2026-11-27T19:30:00Z",
       "publish_at_local": "27/11/2026 a las 20:30 (CET)",
       "recorded_at": "2026-10-23T08:35:49Z"
+    },
+    {
+      "story_id": "h5",
+      "chapter": "4",
+      "title": "ZENO SE ABURRE Y BORRA UN UNIVERSO: GOKU TIENE 24 HORAS PARA DETENERLO | Capítulo 4",
+      "video_id": "Bt4WGCTOBEU",
+      "publish_at_utc": "2026-11-29T19:30:00Z",
+      "publish_at_local": "29/11/2026 a las 20:30 (CET)",
+      "recorded_at": "2026-10-24T08:27:15Z"
     }
   ]
 }
