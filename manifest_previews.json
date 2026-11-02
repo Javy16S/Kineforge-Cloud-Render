@@ -222,11 +222,29 @@
           "updated_at": "2026-11-01T09:33:10.216092Z",
           "scheduled_for": "11/12/2026 a las 20:30 (CET)",
           "youtube_url": "https://youtu.be/M7-KYOYWILs"
+        },
+        "full": {
+          "file": "preview_h6_cap_full.mp4",
+          "updated_at": "2026-11-01T11:18:09.852237Z",
+          "scheduled_for": "11/12/2026 a las 20:30 (CET)",
+          "youtube_url": "https://youtu.be/XraXeA1O04I"
+        }
+      }
+    },
+    "h7": {
+      "id": "h7",
+      "title": "BARDOCK SOBREVIVE A LA SUPERNOVA Y SE CONVIERTE EN EL PRIMER SUPER SAIYAJIN",
+      "chapters": {
+        "1": {
+          "file": "preview_h7_cap_1.mp4",
+          "updated_at": "2026-11-02T09:23:23.908815Z",
+          "scheduled_for": "13/12/2026 a las 20:30 (CET)",
+          "youtube_url": "https://youtu.be/xOCUMCQXcH0"
         }
       }
     }
   },
-  "last_story": "h6",
-  "last_chapter": "5",
-  "last_updated": "2026-11-01T09:33:10.216099Z"
+  "last_story": "h7",
+  "last_chapter": "1",
+  "last_updated": "2026-11-02T09:23:23.908826Z"
 }
