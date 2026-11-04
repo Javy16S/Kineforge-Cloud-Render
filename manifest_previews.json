@@ -246,11 +246,17 @@
           "updated_at": "2026-11-04T08:18:25.083640Z",
           "scheduled_for": "15/12/2026 a las 20:30 (CET)",
           "youtube_url": "https://youtu.be/tKTSScWFUFI"
+        },
+        "3": {
+          "file": "preview_h7_cap_3.mp4",
+          "updated_at": "2026-11-04T11:03:17.190532Z",
+          "scheduled_for": "17/12/2026 a las 20:30 (CET)",
+          "youtube_url": "https://youtu.be/Kt9r5PufQ7M"
         }
       }
     }
   },
   "last_story": "h7",
-  "last_chapter": "2",
-  "last_updated": "2026-11-04T08:18:25.083653Z"
+  "last_chapter": "3",
+  "last_updated": "2026-11-04T11:03:17.190545Z"
 }
