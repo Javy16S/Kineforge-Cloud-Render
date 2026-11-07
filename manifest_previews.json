@@ -264,11 +264,29 @@
           "updated_at": "2026-11-06T09:34:28.279236Z",
           "scheduled_for": "21/12/2026 a las 20:30 (CET)",
           "youtube_url": "https://youtu.be/dbNUxKvN6NM"
+        },
+        "full": {
+          "file": "preview_h7_cap_full.mp4",
+          "updated_at": "2026-11-06T11:17:41.242693Z",
+          "scheduled_for": "21/12/2026 a las 20:30 (CET)",
+          "youtube_url": "https://youtu.be/xEQVvW-cUPE"
+        }
+      }
+    },
+    "h8": {
+      "id": "h8",
+      "title": "ZAMASU FUSIONADO: EL DIOS INMORTAL QUE QUISO BORRAR A LA HUMANIDAD",
+      "chapters": {
+        "1": {
+          "file": "preview_h8_cap_1.mp4",
+          "updated_at": "2026-11-07T09:27:28.664690Z",
+          "scheduled_for": "23/12/2026 a las 20:30 (CET)",
+          "youtube_url": "https://youtu.be/BlWlyKqVv1E"
         }
       }
     }
   },
-  "last_story": "h7",
-  "last_chapter": "5",
-  "last_updated": "2026-11-06T09:34:28.279250Z"
+  "last_story": "h8",
+  "last_chapter": "1",
+  "last_updated": "2026-11-07T09:27:28.664701Z"
 }
