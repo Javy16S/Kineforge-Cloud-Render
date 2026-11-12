@@ -306,11 +306,29 @@
           "updated_at": "2026-11-11T09:20:06.831827Z",
           "scheduled_for": "31/12/2026 a las 20:30 (CET)",
           "youtube_url": "https://youtu.be/qO-Dx6EK510"
+        },
+        "full": {
+          "file": "preview_h8_cap_full.mp4",
+          "updated_at": "2026-11-11T10:26:01.406904Z",
+          "scheduled_for": "31/12/2026 a las 20:30 (CET)",
+          "youtube_url": "https://youtu.be/QVoA0YBJxLs"
+        }
+      }
+    },
+    "h9": {
+      "id": "h9",
+      "title": "MAJIN BUU DEVORA A BEERUS: EL MONSTRUO QUE HIZO TEMBLAR A LOS DIOSES",
+      "chapters": {
+        "1": {
+          "file": "preview_h9_cap_1.mp4",
+          "updated_at": "2026-11-12T14:05:10.003966Z",
+          "scheduled_for": "02/01/2027 a las 20:30 (CET)",
+          "youtube_url": "https://youtu.be/cztv6vLFANY"
         }
       }
     }
   },
-  "last_story": "h8",
-  "last_chapter": "5",
-  "last_updated": "2026-11-11T09:20:06.831837Z"
+  "last_story": "h9",
+  "last_chapter": "1",
+  "last_updated": "2026-11-12T14:05:10.003975Z"
 }
