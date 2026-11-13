@@ -3,8 +3,8 @@
   "timezone": "Europe/Madrid",
   "target_time": "20:30",
   "days_gap": 2,
-  "last_scheduled_iso": "2027-01-02T19:30:00Z",
-  "last_scheduled_local": "02/01/2027 a las 20:30 (CET)",
+  "last_scheduled_iso": "2027-01-04T19:30:00Z",
+  "last_scheduled_local": "04/01/2027 a las 20:30 (CET)",
   "scheduled_videos": [
     {
       "story_id": "h1",
@@ -428,6 +428,15 @@
       "publish_at_utc": "2027-01-02T19:30:00Z",
       "publish_at_local": "02/01/2027 a las 20:30 (CET)",
       "recorded_at": "2026-11-12T14:03:08Z"
+    },
+    {
+      "story_id": "h9",
+      "chapter": "2",
+      "title": "MAJIN BUU DEVORA A BEERUS: EL MONSTRUO QUE HIZO TEMBLAR A LOS DIOSES | Capítulo 2",
+      "video_id": "Et4XEO3qn4c",
+      "publish_at_utc": "2027-01-04T19:30:00Z",
+      "publish_at_local": "04/01/2027 a las 20:30 (CET)",
+      "recorded_at": "2026-11-13T09:35:28Z"
     }
   ]
 }
